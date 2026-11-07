@@ -1,0 +1,738 @@
+{
+  "stageId": "L3_S3_UnstableNetworkAnalysis",
+  "level": 3,
+  "stageIndexInLevel": 10,
+  "titleArabic": "المرحلة 3 — تحليل شبكة تحت ظروف تشغيل غير مستقرة",
+  "briefingArabic": "تتلقى غرفة التشغيل بلاغات متقطعة عن ضعف الماء في نهاية أحد الخطوط. القراءات تتغير مع الطلب، ولا تتفق بعض المؤشرات مع التشغيل المعتاد. حلّل البيانات، ميّز بين ما تثبته وما لا تثبته، ثم أوصِ بخطوة آمنة قبل أي تعديل دائم.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "خزان التغذية",
+        "kind": "reservoir",
+        "elevationMeters": 118
+      },
+      {
+        "nodeId": "عقدة القياس",
+        "kind": "junction",
+        "elevationMeters": 126
+      },
+      {
+        "nodeId": "نهاية الخط",
+        "kind": "consumer",
+        "elevationMeters": 131
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "خط المنطقة الشرقي",
+        "fromNodeId": "عقدة القياس",
+        "toNodeId": "نهاية الخط",
+        "lengthMeters": 1400,
+        "diameterMm": 250,
+        "roughnessMm": 0.15
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "P_in_normal",
+      "displayNameArabic": "ضغط الدخول في الفترة الهادئة",
+      "value": 4.8,
+      "unit": "bar"
+    },
+    {
+      "key": "P_out_normal",
+      "displayNameArabic": "ضغط نهاية الخط في الفترة الهادئة",
+      "value": 3.7,
+      "unit": "bar"
+    },
+    {
+      "key": "Q_normal",
+      "displayNameArabic": "التدفق في الفترة الهادئة",
+      "value": 29,
+      "unit": "L/s"
+    },
+    {
+      "key": "P_in_peak",
+      "displayNameArabic": "ضغط الدخول وقت الذروة",
+      "value": 4.7,
+      "unit": "bar"
+    },
+    {
+      "key": "P_out_peak",
+      "displayNameArabic": "ضغط نهاية الخط وقت الذروة",
+      "value": 2.8,
+      "unit": "bar"
+    },
+    {
+      "key": "Q_peak",
+      "displayNameArabic": "التدفق وقت الذروة",
+      "value": 19,
+      "unit": "L/s"
+    },
+    {
+      "key": "valve_opening",
+      "displayNameArabic": "قراءة فتحة صمام التحكم",
+      "value": 55,
+      "unit": "%"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "قطر الخط محل الدراسة",
+      "value": 250,
+      "unit": "mm"
+    },
+    {
+      "key": "L",
+      "displayNameArabic": "طول الخط محل الدراسة",
+      "value": 1400,
+      "unit": "m"
+    },
+    {
+      "key": "deltaZ",
+      "displayNameArabic": "فرق الارتفاع من الدخول إلى نهاية الخط",
+      "value": 13,
+      "unit": "m"
+    },
+    {
+      "key": "roughness",
+      "displayNameArabic": "خشونة الأنبوب المطلقة",
+      "value": 0.15,
+      "unit": "mm"
+    },
+    {
+      "key": "water_temp",
+      "displayNameArabic": "درجة حرارة الماء",
+      "value": 18,
+      "unit": "°C"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — قراءة البلاغ",
+        "instructionArabic": "ابدأ بما يمكن استنتاجه من اختلاف القراءات بين فترة هادئة ووقت الذروة. اعتبر ضغط الدخول شبه ثابت، ولا تفترض أن قراءة منفردة تثبت سببًا.",
+        "feedbackArabic": "هبوط ضغط نهاية الخط والتدفق وقت الذروة مع ثبات ضغط الدخول تقريبًا علامة على تغير في أداء المسار تحت الطلب. هذا يبرر التحقيق في الفقد أو التحكم، لكنه لا يثبت وحده تسربًا أو عطلًا في المضخة.",
+        "selection": {
+          "promptArabic": "ما الاستنتاج الأولي الأكثر اتزانًا؟",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — ضغط المصدر ثابت تقريبًا، لكن أداء نهاية الخط يتراجع وقت الذروة",
+              "feedbackArabic": "صحيح. الضغط عند الدخول بقي قريبًا من 4.8 bar، فيما انخفض ضغط النهاية والتدفق. يلزم تحديد ما يحدث على المسار قبل تسمية السبب.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — التذبذب الملحوظ في تدفق الخدمة يثبت حتمًا حدوث عطل ميكانيكي كامل في مضخة التغذية",
+              "feedbackArabic": "لا تثبت القراءات ذلك؛ ضغط الدخول لم ينهَر. افحص المصدر والمضخة والمسار بقياسات متزامنة قبل التشخيص."
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — الشبكة مستقرة تمامًا ولا تتطلب تدخلًا هندسيًا ما دام ضغط مدخل الخط أعلى من 4 بار",
+              "feedbackArabic": "ضغط الدخول لا يضمن وصول الضغط والتدفق المطلوبين إلى نهاية الخط."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — ضرورة البدء الفوري باستبدال الخط الناقل بالكامل بقطر مضاعف لتلبية سعة الذروة",
+              "feedbackArabic": "القراءات لا تكفي لتقرير تغيير تصميمي؛ افحص الفقد والصمام والقياس أولًا."
+            }
+          ],
+          "correctOptionId": "A",
+          "justification": {
+            "prompt": "اختر المؤشرات التي تسند استنتاجك الأولي.",
+            "factors": [
+              {
+                "factorId": "stable_inlet",
+                "labelArabic": "ضغط الدخول بقي قريبًا من قيمته المعتادة",
+                "correct": true
+              },
+              {
+                "factorId": "downstream_drop",
+                "labelArabic": "ضغط نهاية الخط انخفض من 3.7 إلى 2.8 bar",
+                "correct": true
+              },
+              {
+                "factorId": "flow_drop",
+                "labelArabic": "التدفق انخفض من 29 إلى 19 L/s وقت الذروة",
+                "correct": true
+              },
+              {
+                "factorId": "pump_proven",
+                "labelArabic": "القراءات تثبت عطل المضخة قطعًا",
+                "correct": false
+              },
+              {
+                "factorId": "no_issue",
+                "labelArabic": "ثبات ضغط الدخول يعني أن نهاية الخط سليمة",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "stable_inlet": "قارن ضغط الدخول بين الفترتين قبل نسب المشكلة للمصدر.",
+                "downstream_drop": "ضغط نهاية الخط تغير بوضوح عند الذروة.",
+                "flow_drop": "التدفق انخفض 10 L/s عن الفترة الهادئة."
+              },
+              "wrongFactor": {
+                "pump_proven": "لا تكفي هذه القياسات لإثبات عطل المضخة.",
+                "no_issue": "قد يكون الدخول مستقرًا بينما يوجد فقد أو قيد في اتجاه المستهلك."
+              }
+            },
+            "scoring": {
+              "fullBonus": 3,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — اختيار البيانات",
+        "instructionArabic": "حدد البيانات اللازمة لمقارنة الحالتين وعزل موضع التغير. بعض البيانات المعروضة قد لا تساعد في هذا التحقيق.",
+        "feedbackArabic": "القراءات المتزامنة للضغط والتدفق، وموضع الصمام، وهندسة المقطع وارتفاعه وخشونته تسمح بمقارنة الطاقة والفقد. لون الخزان والطقس واسم المورد ليست لازمة لهذا التحليل.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "أي البيانات ينبغي أن تدخل في تحليل تغير الأداء؟ اختر كل ما يلزم.",
+          "options": [
+            {
+              "optionId": "inlet_pressure",
+              "displayName": "ضغط الدخول في الفترتين",
+              "feedbackArabic": "يساعد على معرفة ما إذا كان التغير يبدأ من المصدر."
+            },
+            {
+              "optionId": "outlet_pressure",
+              "displayName": "ضغط نهاية الخط في الفترتين",
+              "feedbackArabic": "يوضح أثر التشغيل عند النقطة المتأثرة."
+            },
+            {
+              "optionId": "flow",
+              "displayName": "التدفق في الفترتين",
+              "feedbackArabic": "يتيح مقارنة الخدمة المقدمة ومستوى الانخفاض."
+            },
+            {
+              "optionId": "valve",
+              "displayName": "فتحة صمام التحكم",
+              "feedbackArabic": "حالة الصمام قد تحد التدفق وتغير الفقد."
+            },
+            {
+              "optionId": "geometry",
+              "displayName": "قطر الخط وطوله وخشونته",
+              "feedbackArabic": "تلزم لتقدير السرعة وفقد الاحتكاك على المقطع."
+            },
+            {
+              "optionId": "elevation",
+              "displayName": "فرق الارتفاع بين نقطتي القياس",
+              "feedbackArabic": "يدخل في موازنة الرأس والطاقة."
+            },
+            {
+              "optionId": "tank_color",
+              "displayName": "لون الخزان",
+              "feedbackArabic": "لا يدخل في تحليل الضغط والتدفق هنا."
+            },
+            {
+              "optionId": "weather",
+              "displayName": "درجة حرارة الجو",
+              "feedbackArabic": "ليست مطلوبة لمقارنة القراءات الهيدروليكية المعروضة."
+            },
+            {
+              "optionId": "vendor",
+              "displayName": "اسم مورد الأنبوب",
+              "feedbackArabic": "اسم المورد لا يحدد الفقد دون بيانات هندسية مناسبة."
+            }
+          ],
+          "correctOptionIds": [
+            "inlet_pressure",
+            "outlet_pressure",
+            "flow",
+            "valve",
+            "geometry",
+            "elevation"
+          ],
+          "scoring": {
+            "fullBonus": 3
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط البيانات المختارة بما ستختبره.",
+            "factors": [
+              {
+                "factorId": "pressure_comparison",
+                "labelArabic": "الضغط عند الطرفين يحدد أين يتغير الرأس بين الحالتين",
+                "correct": true
+              },
+              {
+                "factorId": "flow_comparison",
+                "labelArabic": "التدفق يبين مقدار تراجع الخدمة وقت الذروة",
+                "correct": true
+              },
+              {
+                "factorId": "valve_state",
+                "labelArabic": "موضع الصمام يساعد على فحص وجود قيد تشغيلي",
+                "correct": true
+              },
+              {
+                "factorId": "pipe_losses",
+                "labelArabic": "الهندسة والارتفاع والخشونة لازمة لتقدير الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "weather_cause",
+                "labelArabic": "طقس اليوم يثبت سبب تغير الضغط",
+                "correct": false
+              },
+              {
+                "factorId": "brand_cause",
+                "labelArabic": "اسم المورد يحدد وحده كفاءة الخط",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "pressure_comparison": "قارن الضغط عند الدخول والنهاية بين الفترتين.",
+                "flow_comparison": "التدفق يثبت مقدار التغير في الخدمة.",
+                "valve_state": "تحقق من أن الصمام يعمل وفق وضع التشغيل المطلوب.",
+                "pipe_losses": "قطر الخط وطوله وخشونته وفرق الارتفاع عناصر موازنة الطاقة."
+              },
+              "wrongFactor": {
+                "weather_cause": "الطقس لا يفسر وحده القراءات الهيدروليكية المعروضة.",
+                "brand_cause": "بيانات المورد وحدها لا تستبدل القياسات والهندسة."
+              }
+            },
+            "scoring": {
+              "fullBonus": 3,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — اختيار العلاقات الهندسية",
+        "instructionArabic": "اختر العلاقات التي تساعد على تفسير ضغط وتدفق ماء في أنبوب مضغوط، مع التمييز بين موازنة الطاقة وحساب فقد الاحتكاك.",
+        "feedbackArabic": "الاستمرارية تربط التدفق بالمساحة والسرعة، وبرنولي يوازن الضغط والسرعة والارتفاع والطاقة، ودارسي–وايزباخ يقدّر فقد الاحتكاك. هذه علاقات تحليل وليست دليلًا منفردًا على سبب العطل.",
+        "selection": {
+          "mode": "multiple",
+          "scoreAsFormula": true,
+          "promptArabic": "اختر القوانين أو العلاقات الملائمة لهذا التحليل.",
+          "options": [
+            {
+              "optionId": "continuity",
+              "displayName": "معادلة الاستمرارية Q = Av",
+              "feedbackArabic": "تربط معدل التدفق بمساحة المقطع والسرعة."
+            },
+            {
+              "optionId": "bernoulli",
+              "displayName": "معادلة برنولي مع احتساب الفواقد",
+              "feedbackArabic": "توازن الضغط والسرعة والارتفاع وفقد الطاقة بين نقطتين."
+            },
+            {
+              "optionId": "darcy",
+              "displayName": "دارسي–وايزباخ لفقد الاحتكاك",
+              "feedbackArabic": "تستخدم هندسة الخط وخشونته والسرعة لتقدير فقد الاحتكاك."
+            },
+            {
+              "optionId": "ohm",
+              "displayName": "قانون أوم",
+              "feedbackArabic": "يصف الدوائر الكهربائية ولا يحسب جريان الماء."
+            },
+            {
+              "optionId": "manning",
+              "displayName": "ماننغ للجريان في قناة مفتوحة",
+              "feedbackArabic": "المقطع المعروض أنبوب مضغوط وليس قناة مفتوحة."
+            },
+            {
+              "optionId": "ideal_gas",
+              "displayName": "قانون الغاز المثالي",
+              "feedbackArabic": "لا يصف جريان الماء في هذا الأنبوب."
+            }
+          ],
+          "correctOptionIds": [
+            "continuity",
+            "bernoulli",
+            "darcy"
+          ],
+          "scoring": {
+            "fullBonus": 3
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اختر وظيفة كل علاقة ضمن سلسلة التحليل.",
+            "factors": [
+              {
+                "factorId": "flow_velocity",
+                "labelArabic": "الاستمرارية تربط التدفق بالسرعة ومساحة المقطع",
+                "correct": true
+              },
+              {
+                "factorId": "energy_balance",
+                "labelArabic": "برنولي يوازن رؤوس الطاقة بين نقطتي القياس",
+                "correct": true
+              },
+              {
+                "factorId": "friction_loss",
+                "labelArabic": "دارسي–وايزباخ يقدّر فقد الاحتكاك في الخط",
+                "correct": true
+              },
+              {
+                "factorId": "electric_loss",
+                "labelArabic": "قانون أوم يحسب فقد الاحتكاك في أنبوب الماء",
+                "correct": false
+              },
+              {
+                "factorId": "open_channel",
+                "labelArabic": "ماننغ هي العلاقة الأساسية لهذا الأنبوب المضغوط",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_velocity": "الاستمرارية تربط Q وA وv.",
+                "energy_balance": "تضم موازنة الطاقة الضغط والسرعة والارتفاع والفواقد.",
+                "friction_loss": "تقدير فقد الاحتكاك يتطلب خصائص المقطع والجريان."
+              },
+              "wrongFactor": {
+                "electric_loss": "قانون أوم علاقة كهربائية.",
+                "open_channel": "هذا خط مضغوط؛ ماننغ للقنوات المفتوحة في العادة."
+              }
+            },
+            "scoring": {
+              "fullBonus": 3,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — تحليل نتائج التشغيل",
+        "instructionArabic": "في سجلين متزامنين: بقي ضغط الدخول قريبًا من 4.8 bar، بينما هبط ضغط النهاية من 3.7 إلى 2.8 bar، وهبط التدفق من 29 إلى 19 L/s. أظهر مؤشر صمام التحكم فتحة 55%. ما الذي تدعمه هذه النتائج؟",
+        "feedbackArabic": "القراءات متسقة مع زيادة مقاومة أو قيد في المسار عند الطلب، وفتحة الصمام تستحق التحقق مقابل أمر التشغيل. لا تنفرد هذه النتائج بإثبات تلف الصمام؛ يجب تأكيد القياس وفحص حالة التحكم والمقطع.",
+        "selection": {
+          "promptArabic": "اختر التفسير الأقرب إلى البيانات دون تجاوز ما تثبته.",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — تراجع نهاية الخط مع ضغط دخول شبه ثابت يرجح فقدًا أو قيدًا بعد نقطة الدخول؛ تحقّق من الصمام والقياس",
+              "feedbackArabic": "صحيح. تجمع القراءة بين هبوط الضغط والتدفق downstream وفتحة صمام تستدعي المقارنة بأمر التحكم. هي فرضية مدعومة وليست إثباتًا نهائيًا.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — تراجع الأداء يعود حتمًا إلى انهيار منحنى أداء المضخة رغم استقرار قراءة مانومتر الدخول",
+              "feedbackArabic": "القياسات لا تثبت عطل المضخة، وثبات ضغط الدخول يجعل فحص المسار والصمام والعدادات لازمًا."
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — القطر التصميمي للأنبوب يمثل اختناقًا هيدروليكيًا دائمًا يستلزم استبدال كامل المسار فورًا",
+              "feedbackArabic": "لا تحسم هذه القراءات كفاية التصميم؛ يلزم التحقق من القياس والفقد وحالة الصمام والتصميم المعتمد."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — زيادة السحب في أوقات الذروة ترفع التدفق، وبالتالي قراءة 19 L/s تدل على تحسن كفاءة التوزيع",
+              "feedbackArabic": "التدفق المسجل انخفض من 29 إلى 19 L/s، وكذلك انخفض ضغط نهاية الخط."
+            }
+          ],
+          "correctOptionId": "A",
+          "justification": {
+            "prompt": "ما عناصر المقارنة التي تجعل هذا التفسير قابلًا للفحص؟",
+            "factors": [
+              {
+                "factorId": "inlet_stable",
+                "labelArabic": "ضغط الدخول بقي شبه ثابت بين التسجيلين",
+                "correct": true
+              },
+              {
+                "factorId": "end_pressure",
+                "labelArabic": "ضغط النهاية هبط 0.9 bar وقت الذروة",
+                "correct": true
+              },
+              {
+                "factorId": "flow_changed",
+                "labelArabic": "التدفق هبط 10 L/s رغم زيادة الطلب",
+                "correct": true
+              },
+              {
+                "factorId": "valve_reading",
+                "labelArabic": "قراءة فتحة الصمام تستحق التحقق مقابل أمر التحكم",
+                "correct": true
+              },
+              {
+                "factorId": "pump_certainty",
+                "labelArabic": "فرق الضغط يثبت وحده تعطل المضخة",
+                "correct": false
+              },
+              {
+                "factorId": "replace_now",
+                "labelArabic": "القراءات تكفي لاعتماد استبدال الأنبوب الآن",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "inlet_stable": "ثبات الدخول يساعد في تحديد أن التغير أوضح قرب نهاية المسار.",
+                "end_pressure": "الضغط عند نهاية الخط انخفض مع الذروة.",
+                "flow_changed": "التدفق انخفض رغم ارتفاع الطلب.",
+                "valve_reading": "قارن قراءة الصمام بنسبة الفتح المطلوبة وتحقق منها ميدانيًا."
+              },
+              "wrongFactor": {
+                "pump_certainty": "لا تثبت قراءة الدخول وحدها حالة المضخة أو بقية المكونات.",
+                "replace_now": "يلزم عزل السبب والتحقق قبل قرار الاستبدال."
+              }
+            },
+            "scoring": {
+              "fullBonus": 3,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — خطة التحقق الميداني",
+        "instructionArabic": "رتّب التفكير حول قياسات يمكن تكرارها والتحقق منها، ثم افحص الأسباب المحتملة بقدر يتناسب مع الأدلة. الشبكة تخدم مستهلكين أثناء التحقيق.",
+        "feedbackArabic": "ابدأ بقياس ضغط متزامن على جانبي المقطع وتحقق من العدادات وأمر الصمام وموضعه الفعلي، ثم راقب التدفق وسجل المضخة وافحص التسرب أو الانسداد. التغيير الدائم أو قطع الخدمة يحتاج دليلًا وخطة تشغيلية.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "حدد إجراءات التحقق المناسبة قبل اعتماد إصلاح دائم.",
+          "options": [
+            {
+              "optionId": "sync_pressure",
+              "displayName": "إعادة قياس الضغط عند الدخول والنهاية في الوقت نفسه",
+              "feedbackArabic": "التزامن يساعد على مقارنة الحالتين دون خلط تغيرات الطلب بالقراءات."
+            },
+            {
+              "optionId": "calibrate",
+              "displayName": "التحقق من معايرة أجهزة الضغط والتدفق",
+              "feedbackArabic": "القراءة غير الموثوقة قد تقود إلى تشخيص خاطئ."
+            },
+            {
+              "optionId": "valve_command",
+              "displayName": "مقارنة أمر فتح الصمام بموضعه الفعلي وفحص المشغل",
+              "feedbackArabic": "يكشف الفرق بين أمر التحكم وحالة الصمام الفعلية."
+            },
+            {
+              "optionId": "trend_flow",
+              "displayName": "تسجيل التدفق والضغط عبر فترات الطلب",
+              "feedbackArabic": "السجل الزمني يوضح ارتباط التغير بالطلب أو التحكم."
+            },
+            {
+              "optionId": "pump_log",
+              "displayName": "مراجعة سجل تشغيل المضخة ومستوى التغذية",
+              "feedbackArabic": "تساعد على استبعاد تغيرات المصدر أو نمط التشغيل."
+            },
+            {
+              "optionId": "leak_blockage",
+              "displayName": "فحص المسار بحثًا عن تسرب أو انسداد محتمل",
+              "feedbackArabic": "يفحص أسبابًا محتملة دون افتراض أي منها مسبقًا."
+            },
+            {
+              "optionId": "replace_pipe",
+              "displayName": "استبدال الخط بقطر أكبر قبل التحقق",
+              "feedbackArabic": "قرار تصميمي مكلف لا تسنده القياسات وحدها."
+            },
+            {
+              "optionId": "close_network",
+              "displayName": "إغلاق الشبكة كاملةً فورًا رغم استمرار الخدمة",
+              "feedbackArabic": "الإغلاق الواسع غير مبرر بهذه الأدلة؛ استخدم خطة عزل موضعية عند الحاجة وبالتنسيق التشغيلي."
+            },
+            {
+              "optionId": "throttle",
+              "displayName": "خفض ضغط الشبكة لتقليل الطلب دون قياسات",
+              "feedbackArabic": "قد يزيد ضعف الخدمة ولا يعالج سبب التغير."
+            }
+          ],
+          "correctOptionIds": [
+            "sync_pressure",
+            "calibrate",
+            "valve_command",
+            "trend_flow",
+            "pump_log",
+            "leak_blockage"
+          ],
+          "scoring": {
+            "fullBonus": 3
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "لماذا تعد هذه الخطوات مناسبة قبل الإصلاح؟",
+            "factors": [
+              {
+                "factorId": "reliable_comparison",
+                "labelArabic": "القياسات المتزامنة والمعايرة تؤكد موثوقية المقارنة",
+                "correct": true
+              },
+              {
+                "factorId": "verify_control",
+                "labelArabic": "مقارنة أمر الصمام بموضعه تختبر فرضية القيد",
+                "correct": true
+              },
+              {
+                "factorId": "track_cause",
+                "labelArabic": "السجل الزمني وفحص المصدر والمسار يميز الأسباب المحتملة",
+                "correct": true
+              },
+              {
+                "factorId": "replace_first",
+                "labelArabic": "الاستبدال قبل التشخيص أسرع دائمًا وأضمن",
+                "correct": false
+              },
+              {
+                "factorId": "shutdown_first",
+                "labelArabic": "قطع الخدمة كاملةً هو أول اختبار تشخيصي",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "reliable_comparison": "تأكد من تزامن القياسات ومعايرة الأجهزة.",
+                "verify_control": "افحص الصمام وأمر التحكم بدل الاعتماد على مؤشر واحد.",
+                "track_cause": "تسجيل الحالة وفحص المصدر والخط يحدد موضع السبب."
+              },
+              "wrongFactor": {
+                "replace_first": "الإصلاح الدائم يأتي بعد تشخيص تدعمه القياسات.",
+                "shutdown_first": "ابدأ بتحقق موضعي، ونسق أي عزل مع التشغيل."
+              }
+            },
+            "scoring": {
+              "fullBonus": 3,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — القرار التشغيلي النهائي",
+        "instructionArabic": "راجع سجل قراراتك السابقة ونتائج القياس قبل التوصية. اختر استجابة تحافظ على الخدمة وتعالج الدليل المتاح دون ادعاء سبب لم يتم تأكيده.",
+        "feedbackArabic": "التوصية المسؤولة هي التحقق أولًا من صحة القياسات وأمر الصمام وموضعه، ثم عزل الجزء المتأثر واختبار التسرب أو الانسداد ومراجعة سجل المضخة. عدّل أو أصلح المكوّن الذي يثبت فحصه سبب الخلل، مع تنسيق أي عزل لحماية الخدمة.",
+        "selection": {
+          "promptArabic": "ما خطة القرار الأنسب للفريق؟",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — تأكيد القياسات، وفحص أمر الصمام وموضعه، ثم عزل السبب موضعيًا وإصلاح ما يثبته الفحص مع استمرار الخدمة قدر الإمكان",
+              "feedbackArabic": "قرار متزن يربط هبوط الضغط والتدفق بفرضية قابلة للاختبار، ويؤخر الإصلاح الدائم حتى تأكيد السبب.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — اتخاذ قرار عاجل باستبدال وحدة الضخ وتوسيع الأنبوب الرئيسي استنادًا إلى تذبذب قراءات الضغط المسجلة",
+              "feedbackArabic": "التذبذب لا يثبت فشل المضخة أو عدم كفاية الأنبوب؛ تحقّق من القياسات والصمام والمسار أولًا."
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — إغلاق البلاغ الفني دون فحص ميداني اعتمادًا على أن قراءة مانومتر الدخول ما زالت ضمن النطاق الطبيعي",
+              "feedbackArabic": "ضغط النهاية والتدفق تراجعا بوضوح، لذا يحتاج البلاغ إلى متابعة."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — عزل المنطقة السكنية وقطع الإمداد فورًا دون إجراء قياسات تأكيدية أو تنسيق مسبق مع المشغلين",
+              "feedbackArabic": "الإغلاق الفوري الشامل غير متناسب مع الدليل الحالي وقد يقطع الخدمة دون تحديد السبب."
+            }
+          ],
+          "correctOptionId": "A",
+          "justification": {
+            "prompt": "اختر ما يربط القرار النهائي بنتائج التحقيق ومسؤولية التشغيل.",
+            "factors": [
+              {
+                "factorId": "measurement_evidence",
+                "labelArabic": "إعادة القياس والمعايرة تؤكدان أن التغير حقيقي",
+                "correct": true
+              },
+              {
+                "factorId": "valve_test",
+                "labelArabic": "فحص الصمام يقارن موضعه بأمر التحكم ويختبر القيد المحتمل",
+                "correct": true
+              },
+              {
+                "factorId": "local_isolation",
+                "labelArabic": "عزل موضعي بعد التحقق يساعد على تحديد السبب وتقليل أثره",
+                "correct": true
+              },
+              {
+                "factorId": "service_continuity",
+                "labelArabic": "تنسيق الإصلاح يحمي استمرارية الخدمة وسلامة التشغيل",
+                "correct": true
+              },
+              {
+                "factorId": "assumed_failure",
+                "labelArabic": "التذبذب وحده يثبت وجوب استبدال المضخة والأنبوب",
+                "correct": false
+              },
+              {
+                "factorId": "ignore_downstream",
+                "labelArabic": "ثبات ضغط الدخول يلغي دلالة ضغط النهاية والتدفق",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "measurement_evidence": "أعد القياس وتأكد من الأجهزة قبل قرار صيانة دائم.",
+                "valve_test": "المؤشر يستدعي اختبار الصمام لا افتراض تلفه.",
+                "local_isolation": "اعزل موضع المشكلة عند الحاجة لتحديد السبب.",
+                "service_continuity": "نسق العمل لتقليل أثره على المشتركين."
+              },
+              "wrongFactor": {
+                "assumed_failure": "الأدلة الحالية لا تبرر تبديل معدات لم يثبت عطلها.",
+                "ignore_downstream": "تراجع ضغط النهاية والتدفق مؤشرات تستحق التحقيق."
+              }
+            },
+            "scoring": {
+              "fullBonus": 3,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "valveController",
+    "pumpMonitor",
+    "leakDetector",
+    "waterLevelSensor"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "bernoulli",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "قارن ضغط الدخول ونهاية الخط والتدفق في الفترتين، ولا تستنتج السبب من قراءة واحدة.",
+      "scorePenalty": 5
+    },
+    {
+      "textArabic": "الاستمرارية تربط التدفق بالسرعة، وبرنولي يوازن الطاقة، ودارسي–وايزباخ يقدّر فقد الاحتكاك.",
+      "scorePenalty": 6
+    },
+    {
+      "textArabic": "تحقق من معايرة العدادات وأمر الصمام وموضعه، ثم افحص الخط والمصدر قبل استبدال أي معدة.",
+      "scorePenalty": 8
+    }
+  ],
+  "timeLimitSeconds": 1500,
+  "scoring": {
+    "calculationAccuracyWeight": 0,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 10,
+    "errorCountWeight": 60,
+    "engineeringDecisionsWeight": 30,
+    "minorMistakePenalty": 3,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بخطة تربط تغير الضغط والتدفق بحالة الصمام والقياسات، وتطلب التحقق الميداني قبل الإصلاح. اعتمد فقط السبب الذي تؤكده الفحوص، ونسق العزل والصيانة مع التشغيل.",
+  "debriefFailureArabic": "انتهى الوقت قبل إكمال التحقيق. قارن القياسات المتزامنة، وتأكد من الأجهزة وأمر الصمام، ثم افحص المصدر والمسار قبل استبدال المعدات أو قطع الخدمة."
+}

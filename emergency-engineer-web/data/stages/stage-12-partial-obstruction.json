@@ -1,0 +1,519 @@
+{
+  "stageId": "L3_S12_PartialObstruction",
+  "level": 3,
+  "stageIndexInLevel": 8,
+  "titleArabic": "المرحلة 12 — كشف انسداد جزئي في شبكة مائية",
+  "briefingArabic": "انخفض التدفق من خط الأساس 0.016 إلى 0.012 m³/s، وازداد فرق الضغط عبر منطقة القياس من 0.12 إلى 0.30 bar. يتقلص القطر من 0.15 إلى 0.10 m؛ استخدم K لتقدير الفقد المحلي، وقارن أثره بالقراءة دون الجزم بسبب الفارق.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "مدخل الشبكة",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "قبل التضييق",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "بعد التضييق",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الأنبوب قبل التضييق",
+        "fromNodeId": "مدخل الشبكة",
+        "toNodeId": "قبل التضييق",
+        "lengthMeters": 10,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "المقطع المتضيق",
+        "fromNodeId": "قبل التضييق",
+        "toNodeId": "بعد التضييق",
+        "lengthMeters": 10,
+        "diameterMm": 100,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q",
+      "displayNameArabic": "التدفق",
+      "value": 0.012,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q_reference",
+      "displayNameArabic": "التدفق قبل تراجع الأداء",
+      "value": 0.016,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D_upstream",
+      "displayNameArabic": "قطر الأنبوب قبل التضييق",
+      "value": 0.15,
+      "unit": "m"
+    },
+    {
+      "key": "dp_reference",
+      "displayNameArabic": "فرق الضغط المرجعي عبر المنطقة",
+      "value": 0.12,
+      "unit": "bar"
+    },
+    {
+      "key": "D_local",
+      "displayNameArabic": "قطر المقطع المشتبه",
+      "value": 0.1,
+      "unit": "m"
+    },
+    {
+      "key": "K",
+      "displayNameArabic": "معامل الفقد المحلي المقدر",
+      "value": 18,
+      "unit": "—"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    },
+    {
+      "key": "rho",
+      "displayNameArabic": "كثافة الماء",
+      "value": 1000,
+      "unit": "kg/m3"
+    },
+    {
+      "key": "dp_measured",
+      "displayNameArabic": "فرق الضغط المقاس عبر المنطقة",
+      "value": 0.3,
+      "unit": "bar"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — تمييز نوع الفقد",
+        "instructionArabic": "قارن التدفق وفرق الضغط بخط الأساس، وميّز الفقد المحلي عن الاحتكاك الموزع.",
+        "feedbackArabic": "هبط Q من 0.016 إلى 0.012 m³/s، وارتفع فرق الضغط من 0.12 إلى 0.30 bar. K يصف الفقد المحلي، أما Darcy فيصف الاحتكاك الموزع.",
+        "selection": {
+          "promptArabic": "أي قراءة تجمع التغير المرصود ونوع الفقد بصورة صحيحة؟",
+          "options": [
+            {
+              "optionId": "same",
+              "displayName": "معامل K ومعامل Darcy متطابقان تمامًا ويعبران عن الفقد نفسه بصيغ رياضية مختلفة",
+              "meetsRequirements": false,
+              "feedbackArabic": "K يمثل فواقد موضعية في التراكيب، بينما Darcy يمثل فواقد احتكاك موزعة على طول الخط."
+            },
+            {
+              "optionId": "local",
+              "displayName": "هبط Q وازداد فرق الضغط؛ K يمثل الفقد المحلي وDarcy الاحتكاك الموزع",
+              "meetsRequirements": true,
+              "feedbackArabic": "تحليل سليم: التمييز بين الفقد الموضعي والاحتكاك الموزع أساس نمذجة الشبكات."
+            },
+            {
+              "optionId": "zero",
+              "displayName": "التضييق الجزئي في الصمام لا يولد أي فواقد هيدروليكية تذكر طالما أن مسار المياه سالك",
+              "meetsRequirements": false,
+              "feedbackArabic": "أي تغير مفاجئ في المقطع أو مسار الجريان يولد دوامات وفقدًا موضعيًا حتميًا في الطاقة."
+            }
+          ],
+          "correctOptionId": "local",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "انخفض التدفق 25% وازداد فرق الضغط مقارنة بخط الأساس؛ K وDarcy يصفان نوعين مختلفين من الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — مدخلات الحساب",
+        "instructionArabic": "حدد المقادير الضرورية لتقدير السرعة والرأس المحلي ومقارنتهما بقياس فرق الضغط.",
+        "feedbackArabic": "اتبع الوحدات من التدفق الحجمي إلى السرعة ثم الرأس والضغط.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما المعطيات ذات الصلة؟",
+          "options": [
+            {
+              "optionId": "k_g",
+              "displayName": "K وg لحساب h_local",
+              "feedbackArabic": "معامل الفقد وتسارع الجاذبية لازمان لحساب فقد الرأس الموضعي للعائق."
+            },
+            {
+              "optionId": "measured",
+              "displayName": "فرق الضغط المقاس للمقارنة",
+              "feedbackArabic": "فرق الضغط المقاس ضروري لمقارنة الحساب النظري بواقع الخط."
+            },
+            {
+              "optionId": "brand",
+              "displayName": "الشركة المصنعة رغم إعطاء K",
+              "feedbackArabic": "اسم الشركة المصنعة لا يدخل في المعادلات الحسابية للفواقد."
+            },
+            {
+              "optionId": "q_d",
+              "displayName": "Q وقطر المقطع لحساب V",
+              "feedbackArabic": "التدفق وقطر المقطع يحددان سرعة الجريان الأساسية لحساب الفقد."
+            },
+            {
+              "optionId": "paint",
+              "displayName": "لون الأنبوب",
+              "feedbackArabic": "لون الطلاء الخارجي لا صلة له بالهيدروليكا الداخلية للسريان."
+            },
+            {
+              "optionId": "rho_dp",
+              "displayName": "ρ لربط الرأس بفرق الضغط",
+              "feedbackArabic": "كثافة السائل لازمة للتحويل بين رأس الضغط بالمتر وفرق الضغط بالبار."
+            }
+          ],
+          "correctOptionIds": [
+            "q_d",
+            "k_g",
+            "rho_dp",
+            "measured"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "Q وD يعطيان السرعة، وK وg فقد الرأس، وρ يحول الرأس إلى ضغط.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — اختيار العلاقة",
+        "instructionArabic": "اختر طريقة حساب الفقد الموضعي.",
+        "feedbackArabic": "حوّل الرأس إلى الضغط باستخدام كثافة الماء والجاذبية.",
+        "selection": {
+          "promptArabic": "ما العلاقة المناسبة؟",
+          "options": [
+            {
+              "optionId": "darcy_only",
+              "displayName": "استخدام معادلة دارسي-فايسباخ وحدها لتقدير الفقد الموضعي مع تجاهل معامل المقاومة K",
+              "meetsRequirements": false,
+              "feedbackArabic": "معادلة دارسي تختص بفواقد الاحتكاك الموزعة للأنابيب المستقيمة ولا تحسب الفقد الموضعي بدقة."
+            },
+            {
+              "optionId": "manning",
+              "displayName": "تطبيق معادلة مانينغ للقنوات المفتوحة لحساب الضغط في هذا الأنبوب المضغوط المغلق",
+              "meetsRequirements": false,
+              "feedbackArabic": "معادلة مانينغ تطبق على مجاري السطح الحر ولا تناسب الأنابيب المضغوطة بالكامل."
+            },
+            {
+              "optionId": "k",
+              "displayName": "h_local = K V²/(2g)، ثم Δp=ρg h_local",
+              "meetsRequirements": true,
+              "feedbackArabic": "العلاقة الصحيحة: حساب الفقد الموضعي بدلالة السرعة ثم تحويل الرأس لضغط مكافئ."
+            }
+          ],
+          "correctOptionId": "k",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "معامل K معرف للفقد المحلي عند السرعة المميزة للمقطع.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — سرعة المقطع",
+        "instructionArabic": "احسب السرعة باستخدام المساحة الدائرية وQ.",
+        "feedbackArabic": "في المقطع المحلي D=0.10 m تكون V≈1.528 m/s. إذا مر Q نفسه في قطر 0.15 m قبل التضييق، تكون V≈0.679 m/s؛ سرعة المقطع الأضيق 2.25 مرة وفق الاستمرارية.",
+        "calculation": {
+          "targetParameterKey": "V (m/s)",
+          "expectedValue": 1.5278874537,
+          "tolerancePercent": 2,
+          "feedbackArabic": "تحقق من حساب السرعة V = Q / (π × D² / 4) باستخدام التدفق والقطر المعطيين بوحدات SI."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "5 — الرأس المحلي",
+        "instructionArabic": "استخدم K=18 والسرعة المحسوبة.",
+        "feedbackArabic": "h_local=K V²/(2g)≈2.142 m.",
+        "calculation": {
+          "targetParameterKey": "h_local (m)",
+          "expectedValue": 2.1416881386,
+          "tolerancePercent": 3,
+          "feedbackArabic": "تأكد من حساب فقد الرأس الموضعي بالعلاقة: h_local = K × (V² / (2g)) مع معامل المقاومة K."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "6 — الضغط المكافئ",
+        "instructionArabic": "حوّل الرأس إلى ضغط مكافئ للماء.",
+        "feedbackArabic": "ρg h≈21010 Pa≈0.210 bar.",
+        "calculation": {
+          "targetParameterKey": "Δp_local (bar)",
+          "expectedValue": 0.2100996064,
+          "tolerancePercent": 3,
+          "feedbackArabic": "حوّل الرأس الهيدروليكي إلى ضغط مكافئ بالبار: Δp = ρ × g × h × 10⁻⁵ (لكل 10.2 متر عمود ماء يقابل 1 بار تقريبًا)."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "7 — مقارنة القياس",
+        "instructionArabic": "فسر الفرق بين 0.30 bar المقاسة و0.210 bar المحسوبة.",
+        "feedbackArabic": "لا تنسب الفرق كله إلى تضييق واحد دون ميزانية كاملة.",
+        "selection": {
+          "promptArabic": "ما الاستنتاج المناسب؟",
+          "options": [
+            {
+              "optionId": "gap",
+              "displayName": "النموذج يفسر نحو 0.210 bar؛ الباقي قرابة 0.090 bar يحتاج تحققًا من بقية الفواقد والقياس",
+              "meetsRequirements": true,
+              "feedbackArabic": "استنتاج مهني دقيق: مقارنة الحساب بالقياس تكشف الفجوة غير المفسرة وتوجه للتحقق."
+            },
+            {
+              "optionId": "proven",
+              "displayName": "فارق الضغط المسجل يقدم برهانًا قاطعًا ونهائيًا على حدوث انسداد فيزيائي كامل في مجرى الصمام يستوجب الاستبدال الفوري",
+              "meetsRequirements": false,
+              "feedbackArabic": "الفارق يثبت وجود مقاومة إضافية لكنه لا يجزم بانسداد كامل ما دام التدفق مستمرًا."
+            },
+            {
+              "optionId": "equal",
+              "displayName": "قيمة الفقد النظري تتطابق تمامًا مع فرق الضغط المقاس دون أي تباين يستدعي التفسير",
+              "meetsRequirements": false,
+              "feedbackArabic": "الحساب يفسر 0.21 بار فقط من أصل 0.30 بار مقاسة، وهناك 0.09 بار فارق غير مفسر."
+            }
+          ],
+          "correctOptionId": "gap",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "التقدير المحلي أقل من المقاس؛ يجب مراجعة الفواقد الأخرى ودقة القياس وظروف التشغيل.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "8 — إجراء التحقق",
+        "instructionArabic": "حدد القياس التالي الأكثر إفادة.",
+        "feedbackArabic": "طبّق إجراءات العزل والتصريح قبل أي فتح للخط.",
+        "selection": {
+          "promptArabic": "ما خطة الفحص؟",
+          "options": [
+            {
+              "optionId": "flush",
+              "displayName": "غسل الخط بضغوط تدفق قصوى غير محكومة لمحاولة إزالة العائق المحتمل بالاندفاع المائي الشديد دون مراعاة إجهادات الوصلات",
+              "meetsRequirements": false,
+              "feedbackArabic": "الضخ بضغط غير محكوم قد يسبب طرقًا مائيًا حادًا أو انفجارًا في الوصلات الضعيفة."
+            },
+            {
+              "optionId": "localize",
+              "displayName": "تحقق من المعايرة ثم قس الضغط مباشرة قبل المنطقة وبعدها وافحص المقطع بعد العزل الآمن المعتمد",
+              "meetsRequirements": true,
+              "feedbackArabic": "خطة ممتازة: حصر موضع الفقد بنقاط قياس متقاربة ثم العزل الآمن والفحص المباشر."
+            },
+            {
+              "optionId": "replace",
+              "displayName": "استبدال مسار الأنبوب كاملًا على الفور استنادًا لتقديرات أولية دون إجراء قياس موضعي",
+              "meetsRequirements": false,
+              "feedbackArabic": "استبدال الخط بالكامل إجراء مفرط وغير مبرر هندسيًا قبل تحديد موقع الخلل بدقة."
+            }
+          ],
+          "correctOptionId": "localize",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "قياس الضغط الموضعي وفحص المقطع يختبران الفرضية بأقل افتراضات.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pressureGauge",
+    "pipeDiameterTool"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "سرعة المقطع هي أساس تقدير الفقد المحلي.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "حوّل الرأس المحلي إلى فرق ضغط للمقارنة.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "المتبقي فرق غير مفسر، وليس دليلًا منفردًا على الانسداد.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1500,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 30,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 20,
+    "engineeringDecisionsWeight": 45,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

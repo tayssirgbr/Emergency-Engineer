@@ -1,0 +1,88 @@
+{
+  "educationLevels": ["unspecified", "year1", "year2", "year3", "master"],
+  "concepts": {
+    "flow-rate": {
+      "title": { "ar": "معدل التدفق", "en": "Flow rate" },
+      "definition": { "ar": "حجم الماء الذي يمر عبر مقطع خلال وحدة زمنية. قارن التدفق المقاس بالاحتياج أو بخط الأساس.", "en": "The volume of water passing through a cross-section per unit time. Compare measured flow with demand or a baseline." },
+      "formula": "Q = V × A",
+      "symbols": { "ar": "Q التدفق، V السرعة المتوسطة، A مساحة المقطع.", "en": "Q is flow rate, V is mean velocity, and A is cross-sectional area." }
+    },
+    "continuity": {
+      "title": { "ar": "معادلة الاستمرارية", "en": "Continuity" },
+      "definition": { "ar": "لجريان مستقر لماء غير قابل للانضغاط، يحفظ التدفق الحجمي بين المقاطع ما لم يوجد تفرع أو تسرب.", "en": "For steady incompressible flow, volumetric flow is conserved between sections unless there is a branch or leak." },
+      "formula": "Q = V × A",
+      "symbols": { "ar": "عند ثبات Q، يزداد V إذا نقصت A.", "en": "At constant Q, V increases when A decreases." }
+    },
+    "velocity": {
+      "title": { "ar": "سرعة الجريان", "en": "Flow velocity" },
+      "definition": { "ar": "السرعة المتوسطة في أنبوب دائري تحسب من التدفق مقسومًا على مساحة المقطع الداخلي.", "en": "Mean velocity in a circular pipe is flow rate divided by the internal cross-sectional area." },
+      "formula": "V = Q / A; A = πD² / 4",
+      "symbols": { "ar": "استخدم وحدات متسقة؛ إذا كان D بالمتر تكون A بالمتر المربع.", "en": "Use consistent units; if D is in metres, A is in square metres." }
+    },
+    "pressure-head": {
+      "title": { "ar": "الضغط والرأس الهيدروليكي", "en": "Pressure and hydraulic head" },
+      "definition": { "ar": "الضغط والرأس طريقتان لتمثيل الطاقة لكل حجم/وزن. فرق الارتفاع يغير الضغط الهيدروستاتيكي.", "en": "Pressure and head express fluid energy per volume or weight. Elevation difference changes hydrostatic pressure." },
+      "formula": "Δp = ρgΔz",
+      "symbols": { "ar": "ρ الكثافة، g تسارع الجاذبية، Δz فرق الارتفاع. لا تساوِ المتر بالبار مباشرة.", "en": "ρ is density, g is gravitational acceleration, and Δz is elevation difference. Metres of head are not bars." }
+    },
+    "darcy-weisbach": {
+      "title": { "ar": "دارسي–وايزباخ", "en": "Darcy–Weisbach" },
+      "definition": { "ar": "تقدّر العلاقة فقد الرأس الموزع بسبب احتكاك الجريان داخل أنبوب مستقيم ممتلئ، وفق افتراضات النموذج ومعامل الاحتكاك المعطى أو المحسوب.", "en": "This relation estimates distributed friction head loss in a full pipe, subject to the model assumptions and a given or calculated friction factor." },
+      "formula": "h_f = f(L/D)(V²/(2g))",
+      "symbols": { "ar": "f معامل Darcy، L الطول، D القطر الداخلي، V السرعة، g الجاذبية.", "en": "f is the Darcy friction factor, L length, D internal diameter, V velocity, and g gravity." }
+    },
+    "network-losses": {
+      "title": { "ar": "فواقد الشبكة", "en": "Network losses" },
+      "definition": { "ar": "فقد الخط يتأثر بالطول والقطر والسرعة والخشونة ومعامل الاحتكاك. الفواقد الموضعية قد تحتاج معاملات وبيانات إضافية.", "en": "Pipe loss depends on length, diameter, velocity, roughness, and friction factor. Minor losses need additional coefficients and data." },
+      "formula": "h_total = Σh_f + Σh_minor",
+      "symbols": { "ar": "اجمع المقاطع والفواقد الممثلة فقط، واذكر ما أهمله النموذج.", "en": "Sum only represented sections and losses, and state what the model omits." }
+    },
+    "measurement": {
+      "title": { "ar": "القياس والتحقق", "en": "Measurement and verification" },
+      "definition": { "ar": "قارن قياسات متزامنة ومرجعًا مناسبًا، وتحقق من الجهاز وظروف التشغيل قبل نسبة الفارق إلى عطل محدد.", "en": "Compare simultaneous measurements with a suitable baseline, and check instruments and operating conditions before assigning a specific fault." },
+      "formula": "Δp = p₁ − p₂",
+      "symbols": { "ar": "موضع القياس واتجاهه ومرجعه مهم لتفسير الفرق.", "en": "Measurement location, direction, and reference matter when interpreting a difference." }
+    },
+    "pump-duty": {
+      "title": { "ar": "نقطة تشغيل المضخة", "en": "Pump duty point" },
+      "definition": { "ar": "يجب أن يطابق اختيار المضخة التدفق والرأس المطلوبين مع ظروف التشغيل. فرق المنسوب وحده لا يمثل الرأس الكلي.", "en": "Pump selection must satisfy the required flow and head under operating conditions. Elevation difference alone is not total head." },
+      "formula": "H_required ≈ Δz + h_f + h_minor",
+      "symbols": { "ar": "تؤخذ الفواقد والحدود الفعلية من بيانات النظام؛ هذه صيغة توضيحية للحالات المبسطة.", "en": "Use actual system losses and limits; this is an explanatory relation for simplified cases." }
+    },
+    "evidence-based-diagnosis": {
+      "title": { "ar": "التشخيص المبني على الأدلة", "en": "Evidence-based diagnosis" },
+      "definition": { "ar": "الانحراف مؤشر يستدعي فحصًا، لكنه لا يثبت وحده تسربًا أو تلف مضخة. اختبر الفرضيات بقياسات مناسبة.", "en": "An abnormal reading is a reason to investigate, not proof of a leak or pump failure. Test hypotheses with appropriate measurements." },
+      "formula": "Observation → hypothesis → verification",
+      "symbols": { "ar": "افصل بين المشاهدة والاستنتاج والإجراء.", "en": "Separate observation, inference, and action." }
+    },
+    "safe-field-action": {
+      "title": { "ar": "القرار الميداني الآمن", "en": "Safe field decisions" },
+      "definition": { "ar": "تأكد من حدود التشغيل وإجراءات العزل والتصريح المحلية، واجمع الأدلة قبل اعتماد تغيير دائم.", "en": "Follow local operating limits, isolation, and permit procedures; gather evidence before approving a permanent change." },
+      "formula": "Verify → isolate as required → act → recheck",
+      "symbols": { "ar": "التسلسل تعليمي عام ولا يحل محل إجراءات الموقع.", "en": "This is general learning guidance and does not replace site procedures." }
+    }
+  },
+  "stages": {
+    "L3_S12_PumpSelection": { "titleEn": "Pump selection", "academicLevel": "year2", "difficulty": "Beginner", "prerequisites": ["flow-rate", "pressure-head", "darcy-weisbach"], "concepts": ["pump-duty", "network-losses"], "outcome": { "ar": "تمييز التدفق والرأس المطلوبين قبل اختيار المضخة.", "en": "Distinguish required flow and head before selecting a pump." } },
+    "L3_S2_NetworkFaultDiagnosis": { "titleEn": "Network fault diagnosis", "academicLevel": "year2", "difficulty": "Intermediate", "prerequisites": ["flow-rate", "pressure-head"], "concepts": ["measurement", "evidence-based-diagnosis"], "outcome": { "ar": "اعتبار الانخفاض دليلًا للتحقيق لا إثباتًا لسبب واحد.", "en": "Treat a shortfall as evidence to investigate, not proof of a single cause." } },
+    "L3_S3_UnstableNetworkAnalysis": { "titleEn": "Unstable network analysis", "academicLevel": "year3", "difficulty": "Intermediate", "prerequisites": ["flow-rate", "pressure-head", "measurement"], "concepts": ["evidence-based-diagnosis", "network-losses"], "outcome": { "ar": "مقارنة القراءات المتغيرة وبناء استنتاج مشروط.", "en": "Compare changing readings and form a qualified conclusion." } },
+    "L3_S4_HydraulicHeadLoss": { "titleEn": "Hydraulic head loss", "academicLevel": "year3", "difficulty": "Intermediate", "prerequisites": ["velocity", "darcy-weisbach"], "concepts": ["network-losses", "measurement"], "outcome": { "ar": "حساب الفقد التقديري وربطه بحدود التصميم.", "en": "Estimate head loss and compare it with a design limit." } },
+    "L3_S5_NetworkPerformance": { "titleEn": "Network performance", "academicLevel": "year3", "difficulty": "Intermediate", "prerequisites": ["flow-rate", "pressure-head", "measurement"], "concepts": ["network-losses", "evidence-based-diagnosis"], "outcome": { "ar": "تقييم مؤشرات الأداء واختيار إجراء تحقق مسؤول.", "en": "Assess performance indicators and select a responsible verification action." } },
+    "L3_S6_FlowVelocity": { "titleEn": "Flow and velocity", "academicLevel": "year2", "difficulty": "Beginner", "prerequisites": ["flow-rate"], "concepts": ["continuity", "velocity"], "outcome": { "ar": "الانتقال بين التدفق والسرعة ومساحة المقطع.", "en": "Relate flow rate, velocity, and cross-sectional area." } },
+    "L3_S7_DiameterPerformance": { "titleEn": "Diameter and performance", "academicLevel": "year3", "difficulty": "Intermediate", "prerequisites": ["continuity", "velocity"], "concepts": ["network-losses", "evidence-based-diagnosis"], "outcome": { "ar": "شرح أثر القطر في السرعة والفقد مع ثبات التدفق.", "en": "Explain how diameter affects velocity and loss at a fixed flow rate." } },
+    "L3_S8_DarcyPressureLoss": { "titleEn": "Darcy–Weisbach pressure loss", "academicLevel": "year3", "difficulty": "Advanced", "prerequisites": ["velocity", "darcy-weisbach", "pressure-head"], "concepts": ["network-losses", "measurement"], "outcome": { "ar": "استخدام Darcy–Weisbach وتحويل الرأس إلى فرق ضغط.", "en": "Apply Darcy–Weisbach and convert head to pressure difference." } },
+    "L3_S9_MultiDiameterNetwork": { "titleEn": "Multi-diameter network", "academicLevel": "year3", "difficulty": "Advanced", "prerequisites": ["continuity", "velocity", "darcy-weisbach"], "concepts": ["network-losses", "measurement"], "outcome": { "ar": "تحليل مقاطع مختلفة القطر وتجميع الفواقد المقدرة.", "en": "Analyze different-diameter sections and sum estimated losses." } },
+    "L3_S10_IntegratedHydraulicMission": { "titleEn": "Integrated hydraulic mission", "academicLevel": "master", "difficulty": "Advanced", "prerequisites": ["continuity", "velocity", "darcy-weisbach", "measurement"], "concepts": ["network-losses", "evidence-based-diagnosis", "safe-field-action"], "outcome": { "ar": "ربط الحساب بحدود النموذج وخطة القياس الميداني.", "en": "Connect calculations to model limits and a field measurement plan." } },
+    "L3_S11_FieldDistributionFault": { "titleEn": "Field distribution diagnosis", "academicLevel": "year3", "difficulty": "Intermediate", "prerequisites": ["flow-rate", "pressure-head", "measurement"], "concepts": ["evidence-based-diagnosis", "safe-field-action"], "outcome": { "ar": "استخدام خط الأساس لتوجيه التشخيص دون قفز إلى السبب.", "en": "Use a baseline to guide diagnosis without jumping to a cause." } },
+    "L3_S12_PartialObstruction": { "titleEn": "Partial obstruction investigation", "academicLevel": "year3", "difficulty": "Advanced", "prerequisites": ["velocity", "pressure-head", "darcy-weisbach"], "concepts": ["network-losses", "measurement"], "outcome": { "ar": "مقارنة الفقد المقدر بالقياس وتحديد حدود الاستنتاج.", "en": "Compare estimated loss with measurements and state inference limits." } },
+    "L3_S13_UnstablePressure": { "titleEn": "Unstable pressure", "academicLevel": "year3", "difficulty": "Advanced", "prerequisites": ["pressure-head", "measurement"], "concepts": ["evidence-based-diagnosis", "safe-field-action"], "outcome": { "ar": "تمييز تذبذب القراءة عن السبب المؤكد وترتيب التحقق.", "en": "Distinguish a fluctuating reading from a confirmed cause and order checks." } },
+    "L3_S14_FieldActionSelection": { "titleEn": "Field action selection", "academicLevel": "year2", "difficulty": "Intermediate", "prerequisites": ["measurement", "evidence-based-diagnosis"], "concepts": ["safe-field-action"], "outcome": { "ar": "اختيار خطوة فحص آمنة قبل التدخل.", "en": "Choose a safe verification step before intervention." } },
+    "L3_S15_RepairPlan": { "titleEn": "Repair plan", "academicLevel": "year3", "difficulty": "Advanced", "prerequisites": ["measurement", "evidence-based-diagnosis"], "concepts": ["safe-field-action", "network-losses"], "outcome": { "ar": "ربط دليل العطل بخطة إصلاح واختبار لاحق.", "en": "Connect fault evidence to a repair plan and follow-up test." } },
+    "L3_S16_CompoundHydraulicEmergency": { "titleEn": "Compound hydraulic emergency", "academicLevel": "master", "difficulty": "Advanced", "prerequisites": ["measurement", "network-losses", "safe-field-action"], "concepts": ["evidence-based-diagnosis"], "outcome": { "ar": "فرز مؤشرات متعارضة وتحديد أولوية التحقق.", "en": "Triage conflicting indicators and prioritize verification." } },
+    "L3_S17_MultisegmentNetwork": { "titleEn": "Multi-segment network analysis", "academicLevel": "year3", "difficulty": "Advanced", "prerequisites": ["continuity", "velocity", "darcy-weisbach"], "concepts": ["network-losses", "measurement"], "outcome": { "ar": "حساب سرعة وفقد كل مقطع ثم تجميع النتائج.", "en": "Calculate velocity and loss for each segment, then combine results." } },
+    "L3_S18_TimePressureDecision": { "titleEn": "Decision under time pressure", "academicLevel": "master", "difficulty": "Advanced", "prerequisites": ["evidence-based-diagnosis", "safe-field-action"], "concepts": ["measurement", "safe-field-action"], "outcome": { "ar": "ترتيب إجراءات الطوارئ مع احترام حدود الأدلة والسلامة.", "en": "Prioritize emergency actions while respecting evidence and safety limits." } },
+    "L3_S19_NetworkFailureInvestigation": { "titleEn": "Network failure investigation", "academicLevel": "master", "difficulty": "Advanced", "prerequisites": ["velocity", "darcy-weisbach", "pressure-head", "measurement"], "concepts": ["network-losses", "evidence-based-diagnosis"], "outcome": { "ar": "مقارنة الفقد الموزع بقياس الضغط دون إثبات عطل منفرد.", "en": "Compare distributed loss with pressure measurements without claiming a single proven fault." } },
+    "L3_S20_FinalCapstone": { "titleEn": "Final hydraulic capstone", "academicLevel": "master", "difficulty": "Expert", "prerequisites": ["continuity", "velocity", "darcy-weisbach", "measurement", "safe-field-action"], "concepts": ["network-losses", "evidence-based-diagnosis", "pump-duty"], "outcome": { "ar": "دمج الحساب والتحقق والقرار الهندسي المشروط.", "en": "Integrate calculations, verification, and a qualified engineering decision." } }
+  },
+  "sources": []
+}

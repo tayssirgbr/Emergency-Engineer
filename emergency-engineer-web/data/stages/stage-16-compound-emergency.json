@@ -1,0 +1,503 @@
+{
+  "stageId": "L3_S16_CompoundHydraulicEmergency",
+  "level": 3,
+  "stageIndexInLevel": 15,
+  "titleArabic": "المرحلة 16 — طوارئ هيدروليكية متعددة المؤشرات",
+  "briefingArabic": "هبط التدفق، وظهر فرق ضغط عبر المرشح، كما اختلف مقياسان للمصب وتغير قطر الشبكة. لا تسمح المؤشرات المتزامنة بتسمية سبب واحد قبل التحقق من جودة القياس وتحديد حدود المقطع.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "منبع",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "قبل الجزء الكبير",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "قبل الجزء الصغير",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "المصب",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "المقطع D1",
+        "fromNodeId": "منبع",
+        "toNodeId": "قبل الجزء الكبير",
+        "lengthMeters": 100,
+        "diameterMm": 200,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "المقطع D2",
+        "fromNodeId": "قبل الجزء الكبير",
+        "toNodeId": "قبل الجزء الصغير",
+        "lengthMeters": 80,
+        "diameterMm": 100,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "المصب",
+        "fromNodeId": "قبل الجزء الصغير",
+        "toNodeId": "المصب",
+        "lengthMeters": 50,
+        "diameterMm": 100,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_baseline",
+      "displayNameArabic": "التدفق الأساسي",
+      "value": 0.02,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q_now",
+      "displayNameArabic": "التدفق الحالي",
+      "value": 0.011,
+      "unit": "m3/s"
+    },
+    {
+      "key": "P_filter_in",
+      "displayNameArabic": "ضغط قبل المرشح",
+      "value": 3.1,
+      "unit": "bar"
+    },
+    {
+      "key": "P_filter_out",
+      "displayNameArabic": "ضغط بعد المرشح",
+      "value": 2.4,
+      "unit": "bar"
+    },
+    {
+      "key": "P_gauge_A",
+      "displayNameArabic": "مقياس المصب A",
+      "value": 2.1,
+      "unit": "bar"
+    },
+    {
+      "key": "P_gauge_B",
+      "displayNameArabic": "مقياس المصب B",
+      "value": 2.6,
+      "unit": "bar"
+    },
+    {
+      "key": "D1",
+      "displayNameArabic": "قطر الجزء الأول",
+      "value": 0.2,
+      "unit": "m"
+    },
+    {
+      "key": "D2",
+      "displayNameArabic": "قطر الجزء الثاني",
+      "value": 0.1,
+      "unit": "m"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — ترتيب المؤشرات",
+        "instructionArabic": "حدد ما تشير إليه القراءات معًا.",
+        "feedbackArabic": "هناك عدة مؤشرات لكن القياسات المتعارضة تحد من الثقة.",
+        "selection": {
+          "promptArabic": "ما التقييم الأولي؟",
+          "options": [
+            {
+              "optionId": "filter",
+              "displayName": "المرشح مسدود ميكانيكيًا بصفة قاطعة ونهائية ويجب تفكيكه فورًا دون فحص إضافي أو أخذ قياسات ضغط تفاضلية قبل وبعد العنصر",
+              "meetsRequirements": false,
+              "feedbackArabic": "البيانات الأولية ترصد هبوطًا في الضغط ولكنها لا تجزم بانسداد المرشح دون قياس موضعي."
+            },
+            {
+              "optionId": "rupture",
+              "displayName": "الأنبوب الرئيسي تعرض لكسر وانفجار مفاجئ تحت الأرض أدى لتفريغ كامل الشبكة",
+              "meetsRequirements": false,
+              "feedbackArabic": "استمرار التدفق ووجود قراءات ضغط موجبة في المصب ينفيان فرضية الانفجار الكلي."
+            },
+            {
+              "optionId": "compound",
+              "displayName": "تدفق منخفض وفرق عبر المرشح واختلاف بين مقياسي المصب؛ يجب فصل مشكلة القياس عن الفقد المحلي",
+              "meetsRequirements": true,
+              "feedbackArabic": "تشخيص تركيبي دقيق: التمييز بين خطأ أجهزة القياس والفقد الهيدروليكي المحلي يمنع القرارات الخاطئة."
+            }
+          ],
+          "correctOptionId": "compound",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "فرق المرشح 0.7 bar، والمقياسان يختلفان 0.5 bar، والتدفق منخفض.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — تحديد البيانات الحاسمة",
+        "instructionArabic": "اختر القياسات اللازمة لترتيب الفرضيات.",
+        "feedbackArabic": "حل تعارض المقياسين قبل ترجيح موقع مقاومة.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما الذي تجمعه؟",
+          "options": [
+            {
+              "optionId": "replace",
+              "displayName": "استبدال المرشح قبل توثيق الضغط",
+              "feedbackArabic": "استبدال المرشح دون توثيق الضغوط قد يهدر الميزانية إذا كان العيب في أجهزة القياس."
+            },
+            {
+              "optionId": "diameter",
+              "displayName": "تأكيد الأقطار الفعلية ومواقع تغير المقطع",
+              "feedbackArabic": "تأكيد الأقطار يضمن حساب السرعات الحقيقية وفواقد الاحتكاك بدقة."
+            },
+            {
+              "optionId": "color",
+              "displayName": "لون الأنابيب",
+              "feedbackArabic": "لون الأنابيب الخارجي لا صلة له بالسريان أو الفواقد الهيدروليكية."
+            },
+            {
+              "optionId": "cal",
+              "displayName": "معايرة المقياسين والتحقق منهما بمقياس مرجعي",
+              "feedbackArabic": "معايرة المقياسين بمقياس مرجعي تفصل العطل الحقيقي عن خطأ القراءة."
+            },
+            {
+              "optionId": "local",
+              "displayName": "قياس متزامن قبل المرشح وبعده وعند المصب",
+              "feedbackArabic": "القياس المتزامن قبل المرشح وبعده يحدد بدقة هبوط الضغط الفعلي عبره."
+            },
+            {
+              "optionId": "flow",
+              "displayName": "التحقق من عداد التدفق ومقارنة خط الأساس",
+              "feedbackArabic": "التحقق من عداد التدفق يربط العجز المائي بمنحنى أداء المنظومة."
+            }
+          ],
+          "correctOptionIds": [
+            "cal",
+            "local",
+            "flow",
+            "diameter"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "القياسات المستقلة والمتزامنة وحدود الأقطار تميز الفقد الحقيقي عن خطأ الإشارة.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — نسبة التدفق",
+        "instructionArabic": "احسب Q_now كنسبة من خط الأساس.",
+        "feedbackArabic": "0.011/0.020×100=55%.",
+        "calculation": {
+          "targetParameterKey": "النسبة (%)",
+          "expectedValue": 55,
+          "tolerancePercent": 2,
+          "feedbackArabic": "احسب نسبة التدفق الحقيقي إلى خط الأساس: (Q_now / Q_baseline) × 100%."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — قراءة فرق المرشح",
+        "instructionArabic": "احسب وصِف فرق الضغط المرصود عبر المرشح.",
+        "feedbackArabic": "فرق الضغط وحده لا يثبت حالة الانسداد دون حدود التصميم والقياس المتحقق.",
+        "selection": {
+          "promptArabic": "ما النتيجة؟",
+          "options": [
+            {
+              "optionId": "filterdrop",
+              "displayName": "فرق الدخول والخروج المقاس 0.7 bar؛ هو موضع يستحق الفحص لكنه يحتاج تحققًا من القياس وظروف الحمل",
+              "meetsRequirements": true,
+              "feedbackArabic": "قراءة منضبطة: تسجيل 0.7 بار يلفت الانتباه للمرشح مع ضرورة تدقيق ظروف القياس."
+            },
+            {
+              "optionId": "blocked",
+              "displayName": "فرق الضغط المسجل 0.7 بار يقدم برهانًا قاطعًا على أن المرشح مسدود بالكامل تمامًا ولا يسمح بمرور أي تدفق هيدروليكي للمصب",
+              "meetsRequirements": false,
+              "feedbackArabic": "الفرق المرتفع يدل على اتساخ أو مقاومة متزايدة، لكنه لا يعني انسدادًا ميكانيكيًا تامًا."
+            },
+            {
+              "optionId": "zero",
+              "displayName": "قراءات أجهزة القياس تثبت انعدام أي هبوط في الضغط عبر المرشح طوال فترة السريان",
+              "meetsRequirements": false,
+              "feedbackArabic": "القراءات تسجل فرقًا مقداره 0.7 بار، وهو فقد ملموس لا يمكن اعتباره صفرًا."
+            }
+          ],
+          "correctOptionId": "filterdrop",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "3.1−2.4=0.7 bar تحت ظروف القياس المذكورة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — تفسير اختلاف المصب",
+        "instructionArabic": "كيف تتعامل مع 2.1 و2.6 bar؟",
+        "feedbackArabic": "القياس المتعارض يقلل الثقة حتى يحل.",
+        "selection": {
+          "promptArabic": "ما القرار التحليلي؟",
+          "options": [
+            {
+              "optionId": "low",
+              "displayName": "اعتماد القراءة الأدنى دائمًا كقاعدة عامة للسلامة وتجاهل المقياس الآخر تمامًا",
+              "meetsRequirements": false,
+              "feedbackArabic": "الانتقاء العشوائي لأدنى قراءة دون تدقيق معايرة قد يقود لتشخيص خاطئ ومضلل."
+            },
+            {
+              "optionId": "resolve",
+              "displayName": "لا تختَر قراءة انتقائيًا؛ افحص المعايرة والموقع والتزامن ثم أعد القياس",
+              "meetsRequirements": true,
+              "feedbackArabic": "منهج علمي رصين: تدقيق الأجهزة وإزالة التناقض قبل اتخاذ أي قرار هندسي حاسم."
+            },
+            {
+              "optionId": "high",
+              "displayName": "اعتماد القراءة الأعلى دائمًا على افتراض أن الضغط الأعلى يمثل الوضع الحقيقي",
+              "meetsRequirements": false,
+              "feedbackArabic": "إهمال المقياس المنخفض دون مقارنة مرجعية قد يخفي مشاكل خطيرة في الشبكة."
+            }
+          ],
+          "correctOptionId": "resolve",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "فرق 0.5 bar مادي ويجب تفسيره قبل استنتاج حالة الخدمة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — ترتيب التحقيق",
+        "instructionArabic": "اختر خطة تخفض عدم اليقين قبل التدخل.",
+        "feedbackArabic": "لا تعالج قراءات متعارضة بزيادة الضغط أو استبدال عشوائي.",
+        "selection": {
+          "promptArabic": "كيف ترتب التحقيق؟",
+          "options": [
+            {
+              "optionId": "replace_all",
+              "displayName": "إصدار أمر فوري بإحلال واستبدال المرشح وكامل الخط الناقل ومحطة الضخ دون تشخيص وتكليف فرق الصيانة بتنفيذ الإحلال الشامل",
+              "meetsRequirements": false,
+              "feedbackArabic": "الاستبدال الشامل غير المبرر هدر هائل للموارد وتصرف غير مهني في الطوارئ."
+            },
+            {
+              "optionId": "raise",
+              "displayName": "رفع ضغط محطة الضخ إلى الحد الأقصى للتغلب على مقاومة المرشح دون مراجعة التحمل",
+              "meetsRequirements": false,
+              "feedbackArabic": "رفع الضغط دون تنظيف المرشح قد يمزق عنصر الترشيح ويلوث الشبكة بالكامل."
+            },
+            {
+              "optionId": "verify",
+              "displayName": "تحقق من الأجهزة والتدفق، ثبّت ظروف التشغيل، قس قبل المرشح وبعده، ثم افحصه وفق إجراء الموقع",
+              "meetsRequirements": true,
+              "feedbackArabic": "ترتيب مهني مثالي: تثبيت الظروف، وتدقيق القياس، والفحص الميداني وفق الإجراءات المعتمدة."
+            }
+          ],
+          "correctOptionId": "verify",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "ابدأ بالقياس المستقل ثم حدد العنصر ذي الفقد قبل صيانة موجهة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pressureGauge",
+    "pipeDiameterTool",
+    "leakDetector"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "اجمع المؤشرات لكن لا تخلطها بتشخيص مؤكد.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "فرق المرشح المقاس كبير نسبيًا ويحتاج تحققًا موضعيًا.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "عالج اختلاف مقاييس المصب بالمعايرة والتزامن أولًا.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1500,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 10,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 3,
+    "errorCountWeight": 27,
+    "engineeringDecisionsWeight": 60,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

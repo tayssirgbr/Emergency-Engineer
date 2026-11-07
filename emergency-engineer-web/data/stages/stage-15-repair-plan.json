@@ -1,0 +1,477 @@
+{
+  "stageId": "L3_S15_RepairPlan",
+  "level": 3,
+  "stageIndexInLevel": 14,
+  "titleArabic": "المرحلة 15 — تحديد سبب العطل وخطة الإصلاح",
+  "briefingArabic": "تحققت القياسات المستقلة من انخفاض التدفق، وظهر فرق ضغط كبير عبر صمام. بعد عزل معتمد أظهر الفحص أن حركة ساق الصمام محدودة. هذه أدلة أقوى على خلل في منظومة الحركة لكنها تحتاج إصلاحًا واختبار عودة للخدمة.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "منبع",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مقطع الفحص",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مستهلك",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخط قيد الفحص",
+        "fromNodeId": "منبع",
+        "toNodeId": "مستهلك",
+        "lengthMeters": 100,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_design",
+      "displayNameArabic": "التدفق التصميمي",
+      "value": 0.018,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q_measured",
+      "displayNameArabic": "التدفق المتحقق",
+      "value": 0.012,
+      "unit": "m3/s"
+    },
+    {
+      "key": "dp_valve",
+      "displayNameArabic": "فرق الضغط عبر الصمام",
+      "value": 0.9,
+      "unit": "bar"
+    },
+    {
+      "key": "command",
+      "displayNameArabic": "أمر الصمام",
+      "value": 100,
+      "unit": "%"
+    },
+    {
+      "key": "stroke",
+      "displayNameArabic": "مشوار الساق الفعلي بعد العزل",
+      "value": 40,
+      "unit": "%"
+    },
+    {
+      "key": "P_service",
+      "displayNameArabic": "ضغط الخدمة المقاس",
+      "value": 2.4,
+      "unit": "bar"
+    },
+    {
+      "key": "P_min",
+      "displayNameArabic": "حد الخدمة الأدنى",
+      "value": 2.5,
+      "unit": "bar"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — تثبيت الدليل",
+        "instructionArabic": "اجمع مؤشرات القياس المستقل والفحص المعزول.",
+        "feedbackArabic": "اجمع بين القياسات والفحص الميداني.",
+        "selection": {
+          "promptArabic": "أي وصف يلخص الدليل؟",
+          "options": [
+            {
+              "optionId": "guess",
+              "displayName": "افتراض عيب المشغل لمجرد أن لوحة التحكم تظهر أمر 100% دون فحص حركة الصمام الميدانية أو مراجعة الضغوط المصاحبة للسريان",
+              "meetsRequirements": false,
+              "feedbackArabic": "الأمر الكهربائي لا يعني استجابة الصمام؛ يلزم قياس الحركة الميكانيكية للتحقق."
+            },
+            {
+              "optionId": "stroke",
+              "displayName": "التدفق دون التصميم والضغط دون الحد، وقياس المشوار بعد العزل يؤكد محدودية الحركة",
+              "meetsRequirements": true,
+              "feedbackArabic": "تثبيت ممتاز للدليل: دمج القراءات الهيدروليكية مع قياس المشوار الميكانيكي يحدد المشكلة."
+            },
+            {
+              "optionId": "leak",
+              "displayName": "وجود كسر وتسرب مائي تحت الأرض هو السبب المؤكد لانخفاض التدفق في نقطة الخدمة",
+              "meetsRequirements": false,
+              "feedbackArabic": "هبوط المشوار المقاس يؤكد أن الاختناق في فتحة الصمام وليس تسربًا خارجيًا في الخط."
+            }
+          ],
+          "correctOptionId": "stroke",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "تم التحقق من Q والضغط، وكُشف مشوار فعلي 40% بعد العزل رغم أمر 100%.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "2 — نسبة التدفق",
+        "instructionArabic": "احسب التدفق الحالي كنسبة من التصميم.",
+        "feedbackArabic": "0.012/0.018×100≈66.67%.",
+        "calculation": {
+          "targetParameterKey": "النسبة (%)",
+          "expectedValue": 66.6666666667,
+          "tolerancePercent": 2,
+          "feedbackArabic": "تحقق من قسمة التدفق المقاس حاليًا على التدفق التصميمي وضرب الناتج في 100 للحصول على النسبة المئوية."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — ترجيح السبب",
+        "instructionArabic": "اختر التشخيص الأرجح مع وصف قوة الدليل.",
+        "feedbackArabic": "التشخيص يحدد المنظومة المرجحة، وليس القطعة الداخلية المعيبة بعينها.",
+        "selection": {
+          "promptArabic": "ما الفرضية المدعومة؟",
+          "options": [
+            {
+              "optionId": "pump",
+              "displayName": "انهيار ريشة المضخة الرئيسية وتراجع قدرتها الهيدروليكية هو السبب المثبت قطعيًا",
+              "meetsRequirements": false,
+              "feedbackArabic": "ثبات ضغط ما قبل الصمام ومحدودية مشوار الصمام ينفيان فرضية عطل المضخة."
+            },
+            {
+              "optionId": "meter",
+              "displayName": "عداد التدفق يعطي قراءات خاطئة نتيجة تراكم الرواسب رغم تحقق المعايرة المسبقة ويجب استبداله بالكامل كإجراء احترازي أول",
+              "meetsRequirements": false,
+              "feedbackArabic": "محدودية حركة الصمام المثبتة بالقياس المباشر هي السبب الحقيقي لعجز التدفق."
+            },
+            {
+              "optionId": "actuator",
+              "displayName": "خلل أو تعليق في منظومة حركة الصمام مرجح بقوة؛ يحدد الفحص المعزول محدودية المشوار لكن يلزم تحديد الجزء وإصلاحه",
+              "meetsRequirements": true,
+              "feedbackArabic": "ترجيح مهني سليم: حصر المشكلة في منظومة الحركة الميكانيكية وتوجيه خطة الفحص لتحديد القطعة."
+            }
+          ],
+          "correctOptionId": "actuator",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "أقوى دليل مباشر هو محدودية المشوار الفعلية بعد العزل مع أمر كامل.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — إعداد خطة الصيانة",
+        "instructionArabic": "اختر تسلسلًا مهنيًا قابلًا للتحقق.",
+        "feedbackArabic": "لا توسع الإصلاح إلى أجزاء غير متحقق من فشلها.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما عناصر الخطة؟",
+          "options": [
+            {
+              "optionId": "repair",
+              "displayName": "إصلاح أو استبدال الجزء الذي يثبت فشله فقط",
+              "feedbackArabic": "إصلاح الجزء المعيب فقط يوفر التكلفة ويحافظ على المكونات السليمة."
+            },
+            {
+              "optionId": "service_test",
+              "displayName": "اختبار التدفق والضغوط والاستقرار قبل التسليم",
+              "feedbackArabic": "اختبار الخدمة الشامل يضمن استقرار المنظومة قبل مغادرة الموقع."
+            },
+            {
+              "optionId": "isolate",
+              "displayName": "تصريح وعزل وتحقق من انعدام الطاقة وفق إجراء الموقع",
+              "feedbackArabic": "العزل وإلغاء الطاقة التزام حتمي لضمان السلامة ومنع الحوادث."
+            },
+            {
+              "optionId": "bypass",
+              "displayName": "تجاوز الحمايات وإبقاء الصمام في الخدمة أثناء الفك",
+              "feedbackArabic": "تجاوز الحمايات أثناء الفك مخالفة خطيرة تعرض الأفراد لمخاطر الضغط."
+            },
+            {
+              "optionId": "stroke_test",
+              "displayName": "اختبار المشوار والإشارات بعد الإصلاح",
+              "feedbackArabic": "اختبار المشوار الكامل يثبت أن الصمام يتحرك بسلاسة من 0% إلى 100%."
+            },
+            {
+              "optionId": "inspect",
+              "displayName": "فحص الوصلة والمشغل والساق وفق تعليمات المصنع",
+              "feedbackArabic": "فحص الأجزاء الميكانيكية وفق الدليل يحدد موضع التعليق أو التآكل بدقة."
+            }
+          ],
+          "correctOptionIds": [
+            "isolate",
+            "inspect",
+            "repair",
+            "stroke_test",
+            "service_test"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "إجراء آمن، فحص مركز، إصلاح مثبت، ثم اختبار وظيفي وهيدروليكي موثق.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — حد قبول الإصلاح",
+        "instructionArabic": "اختر شرطًا كافيًا للعودة بعد الصيانة.",
+        "feedbackArabic": "تحقق من الوظيفة الفعلية لا قيمة الأمر فقط.",
+        "selection": {
+          "promptArabic": "أي معيار يعتمد؟",
+          "options": [
+            {
+              "optionId": "accept",
+              "displayName": "مشوار يطابق الأمر ضمن السماحية، وأجهزة متحققة، وقراءات ضغط وتدفق مستقرة تحقق حد الخدمة",
+              "meetsRequirements": true,
+              "feedbackArabic": "قبول هندسي رصين: توافق المشوار واستقرار الضغط والتدفق يمثل الإثبات المتكامل للنجاح."
+            },
+            {
+              "optionId": "command_only",
+              "displayName": "ظهور إشارة 100% على شاشة التحكم كافٍ لاعتماد الإصلاح دون فحص المشوار الميداني أو التأكد من سلامة الحركة الميكانيكية للساق",
+              "meetsRequirements": false,
+              "feedbackArabic": "إشارة التحكم قد تعطي 100% بينما الصمام عالق ميكانيكيًا عند موضع جزئي."
+            },
+            {
+              "optionId": "one_reading",
+              "displayName": "تسجيل قراءة ضغط عابرة أعلى من الحد الأدنى يكفي لإغلاق أمر الصيانة والانسحاب",
+              "meetsRequirements": false,
+              "feedbackArabic": "القراءات اللحظية قد تكون غير مستقرة؛ يلزم التحقق من ثبات الأداء لفترة تشغيلية كافية."
+            }
+          ],
+          "correctOptionId": "accept",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "يجب أن يعمل الصمام فعليًا وأن تعود مؤشرات الشبكة إلى متطلبات الخدمة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — التسليم والتعلم",
+        "instructionArabic": "كيف توثق سبب العطل والإجراء؟",
+        "feedbackArabic": "تجنب ضمانات مطلقة؛ اذكر الاختبار والحدود.",
+        "selection": {
+          "promptArabic": "ما سجل التسليم المناسب؟",
+          "options": [
+            {
+              "optionId": "erase",
+              "displayName": "حذف سجلات الأعطال والإنذارات من ذاكرة النظام دون أرشفة تقرير الفحص والإصلاح",
+              "meetsRequirements": false,
+              "feedbackArabic": "مسح البيانات يضيع التوثيق التاريخي ويمنع الاستفادة من الحالة في الصيانة الوقائية."
+            },
+            {
+              "optionId": "record",
+              "displayName": "وثق الدليل والجزء الذي فشل والإصلاح ونتائج الاختبار وأي قيود متبقية",
+              "meetsRequirements": true,
+              "feedbackArabic": "توثيق مهني ممتاز: أرشفة الحالة تبني قاعدة معرفية تسند قرارات الصيانة المستقبلية."
+            },
+            {
+              "optionId": "certain",
+              "displayName": "تدوين تعهد بأن هذا العطل لن يتكرر مستقبلاً في أي جزء من أجزاء الشبكة المشابهة",
+              "meetsRequirements": false,
+              "feedbackArabic": "الأنظمة الهيدروليكية معرضة دائمًا للتآكل؛ والواجب هو خطط الصيانة وليس الوعود المطلقة."
+            }
+          ],
+          "correctOptionId": "record",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "سجل نتائج قابلة للتدقيق يساعد الصيانة والتشغيل على متابعة الحالة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "valveController",
+    "pumpMonitor"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "bernoulli"
+  ],
+  "hints": [
+    {
+      "textArabic": "الدليل المباشر على الحركة جاء بعد العزل المعتمد.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "افصل المنظومة المرجحة عن الجزء الذي لم يثبت فشله بعد.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "اجعل قبول الإصلاح قائمًا على الوظيفة والقياسات المستقرة.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1200,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 10,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 3,
+    "errorCountWeight": 27,
+    "engineeringDecisionsWeight": 60,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

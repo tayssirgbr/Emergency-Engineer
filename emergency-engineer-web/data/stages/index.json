@@ -1,0 +1,144 @@
+{
+  "stages": [
+    {
+      "stageId": "L3_S6_FlowVelocity",
+      "url": "stage-6-flow-velocity.json",
+      "level": 3,
+      "stageIndexInLevel": 1,
+      "titleArabic": "المرحلة 1 — تحليل التدفق والسرعة داخل الأنبوب"
+    },
+    {
+      "stageId": "L3_S7_DiameterPerformance",
+      "url": "stage-7-diameter-performance.json",
+      "level": 3,
+      "stageIndexInLevel": 2,
+      "titleArabic": "المرحلة 2 — تأثير تغير قطر الأنبوب على الأداء"
+    },
+    {
+      "stageId": "L3_S4_HydraulicHeadLoss",
+      "url": "stage-4-hydraulic-head-loss.json",
+      "level": 3,
+      "stageIndexInLevel": 3,
+      "titleArabic": "المرحلة 3 — حساب فقدان الرأس في شبكة مائية"
+    },
+    {
+      "stageId": "L3_S8_DarcyPressureLoss",
+      "url": "stage-8-darcy-pressure-loss.json",
+      "level": 3,
+      "stageIndexInLevel": 4,
+      "titleArabic": "المرحلة 4 — تحليل فقد الضغط باستخدام Darcy–Weisbach"
+    },
+    {
+      "stageId": "L3_S9_MultiDiameterNetwork",
+      "url": "stage-9-multi-diameter-network.json",
+      "level": 3,
+      "stageIndexInLevel": 5,
+      "titleArabic": "المرحلة 5 — تحليل شبكة متعددة الأقطار"
+    },
+    {
+      "stageId": "L3_S12_PumpSelection",
+      "url": "stage-1-pump-selection.json",
+      "level": 3,
+      "stageIndexInLevel": 6,
+      "titleArabic": "المرحلة 6 — اختيار مضخة مناسبة"
+    },
+    {
+      "stageId": "L3_S5_NetworkPerformance",
+      "url": "stage-5-network-performance.json",
+      "level": 3,
+      "stageIndexInLevel": 7,
+      "titleArabic": "المرحلة 7 — تقييم كفاءة الشبكة واتخاذ القرار الهندسي"
+    },
+    {
+      "stageId": "L3_S12_PartialObstruction",
+      "url": "stage-12-partial-obstruction.json",
+      "level": 3,
+      "stageIndexInLevel": 8,
+      "titleArabic": "المرحلة 8 — كشف انسداد جزئي في شبكة مائية"
+    },
+    {
+      "stageId": "L3_S2_NetworkFaultDiagnosis",
+      "url": "stage-2-network-fault-diagnosis.json",
+      "level": 3,
+      "stageIndexInLevel": 9,
+      "titleArabic": "المرحلة 9 — تشخيص عطل في شبكة مائية"
+    },
+    {
+      "stageId": "L3_S3_UnstableNetworkAnalysis",
+      "url": "stage-3-unstable-network.json",
+      "level": 3,
+      "stageIndexInLevel": 10,
+      "titleArabic": "المرحلة 10 — تحليل شبكة تحت ظروف تشغيل غير مستقرة"
+    },
+    {
+      "stageId": "L3_S11_FieldDistributionFault",
+      "url": "stage-11-field-distribution-diagnosis.json",
+      "level": 3,
+      "stageIndexInLevel": 11,
+      "titleArabic": "المرحلة 11 — تشخيص عطل ميداني في خط توزيع المياه"
+    },
+    {
+      "stageId": "L3_S13_UnstablePressure",
+      "url": "stage-13-unstable-pressure.json",
+      "level": 3,
+      "stageIndexInLevel": 12,
+      "titleArabic": "المرحلة 12 — تحليل عدم استقرار الضغط أثناء التشغيل"
+    },
+    {
+      "stageId": "L3_S14_FieldActionSelection",
+      "url": "stage-14-field-action-selection.json",
+      "level": 3,
+      "stageIndexInLevel": 13,
+      "titleArabic": "المرحلة 13 — اختيار الإجراء قبل التدخل"
+    },
+    {
+      "stageId": "L3_S15_RepairPlan",
+      "url": "stage-15-repair-plan.json",
+      "level": 3,
+      "stageIndexInLevel": 14,
+      "titleArabic": "المرحلة 14 — تحديد سبب العطل وخطة الإصلاح"
+    },
+    {
+      "stageId": "L3_S16_CompoundHydraulicEmergency",
+      "url": "stage-16-compound-emergency.json",
+      "level": 3,
+      "stageIndexInLevel": 15,
+      "titleArabic": "المرحلة 15 — طوارئ هيدروليكية متعددة المؤشرات"
+    },
+    {
+      "stageId": "L3_S17_MultisegmentNetwork",
+      "url": "stage-17-multisegment-analysis.json",
+      "level": 3,
+      "stageIndexInLevel": 16,
+      "titleArabic": "المرحلة 16 — تحليل شبكة متعددة المقاطع"
+    },
+    {
+      "stageId": "L3_S18_TimePressureDecision",
+      "url": "stage-18-emergency-decision.json",
+      "level": 3,
+      "stageIndexInLevel": 17,
+      "titleArabic": "المرحلة 17 — قرار هندسي تحت ضغط الوقت"
+    },
+    {
+      "stageId": "L3_S19_NetworkFailureInvestigation",
+      "url": "stage-19-failure-investigation.json",
+      "level": 3,
+      "stageIndexInLevel": 18,
+      "titleArabic": "المرحلة 18 — التحقيق في سبب فشل الشبكة"
+    },
+    {
+      "stageId": "L3_S10_IntegratedHydraulicMission",
+      "url": "stage-10-integrated-hydraulic-mission.json",
+      "level": 3,
+      "stageIndexInLevel": 19,
+      "titleArabic": "المرحلة 19 — مهمة هيدروليكية تكاملية"
+    },
+    {
+      "stageId": "L3_S20_FinalCapstone",
+      "url": "stage-20-final-capstone.json",
+      "level": 3,
+      "stageIndexInLevel": 20,
+      "titleArabic": "المرحلة 20 — المهمة النهائية: استجابة هيدروليكية متكاملة"
+    }
+  ]
+}

@@ -1,0 +1,469 @@
+{
+  "stageId": "L3_S18_TimePressureDecision",
+  "level": 3,
+  "stageIndexInLevel": 17,
+  "titleArabic": "المرحلة 18 — قرار هندسي تحت ضغط الوقت",
+  "briefingArabic": "الحالة عاجلة: التدفق أقل من الهدف والضغط أدنى من الحد. اجعل أولوية القرار حماية الخدمة والأشخاص، والتحقق السريع من المؤشرات، والتواصل عبر الإجراء المعتمد. لا يعني المؤقت محاكاة عواقب تشغيلية.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "منبع",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مقطع الفحص",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مستهلك",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخط قيد الفحص",
+        "fromNodeId": "منبع",
+        "toNodeId": "مستهلك",
+        "lengthMeters": 100,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_target",
+      "displayNameArabic": "التدفق المستهدف",
+      "value": 0.018,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q_actual",
+      "displayNameArabic": "التدفق الحالي",
+      "value": 0.01,
+      "unit": "m3/s"
+    },
+    {
+      "key": "P_actual",
+      "displayNameArabic": "الضغط الحالي",
+      "value": 1.7,
+      "unit": "bar"
+    },
+    {
+      "key": "P_min",
+      "displayNameArabic": "حد الخدمة",
+      "value": 2.2,
+      "unit": "bar"
+    },
+    {
+      "key": "P_limit",
+      "displayNameArabic": "حد التشغيل الأعلى المعتمد",
+      "value": 4,
+      "unit": "bar"
+    },
+    {
+      "key": "time",
+      "displayNameArabic": "الوقت المتبقي المعروض",
+      "value": 720,
+      "unit": "s"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — فرز الخطر",
+        "instructionArabic": "قارن ضغط الخدمة بالحد وحدد أولوية الاستجابة.",
+        "feedbackArabic": "الأولوية حماية الأشخاص واستمرار الخدمة ضمن الإجراء.",
+        "selection": {
+          "promptArabic": "ما التقييم؟",
+          "options": [
+            {
+              "optionId": "normal",
+              "displayName": "الشبكة في حالة استقرار تام ولا تستدعي أي قلق ما دام مؤشر المانومتر يسجل قيمة موجبة",
+              "meetsRequirements": false,
+              "feedbackArabic": "تسجيل 0.5 بار دون حد الخدمة يمثل حالة طوارئ وعجزًا حرجًا في الإمداد المائي."
+            },
+            {
+              "optionId": "urgent",
+              "displayName": "الضغط 0.5 bar دون حد الخدمة والتدفق منخفض؛ اتبع خطة الطوارئ وأبلغ المسؤول فورًا",
+              "meetsRequirements": true,
+              "feedbackArabic": "تصنيف سليم للموقف: تراجع الضغط دون الحد الأدنى يستوجب تفعيل بروتوكول الطوارئ فورًا."
+            },
+            {
+              "optionId": "boost",
+              "displayName": "رفع سرعة مضخات الطرد لأقصى قدرة ميكانيكية متاحة دون الرجوع لغرفة التحكم والعمليات",
+              "meetsRequirements": false,
+              "feedbackArabic": "الرفع العشوائي للضغوق دون تنسيق قد يؤدي إلى تفجير الخطوط أو انهيار الخزانات."
+            }
+          ],
+          "correctOptionId": "urgent",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "الضغط دون حد الخدمة مع نقص التدفق يتطلب تصعيدًا وإدارة حالة حسب خطة الموقع.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "2 — مستوى التدفق",
+        "instructionArabic": "احسب Q الفعلي نسبةً إلى المستهدف.",
+        "feedbackArabic": "0.010/0.018×100≈55.56%.",
+        "calculation": {
+          "targetParameterKey": "النسبة (%)",
+          "expectedValue": 55.5555555556,
+          "tolerancePercent": 2,
+          "feedbackArabic": "احسب النسبة المئوية لمستوى التدفق الفعلي بالنسبة للتدفق المستهدف: (Q_actual / Q_target) × 100%."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — معلومات سريعة حاسمة",
+        "instructionArabic": "اختر ما يجب التحقق منه بالتوازي دون تأخير التصعيد.",
+        "feedbackArabic": "لا تجعل القياس يؤخر الإبلاغ إذا تطلبت خطة الطوارئ التصعيد.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "أي معلومات تساعد؟",
+          "options": [
+            {
+              "optionId": "gauge",
+              "displayName": "تحقق سريع مستقل من مقياس الضغط",
+              "feedbackArabic": "التأكد السريع من مقياس الضغط يستبعد فرضية الإنذار الكاذب الناتج عن عطل المانومتر."
+            },
+            {
+              "optionId": "alarm",
+              "displayName": "راجع سجل الإنذارات وحالة المعدات",
+              "feedbackArabic": "مراجعة لوحة الإنذار تكشف هل توجد إشارات حماية نشطة أو أعطال مساعدة."
+            },
+            {
+              "optionId": "bypass",
+              "displayName": "تجاوز إنذار الضغط",
+              "feedbackArabic": "تجاوز إنذار الضغط دون معالجة المسبب يعرض الشبكة لخطر الانهيار."
+            },
+            {
+              "optionId": "guess",
+              "displayName": "افترض تلف المضخة دون دليل",
+              "feedbackArabic": "افتراض تلف المضخة دون دليل قياسي يؤدي لقرارات خاطئة وتكاليف مهدرة."
+            },
+            {
+              "optionId": "authority",
+              "displayName": "أبلغ مركز التشغيل واتبع خطة الطوارئ المعتمدة",
+              "feedbackArabic": "الإبلاغ الفوري يتيح للقيادة الفنية تنسيق الدعم الميداني وإدارة الأزمة."
+            },
+            {
+              "optionId": "flow",
+              "displayName": "تحقق من عداد التدفق وخط الأساس",
+              "feedbackArabic": "التحقق الفوري من تدفق الخدمة يؤكد هل الانقطاع شامل أم محلي."
+            }
+          ],
+          "correctOptionIds": [
+            "gauge",
+            "flow",
+            "alarm",
+            "authority"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "تأكيد القياسات وسجل الإنذار مع الإبلاغ يجمع أدلة سريعة ويحافظ على مسار الاستجابة.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — قرار التشغيل",
+        "instructionArabic": "ما الإجراء المبدئي المسؤول؟",
+        "feedbackArabic": "لا توحي القيمة العليا بأنها هدف تشغيل.",
+        "selection": {
+          "promptArabic": "اختر القرار.",
+          "options": [
+            {
+              "optionId": "raise",
+              "displayName": "رفع نقطة ضبط الضغط فورًا إلى 4 bar لتعويض النقص دون تقييم إجهادات الأنبوب ودون مراعاة قدرة تحمل المحابس والوصلات المنزلية",
+              "meetsRequirements": false,
+              "feedbackArabic": "رفع الضبط فورًا إلى 4 bar دون تقييم إجهادات الأنبوب يشكل خطورة بالغة."
+            },
+            {
+              "optionId": "ignore",
+              "displayName": "مواصلة الضخ بالوضع الحالي دون إخطار الإدارة أو مراقبة تطور هبوط الضغط",
+              "meetsRequirements": false,
+              "feedbackArabic": "مواصلة التشغيل دون إخطار أو مراقبة في الطوارئ مخالفة جسيمة لبروتوكول السلامة."
+            },
+            {
+              "optionId": "controlled",
+              "displayName": "حافظ على التشغيل ضمن حدود الخطة، وطبّق تخفيض حمل أو عزلًا فقط إذا نصت عليه خطة معتمدة",
+              "meetsRequirements": true,
+              "feedbackArabic": "إجراء محكوم سليم: الحفاظ على الحدود وتطبيق العزل وفق خطة معتمدة يؤمن المنظومة."
+            }
+          ],
+          "correctOptionId": "controlled",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "الإجراء يعتمد على خطة الموقع والحدود المعتمدة وموافقة المسؤول.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — معالجة الاحتمالات",
+        "instructionArabic": "بعد تأمين الاستجابة الأولية، كيف تتابع التشخيص؟",
+        "feedbackArabic": "افصل الاستجابة الطارئة عن إصلاح السبب.",
+        "selection": {
+          "promptArabic": "ما الخطوة التالية؟",
+          "options": [
+            {
+              "optionId": "measure",
+              "displayName": "اجمع الضغط والتدفق المتزامنين وتحقق من الأجهزة ثم قس عبر المكونات المشتبه بها",
+              "meetsRequirements": true,
+              "feedbackArabic": "خطة ميدانية ممتازة: جمع القياسات المتزامنة وحصر المكونات المشتبه بها بدقة."
+            },
+            {
+              "optionId": "replace",
+              "displayName": "الشروع الفوري في استبدال أكبر صمام ظاهر على الخط دون تشخيص أو اختبار موضعي على افتراض أنه المسبب الرئيسي للهبوط الحاد في الضغط",
+              "meetsRequirements": false,
+              "feedbackArabic": "استبدال أكبر مكون دون تشخيص يضيع الوقت والميزانية في الطوارئ."
+            },
+            {
+              "optionId": "reset",
+              "displayName": "إعادة ضبط ومسح لوحة الإنذارات بصفة متكررة كي لا تعيق استمرار تشغيل المحطة",
+              "meetsRequirements": false,
+              "feedbackArabic": "مسح الإنذارات دون فحص يلغي التحذير المبكر ويزيد من مخاطر الحادث."
+            }
+          ],
+          "correctOptionId": "measure",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "التحقق السريع يوجه عزل السبب بعد إدارة حالة الخدمة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — الإغلاق المؤقت",
+        "instructionArabic": "متى توثق أن الحالة تحت السيطرة؟",
+        "feedbackArabic": "المؤقت داخل اللعبة أداة تقييم وليس محاكاة لعواقب حقيقية.",
+        "selection": {
+          "promptArabic": "ما معيار السيطرة؟",
+          "options": [
+            {
+              "optionId": "one",
+              "displayName": "استئناف الضخ الكامل بمجرد رصد قراءة مانومتر واحدة عابرة سجلت قيمة فوق الحد",
+              "meetsRequirements": false,
+              "feedbackArabic": "قراءة واحدة لحظية لا تكفي لضمان استقرار الشبكة في الطوارئ."
+            },
+            {
+              "optionId": "stable",
+              "displayName": "بعد تأكيد حدود التشغيل وقراءات مستقرة وموافقة المسؤول وفق الخطة",
+              "meetsRequirements": true,
+              "feedbackArabic": "معيار استعادة خدمة رصين: استقرار القراءات وموافقة المسؤول يضمنان الأمان."
+            },
+            {
+              "optionId": "silent",
+              "displayName": "إغلاق حالة الطوارئ بمجرد صمت جرس الإنذار في لوحة التحكم دون فحص ميداني",
+              "meetsRequirements": false,
+              "feedbackArabic": "اختفاء صوت الإنذار قد يعني تعطل الصافرة وليس عودة الضغط الطبيعي."
+            }
+          ],
+          "correctOptionId": "stable",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "التوثيق يحتاج تحققًا مستقرًا وموافقة وفق الإجراء.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "pumpMonitor"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "bernoulli"
+  ],
+  "hints": [
+    {
+      "textArabic": "انخفاض الضغط عن الحد يستدعي التصعيد أولًا.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "تحقق من المؤشرات بالتوازي مع التواصل حسب خطة الموقع.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "لا تستخدم الحد الأعلى كهدف ضبط ولا تتجاوز الحمايات.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 720,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 10,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 3,
+    "errorCountWeight": 32,
+    "engineeringDecisionsWeight": 55,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

@@ -1,0 +1,651 @@
+{
+  "stageId": "L3_S5_NetworkPerformance",
+  "level": 3,
+  "stageIndexInLevel": 7,
+  "titleArabic": "تقييم كفاءة الشبكة واتخاذ القرار الهندسي",
+  "briefingArabic": "انخفض أداء شبكة مائية عن قيمها التصميمية. قارن التدفق والضغط المتوقعين بالقياسات الفعلية، ثم اربط الأدلة قبل تحديد الفحوص الميدانية والتوصية. القراءات تشير إلى وجود خلل لكنها لا تحدد وحدها سببه أو الجزء المسؤول عنه.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "مدخل الشبكة",
+        "kind": "reservoir",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "مخرج الشبكة",
+        "kind": "consumer",
+        "elevationMeters": 112
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخط محل التقييم",
+        "fromNodeId": "مدخل الشبكة",
+        "toNodeId": "مخرج الشبكة",
+        "lengthMeters": 800,
+        "diameterMm": 150,
+        "roughnessMm": 0.15
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_design",
+      "displayNameArabic": "التدفق التصميمي",
+      "value": 30,
+      "unit": "L/s"
+    },
+    {
+      "key": "Q_actual",
+      "displayNameArabic": "التدفق المقاس حاليًا",
+      "value": 18,
+      "unit": "L/s"
+    },
+    {
+      "key": "P_in",
+      "displayNameArabic": "ضغط الدخول",
+      "value": 5,
+      "unit": "bar"
+    },
+    {
+      "key": "P_out_normal",
+      "displayNameArabic": "ضغط الخروج المتوقع في الحالة الطبيعية",
+      "value": 4.2,
+      "unit": "bar"
+    },
+    {
+      "key": "P_out_actual",
+      "displayNameArabic": "ضغط الخروج المقاس حاليًا",
+      "value": 3.1,
+      "unit": "bar"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "قطر الأنبوب الداخلي",
+      "value": 150,
+      "unit": "mm"
+    },
+    {
+      "key": "L",
+      "displayNameArabic": "طول الخط",
+      "value": 800,
+      "unit": "m"
+    },
+    {
+      "key": "deltaZ",
+      "displayNameArabic": "فرق الارتفاع",
+      "value": 12,
+      "unit": "m"
+    },
+    {
+      "key": "f",
+      "displayNameArabic": "معامل الاحتكاك",
+      "value": 0.025,
+      "unit": "—"
+    },
+    {
+      "key": "rho",
+      "displayNameArabic": "كثافة الماء",
+      "value": 1000,
+      "unit": "kg/m3"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "تسارع الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — قراءة الحالة",
+        "instructionArabic": "ابدأ بتحديد المؤشر الذي يستدعي التحقيق قبل اقتراح إصلاح.",
+        "feedbackArabic": "التدفق المقاس 18 L/s أقل من التدفق التصميمي 30 L/s. هذا يثبت انخفاض الأداء، لكنه لا يحدد بعد سبب الانخفاض.",
+        "selection": {
+          "promptArabic": "أي مشكلة أساسية تظهر من قراءات الشبكة؟",
+          "options": [
+            {
+              "optionId": "low_flow",
+              "displayName": "التدفق أقل من القيمة التصميمية رغم استمرار وصول الماء",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ 18 L/s أقل من 30 L/s، لذا نحتاج إلى تقييم مقدار الانخفاض وأسبابه المحتملة."
+            },
+            {
+              "optionId": "high_outlet",
+              "displayName": "ضغط مخرج الشبكة تجاوز الحدود المسموح بها ويشكل خطرًا وشيكًا على سلامة التوصيلات المنزلية",
+              "meetsRequirements": false,
+              "feedbackArabic": "ضغط الخروج المقاس 3.1 bar أقل من المتوقع 4.2 bar، وليس أعلى منه."
+            },
+            {
+              "optionId": "normal",
+              "displayName": "سريان المياه في الخط الناقل يدل على أن أداء الشبكة مستقر تمامًا ولا يتطلب أي مراجعة تشغيلية",
+              "meetsRequirements": false,
+              "feedbackArabic": "وجود تدفق لا يعني تحقيق الأداء التصميمي؛ قارن 18 L/s بالقيمة المطلوبة 30 L/s."
+            },
+            {
+              "optionId": "excess_flow",
+              "displayName": "معدل التدفق الحجمي المسجل تجاوز الطاقة القصوى لمنحنى تشغيل المضخة بصورة مفرطة",
+              "meetsRequirements": false,
+              "feedbackArabic": "التدفق أقل من التصميم، لا أعلى منه."
+            },
+            {
+              "optionId": "no_issue",
+              "displayName": "لا توجد مشكلة تستدعي الفحص",
+              "meetsRequirements": false,
+              "feedbackArabic": "الانخفاض عن التدفق التصميمي وقراءة الخروج الأدنى من الطبيعي يستدعيان التحقيق."
+            }
+          ],
+          "correctOptionId": "low_flow",
+          "justification": {
+            "prompt": "ما الأدلة التي تثبت وجود انخفاض أداء من دون افتراض سببه؟",
+            "factors": [
+              {
+                "factorId": "flow_below_design",
+                "labelArabic": "التدفق الفعلي 18 L/s أقل من التصميمي 30 L/s",
+                "correct": true
+              },
+              {
+                "factorId": "outlet_below_normal",
+                "labelArabic": "ضغط الخروج المقاس أقل من القيمة الطبيعية المتوقعة",
+                "correct": true
+              },
+              {
+                "factorId": "pump_proven",
+                "labelArabic": "هذه القراءات تثبت وحدها أن المضخة معطلة",
+                "correct": false
+              },
+              {
+                "factorId": "flow_above_design",
+                "labelArabic": "التدفق الفعلي تجاوز التدفق التصميمي",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_below_design": "قارن التدفق المقاس بقيمة التصميم قبل الحكم على الأداء.",
+                "outlet_below_normal": "ضغط الخروج يقدم دليلًا ثانيًا سنقارنه بالتفصيل لاحقًا."
+              },
+              "wrongFactor": {
+                "pump_proven": "انخفاض الأداء لا يحدد بمفرده أي عنصر سبب المشكلة.",
+                "flow_above_design": "18 L/s أدنى من 30 L/s، وليس أعلى."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.25,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — قياس نسبة الأداء",
+        "instructionArabic": "استخدم نتيجة المقارنة السابقة لتحويل انخفاض التدفق إلى نسبة أداء قابلة للمقارنة.",
+        "feedbackArabic": "نسبة التدفق الفعلي إلى التصميمي هي 18 ÷ 30 × 100 = 60%. هذه نسبة تدفق وليست كفاءة طاقة للمضخة.",
+        "selection": {
+          "promptArabic": "ما نسبة التدفق الفعلي إلى التدفق التصميمي؟",
+          "options": [
+            {
+              "optionId": "40",
+              "displayName": "40%",
+              "feedbackArabic": "هذه النسبة لا تنتج من قسمة 18 على 30."
+            },
+            {
+              "optionId": "60",
+              "displayName": "60%",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح: 18 ÷ 30 × 100 = 60% من التدفق التصميمي."
+            },
+            {
+              "optionId": "75",
+              "displayName": "75%",
+              "feedbackArabic": "راجع القسمة: 18 ÷ 30 يساوي 0.60."
+            },
+            {
+              "optionId": "90",
+              "displayName": "90%",
+              "feedbackArabic": "هذه النسبة أعلى من نسبة 18 إلى 30."
+            }
+          ],
+          "correctOptionId": "60",
+          "justification": {
+            "prompt": "اختر الأساس الصحيح لتفسير نسبة الأداء.",
+            "factors": [
+              {
+                "factorId": "actual_numerator",
+                "labelArabic": "استخدم التدفق الفعلي 18 L/s في البسط",
+                "correct": true
+              },
+              {
+                "factorId": "design_denominator",
+                "labelArabic": "استخدم التدفق التصميمي 30 L/s في المقام",
+                "correct": true
+              },
+              {
+                "factorId": "percent_scale",
+                "labelArabic": "اضرب النسبة 0.60 في 100 للتعبير عنها بالمئة",
+                "correct": true
+              },
+              {
+                "factorId": "invert_ratio",
+                "labelArabic": "اقسم التدفق التصميمي على الفعلي للحصول على نسبة الأداء",
+                "correct": false
+              },
+              {
+                "factorId": "energy_efficiency",
+                "labelArabic": "اعتبر النسبة كفاءة كهربائية للمضخة رغم عدم وجود قياس للطاقة",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "actual_numerator": "نسبة الأداء هنا تبدأ بالتدفق الفعلي المتحقق.",
+                "design_denominator": "التصميم هو خط المقارنة المرجعي.",
+                "percent_scale": "القيمة العشرية 0.60 تساوي 60%."
+              },
+              "wrongFactor": {
+                "invert_ratio": "قلب النسبة يعطي مقارنة معكوسة لا تمثل الأداء المتحقق من التصميم.",
+                "energy_efficiency": "المعطيات تقيس نسبة التدفق فقط، ولا تتضمن قدرة أو استهلاكًا كهربائيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.25,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — تقدير فرق ضغط الخروج",
+        "instructionArabic": "قارن الضغط الطبيعي المتوقع عند الخروج بالضغط المقاس في الحالة الحالية، واحتفظ بالوحدة الصحيحة.",
+        "feedbackArabic": "انخفاض ضغط الخروج عن الطبيعي هو 4.2 − 3.1 = 1.1 bar. هذه مقارنة بين قراءتي الخروج وليست فرق الضغط بين مدخل الشبكة ومخرجها.",
+        "selection": {
+          "promptArabic": "بكم يقل ضغط الخروج المقاس عن الضغط الطبيعي المتوقع؟",
+          "options": [
+            {
+              "optionId": "0_5_bar",
+              "displayName": "0.5 bar",
+              "feedbackArabic": "اطرح ضغط الخروج المقاس 3.1 من الطبيعي 4.2؛ الفرق أكبر من 0.5 bar."
+            },
+            {
+              "optionId": "1_1_bar",
+              "displayName": "1.1 bar",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح: 4.2 bar − 3.1 bar = 1.1 bar."
+            },
+            {
+              "optionId": "2_1_bar",
+              "displayName": "2.1 bar",
+              "feedbackArabic": "هذا ليس الفرق بين قيمتي ضغط الخروج المعطاتين."
+            },
+            {
+              "optionId": "1_1_kpa",
+              "displayName": "1.1 kPa",
+              "feedbackArabic": "مقدار الفرق العددي 1.1، لكن الوحدة هنا bar لأن القراءتين معطاتان بالـbar."
+            }
+          ],
+          "correctOptionId": "1_1_bar",
+          "justification": {
+            "prompt": "ما الذي يجعل المقارنة صحيحة من حيث القيمة والوحدة؟",
+            "factors": [
+              {
+                "factorId": "normal_minus_actual",
+                "labelArabic": "اطرح الضغط المقاس من الضغط الطبيعي المتوقع: 4.2 − 3.1",
+                "correct": true
+              },
+              {
+                "factorId": "same_location",
+                "labelArabic": "قارن قيمتي ضغط الخروج معًا بدل خلطهما بضغط الدخول",
+                "correct": true
+              },
+              {
+                "factorId": "bar_unit",
+                "labelArabic": "أبقِ الوحدة bar لأن كلا الضغطين مقاسان بهذه الوحدة",
+                "correct": true
+              },
+              {
+                "factorId": "inlet_difference",
+                "labelArabic": "اطرح ضغط الخروج الحالي من ضغط الدخول لتحصل على النقص عن الطبيعي",
+                "correct": false
+              },
+              {
+                "factorId": "kpa_unit",
+                "labelArabic": "اكتب الفرق 1.1 بوحدة kPa دون تحويل وحدات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "normal_minus_actual": "الانخفاض عن الطبيعي هو المتوقع ناقص المقاس.",
+                "same_location": "استخدم نقطة القياس نفسها لتجنب خلط هبوط الخط مع فرق الحالة الطبيعية.",
+                "bar_unit": "وحدة الفرق تبقى bar ما دامت القراءتان بالـbar."
+              },
+              "wrongFactor": {
+                "inlet_difference": "المطلوب هو الانخفاض عن ضغط الخروج الطبيعي، لا فرق الدخول والخروج.",
+                "kpa_unit": "لا تغيّر الوحدة دون تحويل؛ 1.1 bar تساوي 110 kPa."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.25,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — ربط مؤشري التدفق والضغط",
+        "instructionArabic": "اجمع نتيجة الأداء البالغة 60% مع انخفاض ضغط الخروج 1.1 bar. استنتج ما تدعمه الأدلة مع إبقاء السبب مفتوحًا للفحص.",
+        "feedbackArabic": "اجتماع انخفاض التدفق وضغط الخروج يتسق مع مقاومة أو فقد إضافي محتمل في الخط، لكنه لا يثبت موضعه ولا يحدد العنصر المسبب قبل القياس الميداني.",
+        "selection": {
+          "promptArabic": "ما الاستنتاج الأكثر اتزانًا عند اجتماع انخفاض التدفق وضغط الخروج؟",
+          "options": [
+            {
+              "optionId": "normal",
+              "displayName": "الأداء طبيعي؛ فالتدفق ما زال موجودًا",
+              "feedbackArabic": "وجود جريان لا يلغي أن التدفق 60% فقط من التصميم وأن ضغط الخروج أدنى من الطبيعي."
+            },
+            {
+              "optionId": "extra_loss",
+              "displayName": "قد توجد مقاومة أو فواقد إضافية على المسار تستدعي تحديد موضعها",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ المؤشران يدعمان فرضية فقد إضافي محتمل، والفحوص التالية تختبر الأسباب بدل افتراضها."
+            },
+            {
+              "optionId": "increase_flow",
+              "displayName": "زيادة معدل الضخ لتعويض نقص الضغط الحاصل مع إهمال فواقد الاحتكاك الإضافية الناتجة عن زيادة السرعة",
+              "feedbackArabic": "زيادة التشغيل قبل معرفة سبب انخفاض الضغط والتدفق قد تخفي العطل أو تزيد المخاطر."
+            },
+            {
+              "optionId": "ignore_pressure",
+              "displayName": "تجاهل فرق الضغط ما دام ضغط الدخول 5.0 bar",
+              "feedbackArabic": "ضغط الدخول لا يضمن وصول التدفق والضغط الطبيعيين إلى نهاية الشبكة."
+            }
+          ],
+          "correctOptionId": "extra_loss",
+          "justification": {
+            "prompt": "استند إلى أكثر من مؤشر، وميّز بين الاشتباه وإثبات السبب.",
+            "factors": [
+              {
+                "factorId": "flow_ratio_evidence",
+                "labelArabic": "التدفق لا يتجاوز 60% من التصميم",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_gap_evidence",
+                "labelArabic": "ضغط الخروج يقل 1.1 bar عن الطبيعي",
+                "correct": true
+              },
+              {
+                "factorId": "possible_resistance",
+                "labelArabic": "اجتماع المؤشرين يتسق مع فقد أو مقاومة إضافية محتملة",
+                "correct": true
+              },
+              {
+                "factorId": "cause_proven",
+                "labelArabic": "القراءات تثبت أن الصمام أو المضخة هو السبب قطعًا",
+                "correct": false
+              },
+              {
+                "factorId": "inlet_is_enough",
+                "labelArabic": "ضغط الدخول وحده يكفي لإثبات سلامة نهاية الخط",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_ratio_evidence": "استخدم نسبة التدفق التي حسبتها في الخطوة السابقة.",
+                "pressure_gap_evidence": "اربط استنتاجك بهبوط الخروج الذي حسبته بوحدة bar.",
+                "possible_resistance": "صغها كفرضية للفحص، لا كتشخيص نهائي لعنصر بعينه."
+              },
+              "wrongFactor": {
+                "cause_proven": "المعطيات تكشف انخفاض الأداء ولا تحدد المسبب دون فحص ميداني.",
+                "inlet_is_enough": "يجب تقييم ظروف نهاية الخط أيضًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.25,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — اختيار الفحوص الميدانية الأولية",
+        "instructionArabic": "حوّل فرضية الفقد الإضافي إلى مجموعة فحوص تفصل بين عطل الصمام أو الانسداد وخطأ القياس، دون إدخال تعديل دائم مسبق.",
+        "feedbackArabic": "ابدأ بفحص الصمامات والعوائق، وتحقق من جهاز التدفق، وقس فروق الضغط قبل العناصر المهمة وبعدها لتحديد موضع الفقد. تؤكد المجموعة الكاملة خطة تشخيص أولية لا سببًا محسومًا.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "اختر الفحوص التي تجمع أدلة قابلة للتحقق قبل تقرير الإصلاح.",
+          "options": [
+            {
+              "optionId": "valves",
+              "displayName": "فحص أوضاع الصمامات وحركتها",
+              "feedbackArabic": "قد يحد صمام غير مفتوح بالكامل من التدفق؛ افحصه ميدانيًا."
+            },
+            {
+              "optionId": "obstruction",
+              "displayName": "فحص احتمال وجود انسداد أو ترسبات في المسار",
+              "feedbackArabic": "العائق أو الترسب قد يضيف مقاومة؛ يلزم تحديد موقعه بدل التخمين."
+            },
+            {
+              "optionId": "pressure_points",
+              "displayName": "قياس الضغط قبل العناصر المهمة وبعدها",
+              "feedbackArabic": "المقارنة الموضعية تساعد على تحديد المقطع الذي يظهر عليه هبوط إضافي."
+            },
+            {
+              "optionId": "flow_meter",
+              "displayName": "التحقق من معايرة جهاز التدفق وقراءته",
+              "feedbackArabic": "تأكد من أن انخفاض التدفق حقيقي وليس نتيجة خطأ قياس."
+            },
+            {
+              "optionId": "replace_pipe",
+              "displayName": "تغيير قطر الأنبوب مباشرة قبل تحديد موضع الفقد",
+              "feedbackArabic": "هذا تعديل تصميمي قبل تأكيد السبب والقياسات اللازمة."
+            },
+            {
+              "optionId": "raise_pump",
+              "displayName": "زيادة ضغط المضخة مباشرة دون فحص",
+              "feedbackArabic": "قد تخفي السبب أو تتجاوز حدود التشغيل الآمن؛ اجمع أدلة أولًا."
+            },
+            {
+              "optionId": "ignore",
+              "displayName": "تجاهل الانخفاض ما دام هناك بعض التدفق",
+              "feedbackArabic": "المؤشرات أقل من الأداء الطبيعي وتستدعي الفحص."
+            }
+          ],
+          "correctOptionIds": [
+            "valves",
+            "obstruction",
+            "pressure_points",
+            "flow_meter"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "كيف تغطي هذه المجموعة الاحتمالات الأساسية من دون القفز إلى الإصلاح؟",
+            "factors": [
+              {
+                "factorId": "check_restrictions",
+                "labelArabic": "فحص الصمامات والعوائق التي قد تضيف مقاومة",
+                "correct": true
+              },
+              {
+                "factorId": "locate_pressure_loss",
+                "labelArabic": "مقارنة الضغط حول العناصر لتحديد موضع الهبوط",
+                "correct": true
+              },
+              {
+                "factorId": "verify_measurement",
+                "labelArabic": "التأكد من موثوقية قراءة التدفق",
+                "correct": true
+              },
+              {
+                "factorId": "avoid_unverified_change",
+                "labelArabic": "جمع القياسات قبل تغيير المضخة أو قطر الخط",
+                "correct": true
+              },
+              {
+                "factorId": "change_first",
+                "labelArabic": "إجراء تعديل دائم قبل معرفة موضع المشكلة",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "check_restrictions": "تحقق من العوائق والصمامات بوصفها احتمالات، لا أسبابًا مؤكدة.",
+                "locate_pressure_loss": "قياسات قبل العناصر وبعدها تساعد على فصل الفقد حسب المقطع.",
+                "verify_measurement": "استبعد خطأ جهاز التدفق قبل الاعتماد على النسبة المحسوبة.",
+                "avoid_unverified_change": "التشخيص المدعوم بالقياس يسبق التعديل الدائم."
+              },
+              "wrongFactor": {
+                "change_first": "التعديل قبل التحقق قد لا يعالج السبب الحقيقي."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.25,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — القرار الهندسي النهائي",
+        "instructionArabic": "راجع سجل التحقيق السابق: انخفاض التدفق، نسبة الأداء، فرق ضغط الخروج، الاستنتاج الأولي، ومجموعة الفحوص المقترحة. اتخذ قرارًا يوازن بين مؤشرات الأداء وما لم يُحسم ميدانيًا.",
+        "feedbackArabic": "التوصية المتزنة تعترف بأن التدفق عند 60% وأن ضغط الخروج يقل 1.1 bar عن الطبيعي، وتطلب تحديد مصدر الفقد والتحقق من الأجهزة قبل أي تغيير دائم. اتبع إجراءات السلامة والتشغيل المحلية إذا استدعت الحالة تقييدًا مؤقتًا.",
+        "selection": {
+          "promptArabic": "ما القرار الذي يجمع الأدلة السابقة ويحافظ على سلامة القرار الهندسي؟",
+          "options": [
+            {
+              "optionId": "normal_operation",
+              "displayName": "اعتبار الشبكة طبيعية ومواصلة التشغيل دون إجراء",
+              "feedbackArabic": "القراءات لا تحقق التدفق أو ضغط الخروج المتوقعين."
+            },
+            {
+              "optionId": "increase_pump",
+              "displayName": "رفع ضغط المضخة مباشرة لتعويض الانخفاض دون تشخيص",
+              "feedbackArabic": "قد يؤدي التعويض الأعمى إلى مخاطر ولا يحدد مصدر المقاومة أو خطأ القياس."
+            },
+            {
+              "optionId": "inspect_then_decide",
+              "displayName": "اتباع إجراءات التشغيل الآمن، وإجراء الفحوص والقياسات لتحديد سبب الفقد قبل اعتماد إصلاح دائم",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ يجمع مؤشرات الأداء مع خطة تحقق ميداني، ولا يفترض سببًا أو تغييرًا قبل الأدلة."
+            },
+            {
+              "optionId": "replace_pipe",
+              "displayName": "استبدال الخط الناقل بالكامل بقطر أوسع على الفور استنادًا للتقديرات النظرية المجردة ودون أي قياسات ميدانية للضغط",
+              "feedbackArabic": "لا تثبت القراءات أن قطر الأنبوب هو السبب؛ افحص القياس والصمامات والهبوط الموضعي أولًا."
+            }
+          ],
+          "correctOptionId": "inspect_then_decide",
+          "justification": {
+            "prompt": "برّر القرار النهائي بالربط بين النتائج السابقة وما يجب التحقق منه بعد.",
+            "factors": [
+              {
+                "factorId": "low_performance",
+                "labelArabic": "التدفق 18 L/s يعادل 60% من التصميم البالغ 30 L/s",
+                "correct": true
+              },
+              {
+                "factorId": "outlet_drop",
+                "labelArabic": "ضغط الخروج يقل 1.1 bar عن القيمة الطبيعية المتوقعة",
+                "correct": true
+              },
+              {
+                "factorId": "field_tests",
+                "labelArabic": "فحص الصمامات والعوائق والأجهزة وقياس الضغط يحدد مصدر الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "no_radical_change",
+                "labelArabic": "لا يبرر مؤشر منفرد استبدال الخط أو رفع الضغط قبل تأكيد السبب",
+                "correct": true
+              },
+              {
+                "factorId": "natural_operation",
+                "labelArabic": "وجود تدفق جزئي يثبت أن الأداء طبيعي ويمكن تجاهل النقص",
+                "correct": false
+              },
+              {
+                "factorId": "certain_component",
+                "labelArabic": "المعطيات تثبت أن عنصرًا محددًا تالف ويجب تغييره الآن",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "low_performance": "اربط التوصية بنسبة الأداء المحسوبة لا بمجرد استمرار الجريان.",
+                "outlet_drop": "اذكر فرق الخروج عن الطبيعي بوحدته الصحيحة.",
+                "field_tests": "استخدم الفحوص التي اخترتها لتحديد مصدر الانخفاض والتحقق من القياس.",
+                "no_radical_change": "لا تحدد القراءات الحالية عنصرًا متعطلًا بعينه."
+              },
+              "wrongFactor": {
+                "natural_operation": "البيانات أقل من التصميم والطبيعي؛ استمرار بعض التدفق لا يجعلها طبيعية.",
+                "certain_component": "السبب ما زال فرضية ويحتاج إلى قياسات ميدانية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.25,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "pipeDiameterTool",
+    "elevationMeter",
+    "valveController"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "bernoulli",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "قارن أولًا 18 L/s بالتصميم 30 L/s، واستخدم التدفق الفعلي في البسط عند حساب نسبة الأداء.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "فرق ضغط الخروج عن الطبيعي هو المتوقع ناقص المقاس؛ أبقِ الوحدة bar كما هي.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "اجتماع مؤشري الضغط والتدفق يدعم فرضية تحتاج فحصًا؛ لا يثبت أي مكوّن معطّلًا دون قياس ميداني.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1200,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 0,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 10,
+    "errorCountWeight": 70,
+    "engineeringDecisionsWeight": 20,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "بنيت قرارك على أكثر من مؤشر: التدفق لا يتجاوز 60% من التصميم وضغط الخروج أقل من الطبيعي بـ1.1 bar. خطتك تتحقق من القياس وتحدد موضع الفقد ميدانيًا قبل اعتماد تغيير دائم؛ المؤشرات تبرر الفحص لكنها لا تثبت عنصرًا معطلًا بعينه.",
+  "debriefFailureArabic": "راجع نسبة التدفق الفعلي إلى التصميم، ثم اطرح ضغط الخروج المقاس من الطبيعي المتوقع مع الحفاظ على وحدة bar. اربط المؤشرين كدليل على انخفاض الأداء، واجمع قياسات ميدانية قبل تسمية السبب أو تغيير المعدات."
+}

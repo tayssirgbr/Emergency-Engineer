@@ -1,0 +1,624 @@
+{
+  "stageId": "L3_S2_NetworkFaultDiagnosis",
+  "level": 3,
+  "stageIndexInLevel": 9,
+  "titleArabic": "المرحلة 2 — تشخيص عطل في شبكة مائية",
+  "briefingArabic": "وصل بلاغ عن ضعف التزويد في منطقة من شبكة المياه. بصفتك المهندس المسؤول عن التشخيص الأولي، حلّل القياسات خطوةً خطوة قبل اقتراح أي تغيير للمعدات. قراءة ضغط التغذية وحدها لا تثبت سبب العطل.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "نقطة التغذية",
+        "kind": "reservoir",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "المنطقة المتأثرة",
+        "kind": "consumer",
+        "elevationMeters": 112
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "المقطع محل الدراسة",
+        "fromNodeId": "نقطة التغذية",
+        "toNodeId": "المنطقة المتأثرة",
+        "lengthMeters": 800,
+        "diameterMm": 150,
+        "roughnessMm": 0.15
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "P_feed",
+      "displayNameArabic": "الضغط عند نقطة التغذية",
+      "value": 5,
+      "unit": "bar"
+    },
+    {
+      "key": "P_expected",
+      "displayNameArabic": "الضغط المتوقع في المنطقة",
+      "value": 4.2,
+      "unit": "bar"
+    },
+    {
+      "key": "Q_measured",
+      "displayNameArabic": "التدفق المقاس",
+      "value": 18,
+      "unit": "L/s"
+    },
+    {
+      "key": "Q_normal",
+      "displayNameArabic": "التدفق المعتاد",
+      "value": 30,
+      "unit": "L/s"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "قطر الأنبوب",
+      "value": 150,
+      "unit": "mm"
+    },
+    {
+      "key": "L",
+      "displayNameArabic": "طول الجزء محل الدراسة",
+      "value": 800,
+      "unit": "m"
+    },
+    {
+      "key": "deltaZ",
+      "displayNameArabic": "فرق الارتفاع",
+      "value": 12,
+      "unit": "m"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "التشخيص الأولي",
+        "instructionArabic": "قارن التدفق المقاس بالمعتاد، ولا تعتبر وجود ضغط عند التغذية دليلًا كافيًا على سلامة المقطع.",
+        "feedbackArabic": "انخفاض التدفق من 30 إلى 18 L/s مع فرق بين ضغط التغذية والضغط المتوقع يستدعي التحقق من فقد هيدروليكي أو تسرب محتمل. القياسات لا تثبت وحدها سببًا واحدًا.",
+        "selection": {
+          "promptArabic": "ما الاحتمال الأرجح الذي يجب التحقيق فيه؟",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — ارتفاع حاد غير طبيعي في قراءات الضغط عند مدخل الشبكة والمقاطع الفرعية",
+              "descriptionArabic": "لا تدعم القراءات هذا الاستنتاج.",
+              "feedbackArabic": "الضغط عند التغذية 5 bar، لكن الضغط المتوقع في المنطقة 4.2 bar؛ المعطيات لا تشير إلى ارتفاع غير طبيعي."
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — انخفاض التدفق مع فقد هيدروليكي محتمل",
+              "descriptionArabic": "فرضية أولية تحتاج إلى قياسات وفحوص ميدانية.",
+              "feedbackArabic": "صحيح: التدفق أقل من المعتاد بـ12 L/s، كما توجد قراءة ضغط مختلفة بين التغذية والمنطقة. نحتاج فحوصًا لتحديد السبب.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — اتساع مفاجئ في أقطار الأنابيب الداخلية نتيجة التآكل الكيميائي للمعدن",
+              "descriptionArabic": "القطر المعطى 150 mm ولا توجد قراءة تثبت تغيّره.",
+              "feedbackArabic": "لا توجد مقارنة أو معاينة تشير إلى أن قطر الأنبوب ازداد."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — ارتفاع ملموس في درجات حرارة المياه المنقولة أثر على لزوجة السائل الديناميكية",
+              "descriptionArabic": "لا توجد قراءة لدرجة حرارة المياه.",
+              "feedbackArabic": "لا توجد بيانات حرارة، كما أن المؤشر المباشر في البلاغ هو انخفاض التدفق."
+            }
+          ],
+          "correctOptionId": "B",
+          "justification": {
+            "prompt": "أي المؤشرات تسند فرضية الانخفاض والفقد المحتمل؟ اختر ما اعتمدت عليه.",
+            "factors": [
+              {
+                "factorId": "low_flow",
+                "labelArabic": "التدفق المقاس 18 L/s أقل من المعتاد 30 L/s",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_difference",
+                "labelArabic": "وجود قراءة ضغط متوقعة للمنطقة تختلف عن ضغط التغذية",
+                "correct": true
+              },
+              {
+                "factorId": "proof_of_leak",
+                "labelArabic": "القياسات تثبت وجود تسرب محدد بالفعل",
+                "correct": false
+              },
+              {
+                "factorId": "temperature",
+                "labelArabic": "ارتفاع حرارة المياه هو سبب انخفاض التدفق",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "low_flow": "قارن 18 L/s بالتدفق المعتاد 30 L/s؛ الفرق مؤشر أساسي على ضعف التزويد.",
+                "pressure_difference": "قراءة التغذية وحدها لا تصف الضغط عند المنطقة؛ يلزم فحص الفرق عبر الشبكة."
+              },
+              "wrongFactor": {
+                "proof_of_leak": "هذه قراءات إنذار أولي وليست إثباتًا لموضع تسرب؛ نحتاج فحوصًا إضافية.",
+                "temperature": "لا تتضمن المعطيات قياسًا للحرارة يربطها بالعطل."
+              }
+            },
+            "scoring": {
+              "fullBonus": 4,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "تحديد المعطيات المهمة",
+        "instructionArabic": "حدد المعطيات التي تحتاجها للمقارنة وفهم أثر الأنبوب والارتفاع. يمكنك المتابعة مع اختيارات ناقصة أو زائدة، وستظهر لك مراجعتها.",
+        "feedbackArabic": "الضغط والتدفق يصفان أداء الشبكة، فيما يساعد القطر والطول وفرق الارتفاع على تحليل السرعة وفواقد الطاقة. اللون واسم الشركة وحرارة الجو لا تدخل في هذا الفحص الهيدروليكي الأولي.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "اختر المعطيات المفيدة لهذا التحليل (يمكن اختيار أكثر من إجابة).",
+          "options": [
+            {
+              "optionId": "pressure",
+              "displayName": "الضغط",
+              "descriptionArabic": "قارن ضغط التغذية بالضغط المتوقع في المنطقة.",
+              "feedbackArabic": "الضغط يوضح التغير عبر الشبكة ويساعد على تقدير الفقد."
+            },
+            {
+              "optionId": "flow",
+              "displayName": "التدفق",
+              "descriptionArabic": "قارن التدفق المقاس بالقيمة المعتادة.",
+              "feedbackArabic": "التدفق المقاس والمعتاد يكشفان مقدار ضعف التزويد."
+            },
+            {
+              "optionId": "diameter",
+              "displayName": "قطر الأنبوب",
+              "descriptionArabic": "يلزم لربط التدفق بالمساحة والسرعة.",
+              "feedbackArabic": "القطر يحدد مساحة المقطع ويؤثر في السرعة والفقد."
+            },
+            {
+              "optionId": "length",
+              "displayName": "طول الأنبوب",
+              "descriptionArabic": "يدخل في تقدير فقد الاحتكاك على طول المقطع.",
+              "feedbackArabic": "يزداد فقد الاحتكاك عادةً مع طول المقطع عند ثبات العوامل الأخرى."
+            },
+            {
+              "optionId": "elevation",
+              "displayName": "فرق الارتفاع",
+              "descriptionArabic": "يمثل جزءًا من تغير الرأس الهيدروليكي.",
+              "feedbackArabic": "فرق الارتفاع يدخل في موازنة الطاقة بين النقطتين."
+            },
+            {
+              "optionId": "color",
+              "displayName": "لون الأنبوب",
+              "descriptionArabic": "لا يصف أداءه الهيدروليكي.",
+              "feedbackArabic": "لون الأنبوب لا يدخل في حساب الضغط أو التدفق."
+            },
+            {
+              "optionId": "weather",
+              "displayName": "درجة حرارة الجو",
+              "descriptionArabic": "ليست مطلوبة في هذا التشخيص الأولي.",
+              "feedbackArabic": "درجة حرارة الجو غير لازمة هنا لتحليل المقطع بالمعطيات الحالية."
+            },
+            {
+              "optionId": "manufacturer",
+              "displayName": "اسم الشركة المصنعة",
+              "descriptionArabic": "لا يلزم للحساب الأولي المعروض.",
+              "feedbackArabic": "قد تفيد بيانات الصانع في أعمال صيانة أخرى، لكنها لا تحدد الفقد الهيدروليكي هنا."
+            }
+          ],
+          "correctOptionIds": [
+            "pressure",
+            "flow",
+            "diameter",
+            "length",
+            "elevation"
+          ],
+          "scoring": {
+            "fullBonus": 3
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "برر اختيارك بربط القياسات بما تريد التحقق منه.",
+            "factors": [
+              {
+                "factorId": "compare_pressure",
+                "labelArabic": "مقارنة الضغط بين التغذية والمنطقة لتقدير الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "compare_flow",
+                "labelArabic": "مقارنة التدفق المقاس بالتدفق المعتاد لتأكيد حجم الانخفاض",
+                "correct": true
+              },
+              {
+                "factorId": "pipe_geometry",
+                "labelArabic": "استخدام القطر والطول وفرق الارتفاع لتحليل السرعة وفواقد الطاقة",
+                "correct": true
+              },
+              {
+                "factorId": "visual_color",
+                "labelArabic": "لون الأنبوب مؤشر على مقدار فقد الضغط",
+                "correct": false
+              },
+              {
+                "factorId": "brand",
+                "labelArabic": "اسم الشركة المصنعة مطلوب لحساب الفقد الأولي",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "compare_pressure": "الضغط عند التغذية والضغط المتوقع في المنطقة يساعدان على فهم الفرق عبر المسار.",
+                "compare_flow": "المرجع المعتاد ضروري لتحديد أن 18 L/s أقل من أداء الشبكة المعتاد.",
+                "pipe_geometry": "هندسة المقطع والارتفاع تدخل في حساب السرعة وموازنة الطاقة والفقد."
+              },
+              "wrongFactor": {
+                "visual_color": "المظهر اللوني لا يحدد خسارة الرأس أو معدل التدفق.",
+                "brand": "التحليل الأولي يعتمد على القياسات والهندسة، لا على اسم المصنع."
+              }
+            },
+            "scoring": {
+              "fullBonus": 4,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "اختيار القوانين المناسبة",
+        "instructionArabic": "اختر العلاقات التي تخدم التحليل. يمكن أن تتكامل عدة قوانين، ولكل منها دور مختلف.",
+        "feedbackArabic": "الاستمرارية تربط التدفق بالمساحة والسرعة، ودارسي–وايزباخ يقدّر فقد الاحتكاك، وبرنولي يوازن الضغط والسرعة والارتفاع وفواقد الطاقة بين نقطتين.",
+        "selection": {
+          "mode": "multiple",
+          "scoreAsFormula": true,
+          "promptArabic": "أي القوانين تساعد في تحليل هذا المقطع المضغوط؟",
+          "options": [
+            {
+              "optionId": "bernoulli",
+              "displayName": "Bernoulli",
+              "descriptionArabic": "موازنة الضغط والسرعة والارتفاع وفواقد الطاقة بين نقطتين.",
+              "feedbackArabic": "مفيد لموازنة الرأس بين نقطتي التغذية والمنطقة مع أخذ الفواقد بالحسبان."
+            },
+            {
+              "optionId": "continuity",
+              "displayName": "معادلة الاستمرارية",
+              "descriptionArabic": "تربط التدفق Q بمساحة المقطع A والسرعة v.",
+              "feedbackArabic": "مفيدة لربط التدفق المقاس بسرعة الجريان في الأنبوب."
+            },
+            {
+              "optionId": "darcy",
+              "displayName": "Darcy–Weisbach",
+              "descriptionArabic": "تقدّر فقد الرأس الناتج عن الاحتكاك في الأنبوب.",
+              "feedbackArabic": "مفيدة لتقدير فقد الاحتكاك بالاعتماد على الطول والقطر والخشونة والسرعة."
+            },
+            {
+              "optionId": "ohm",
+              "displayName": "قانون أوم",
+              "descriptionArabic": "يصف علاقة الجهد والتيار والمقاومة الكهربائية.",
+              "feedbackArabic": "قانون كهربائي، ولا يصف جريان الماء في الأنبوب."
+            },
+            {
+              "optionId": "gas",
+              "displayName": "قانون الغاز المثالي",
+              "descriptionArabic": "يربط ضغط الغاز وحرارته وحجمه.",
+              "feedbackArabic": "ليس علاقة مناسبة لتحليل تدفق الماء في شبكة مضغوطة."
+            },
+            {
+              "optionId": "manning",
+              "displayName": "معادلة ماننغ",
+              "descriptionArabic": "تستخدم عادةً للجريان في القنوات المفتوحة.",
+              "feedbackArabic": "المقطع محل الدراسة أنبوب مضغوط؛ ماننغ ليست العلاقة المناسبة هنا."
+            }
+          ],
+          "correctOptionIds": [
+            "bernoulli",
+            "continuity",
+            "darcy"
+          ],
+          "scoring": {
+            "fullBonus": 3
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط كل قانون بوظيفته الهندسية في التحليل.",
+            "factors": [
+              {
+                "factorId": "balance_energy",
+                "labelArabic": "برنولي لموازنة الضغط والسرعة والارتفاع والطاقة بين النقطتين",
+                "correct": true
+              },
+              {
+                "factorId": "relate_flow_velocity",
+                "labelArabic": "الاستمرارية لربط التدفق بمساحة الأنبوب وسرعة الماء",
+                "correct": true
+              },
+              {
+                "factorId": "estimate_friction",
+                "labelArabic": "دارسي–وايزباخ لتقدير فقد الاحتكاك على طول الأنبوب",
+                "correct": true
+              },
+              {
+                "factorId": "electricity",
+                "labelArabic": "قانون أوم لحساب فقد الضغط في أنبوب الماء",
+                "correct": false
+              },
+              {
+                "factorId": "open_channel",
+                "labelArabic": "ماننغ كقانون رئيسي لهذا الأنبوب المضغوط",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "balance_energy": "موازنة برنولي تشمل الضغط والسرعة والارتفاع وفواقد الطاقة.",
+                "relate_flow_velocity": "من الاستمرارية يمكن ربط Q وA وv.",
+                "estimate_friction": "دارسي–وايزباخ تقدّر فقد الاحتكاك للأنابيب المضغوطة."
+              },
+              "wrongFactor": {
+                "electricity": "قانون أوم يخص الدوائر الكهربائية ولا يحسب فقد الماء.",
+                "open_channel": "ماننغ يرتبط غالبًا بالقنوات المفتوحة، لا بهذا الأنبوب المضغوط."
+              }
+            },
+            "scoring": {
+              "fullBonus": 4,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "خطة الفحص الميداني",
+        "instructionArabic": "اختر القياسات والفحوص التي تساعد على تحديد موضع الفقد وسببه قبل أي تغيير دائم.",
+        "feedbackArabic": "قارن القياسات على جانبي المقطع، وافحص التدفق والصمامات ومستوى الخزان وابحث عن تسرب. لا تغيّر المضخة أو الأنبوب ولا توقف الشبكة كاملةً قبل تحديد الحاجة.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "حدد إجراءات التشخيص المناسبة في هذه المرحلة.",
+          "options": [
+            {
+              "optionId": "pressure_before_after",
+              "displayName": "قياس الضغط قبل المقطع وبعده",
+              "descriptionArabic": "يعزل مقدار التغير عبر الجزء محل الدراسة.",
+              "feedbackArabic": "خطوة مفيدة لتحديد ما إذا كان الفقد يتركز عبر هذا المقطع."
+            },
+            {
+              "optionId": "measure_flow",
+              "displayName": "إعادة قياس التدفق ومقارنته بالمرجع",
+              "descriptionArabic": "يؤكد انخفاض التزويد ويتيح متابعة التغير.",
+              "feedbackArabic": "القياس المتكرر يؤكد التدفق الفعلي ويساعد على تقييم أثر الفحوص."
+            },
+            {
+              "optionId": "visual_inspection",
+              "displayName": "فحص الأنبوب والوصلات بصريًا",
+              "descriptionArabic": "يبحث عن تلف ظاهر أو آثار رطوبة.",
+              "feedbackArabic": "الفحص البصري قد يكشف تلفًا أو آثار تسرب ظاهرة."
+            },
+            {
+              "optionId": "leak_search",
+              "displayName": "البحث عن تسرب على امتداد المسار",
+              "descriptionArabic": "تحقق ميداني من أحد أسباب الفقد المحتملة.",
+              "feedbackArabic": "التسرب احتمال يجب اختباره ميدانيًا، لا افتراضه من القراءات فقط."
+            },
+            {
+              "optionId": "check_valves",
+              "displayName": "فحص وضع الصمامات ودرجة فتحها",
+              "descriptionArabic": "صمام مغلق جزئيًا قد يحد التدفق.",
+              "feedbackArabic": "الصمام المغلق أو العالق قد يسبب مقاومة ويحد التدفق."
+            },
+            {
+              "optionId": "tank_level",
+              "displayName": "التحقق من مستوى خزان التغذية",
+              "descriptionArabic": "يتأكد من توفر التغذية upstream.",
+              "feedbackArabic": "التحقق من الخزان يستبعد نقص التغذية من المصدر."
+            },
+            {
+              "optionId": "replace_pump",
+              "displayName": "تغيير المضخة مباشرة",
+              "descriptionArabic": "إجراء مكلف قبل إثبات أن المضخة سبب العطل.",
+              "feedbackArabic": "تغيير المضخة قبل فحص الشبكة قد لا يعالج تسربًا أو صمامًا مقيدًا."
+            },
+            {
+              "optionId": "increase_diameter",
+              "displayName": "زيادة قطر الأنبوب مباشرة",
+              "descriptionArabic": "تغيير دائم دون تشخيص سبب الانخفاض.",
+              "feedbackArabic": "لا يوجد ما يثبت أن سعة القطر هي سبب العطل؛ يلزم التشخيص أولًا."
+            },
+            {
+              "optionId": "shutdown",
+              "displayName": "إغلاق الشبكة كاملةً دون تشخيص",
+              "descriptionArabic": "يعطل الخدمة دون أن يعزل سبب المشكلة.",
+              "feedbackArabic": "الإغلاق الشامل غير متناسب مع الأدلة وقد يقطع الخدمة بلا داعٍ."
+            }
+          ],
+          "correctOptionIds": [
+            "pressure_before_after",
+            "measure_flow",
+            "visual_inspection",
+            "leak_search",
+            "check_valves",
+            "tank_level"
+          ],
+          "scoring": {
+            "fullBonus": 3
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "لماذا تبدأ بهذه الفحوص قبل استبدال أي معدة؟",
+            "factors": [
+              {
+                "factorId": "isolate_loss",
+                "labelArabic": "قياس الضغط قبل المقطع وبعده يساعد على عزل موضع الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "verify_flow",
+                "labelArabic": "إعادة قياس التدفق تتحقق من الحالة ومتابعة التحسن",
+                "correct": true
+              },
+              {
+                "factorId": "inspect_causes",
+                "labelArabic": "فحص التسرب والصمامات والتغذية يبحث عن أسباب محتملة قابلة للتحقق",
+                "correct": true
+              },
+              {
+                "factorId": "replace_without_evidence",
+                "labelArabic": "تغيير المضخة هو أول خطوة حتى قبل فحص الخط",
+                "correct": false
+              },
+              {
+                "factorId": "full_shutdown",
+                "labelArabic": "إيقاف الشبكة كاملة هو الإجراء التشخيصي الأول دائمًا",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "isolate_loss": "قياسات الضغط على جانبي المقطع تحدد مكان التغير بدل التخمين.",
+                "verify_flow": "قياس التدفق مرجعي لتأكيد الحالة ورصد أي تحسن.",
+                "inspect_causes": "التسرب والصمام والتغذية احتمالات يجب اختبارها ميدانيًا."
+              },
+              "wrongFactor": {
+                "replace_without_evidence": "لا تبدّل المضخة قبل التحقق من أن الخلل منها.",
+                "full_shutdown": "ابدأ بفحوص موضعية آمنة؛ الإغلاق الكامل قرار تشغيلي يحتاج مبررًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 4,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "القرار النهائي",
+        "instructionArabic": "استند إلى المؤشرات، والقوانين، وخطة الفحص التي راجعتها. اختر الإجراء النهائي الأكثر مسؤولية.",
+        "feedbackArabic": "القرار المهني هو متابعة البحث عن تسرب أو فقد غير طبيعي بالقياس والفحص قبل تغيير المضخة أو الأنبوب. النتائج الحالية تحدد مسار التحقيق ولا تثبت عطلًا بعينه.",
+        "selection": {
+          "promptArabic": "ما القرار النهائي الذي توصي به للفريق؟",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — البحث عن تسرب أو فقد هيدروليكي وإجراء فحوص إضافية",
+              "descriptionArabic": "تحقق موضعي قبل اعتماد إصلاح دائم.",
+              "feedbackArabic": "قرار سليم: يجمع قياسات ميدانية ويختبر الأسباب المحتملة قبل التدخل.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — استبدال وحدة الضخ الحالية بمضخة ذات قدرة حصانية أكبر دون إجراء مسح ميداني للشبكة",
+              "descriptionArabic": "لا توجد أدلة كافية على أن المضخة هي سبب المشكلة.",
+              "feedbackArabic": "استبدال المضخة قد يهدر الموارد ولا يعالج تسربًا أو صمامًا مقيدًا."
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — إعادة مد وتوسيع كامل الخط الناقل بأقطار أكبر على افتراض أن المشكلة في السعة التصميمية",
+              "descriptionArabic": "القطر الحالي معلوم ولم يثبت أنه سبب الخلل.",
+              "feedbackArabic": "تغيير القطر قرار تصميمي يحتاج حسابات وأدلة، وليس أول استجابة لهذه القراءات."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — استمرار الضخ بالظروف الحالية استنادًا إلى بقاء قراءات الضغط فوق الحد الأدنى دون تدخل",
+              "descriptionArabic": "وجود ضغط عند التغذية لا يضمن وصول التدفق المطلوب.",
+              "feedbackArabic": "التدفق انخفض 40% عن المعتاد؛ وجود ضغط عند التغذية لا يلغي الحاجة إلى التحقيق."
+            }
+          ],
+          "correctOptionId": "A",
+          "justification": {
+            "prompt": "برر توصيتك النهائية بالاستناد إلى نتائج التشخيص.",
+            "factors": [
+              {
+                "factorId": "flow_drop",
+                "labelArabic": "التدفق المقاس أقل من المعتاد بوضوح",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_path",
+                "labelArabic": "يلزم قياس الضغط على جانبي المقطع لتحديد الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "verify_before_replace",
+                "labelArabic": "الفحوص الإضافية تسبق تغيير المضخة أو الأنبوب",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_means_ok",
+                "labelArabic": "وجود ضغط عند التغذية يعني أن الشبكة سليمة ويمكن تجاهل التدفق",
+                "correct": false
+              },
+              {
+                "factorId": "assume_pump",
+                "labelArabic": "المضخة هي السبب المؤكد حتى دون اختبار",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_drop": "التدفق المقاس أقل من المعتاد بـ12 L/s، وهذا يدعم استمرار التحقيق.",
+                "pressure_path": "قياس الضغط عبر المقطع يساعد على التمييز بين أسباب الفقد.",
+                "verify_before_replace": "الإصلاح الدائم يأتي بعد تحديد السبب بأدلة ميدانية."
+              },
+              "wrongFactor": {
+                "pressure_means_ok": "قراءة ضغط التغذية لا تضمن وصول التدفق المعتاد إلى المنطقة.",
+                "assume_pump": "المعطيات لا تثبت عطل المضخة؛ افحص الخط والصمامات والتسرب أولًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 4,
+              "wrongFactorPenalty": 1,
+              "maxWrongPenalty": 2
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "leakDetector",
+    "valveController",
+    "waterLevelSensor"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "bernoulli",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "ابدأ بمقارنة التدفق المقاس 18 L/s بالتدفق المعتاد 30 L/s، ثم لاحظ الفرق بين قراءتي الضغط.",
+      "scorePenalty": 5
+    },
+    {
+      "textArabic": "الاستمرارية تربط التدفق بالسرعة والمساحة؛ برنولي يوازن الطاقة؛ ودارسي–وايزباخ يقدّر فقد الاحتكاك.",
+      "scorePenalty": 6
+    },
+    {
+      "textArabic": "القراءات تشير إلى مشكلة تحتاج فحصًا، لكنها لا تثبت وحدها تسربًا أو عطل مضخة. قِس وافحص قبل التغيير.",
+      "scorePenalty": 8
+    }
+  ],
+  "timeLimitSeconds": 1200,
+  "scoring": {
+    "calculationAccuracyWeight": 0,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 10,
+    "errorCountWeight": 55,
+    "engineeringDecisionsWeight": 35,
+    "minorMistakePenalty": 3,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أتممت خطوات التشخيص. التدفق الأقل والفرق في الضغط يبرران مزيدًا من القياس والفحص، لكنهما لا يحددان سببًا وحيدًا. اعزل موضع الفقد، وتحقق من التسرب والصمامات والتغذية قبل استبدال المعدات.",
+  "debriefFailureArabic": "انتهى وقت المهمة قبل إكمال التشخيص. تذكّر أن انخفاض التدفق يستدعي مقارنة القياسات وفحص المسار قبل استبدال المعدات."
+}
