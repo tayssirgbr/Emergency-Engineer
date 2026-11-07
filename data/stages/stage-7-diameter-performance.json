@@ -1,0 +1,422 @@
+{
+  "stageId": "L3_S7_DiameterPerformance",
+  "level": 3,
+  "stageIndexInLevel": 2,
+  "titleArabic": "تأثير تغير قطر الأنبوب على الأداء",
+  "briefingArabic": "يعرض فريق التصميم بديلين لنقل التدفق نفسه في خط مستقيم متساوي الطول والخشونة. قارن السرعة وفقد الاحتكاك، ثم استخدم حدود التشغيل المحددة لاختيار البديل. الأرقام تقدير أولي ولا تمثل محاكاة للشبكة.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "مصدر A",
+        "kind": "reservoir",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "مخرج A",
+        "kind": "consumer",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "مصدر B",
+        "kind": "reservoir",
+        "elevationMeters": 102
+      },
+      {
+        "nodeId": "مخرج B",
+        "kind": "consumer",
+        "elevationMeters": 102
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخيار A",
+        "fromNodeId": "مصدر A",
+        "toNodeId": "مخرج A",
+        "lengthMeters": 100,
+        "diameterMm": 100,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "الخيار B",
+        "fromNodeId": "مصدر B",
+        "toNodeId": "مخرج B",
+        "lengthMeters": 100,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q",
+      "displayNameArabic": "التدفق المطلوب في كل بديل",
+      "value": 0.02,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D_A",
+      "displayNameArabic": "قطر البديل A",
+      "value": 0.1,
+      "unit": "m"
+    },
+    {
+      "key": "D_B",
+      "displayNameArabic": "قطر البديل B",
+      "value": 0.15,
+      "unit": "m"
+    },
+    {
+      "key": "L",
+      "displayNameArabic": "طول كل بديل",
+      "value": 100,
+      "unit": "m"
+    },
+    {
+      "key": "f",
+      "displayNameArabic": "معامل الاحتكاك نفسه في البديلين",
+      "value": 0.02,
+      "unit": "—"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "تسارع الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    },
+    {
+      "key": "V_limit",
+      "displayNameArabic": "حد السرعة التصميمي للمقارنة",
+      "value": 1.5,
+      "unit": "m/s"
+    },
+    {
+      "key": "hf_limit",
+      "displayNameArabic": "حد فقد الرأس الاحتكاكي المقبول",
+      "value": 2,
+      "unit": "m"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — تثبيت شروط المقارنة",
+        "instructionArabic": "اعزل أثر القطر عن بقية العوامل قبل مقارنة الأنبوبين.",
+        "feedbackArabic": "التدفق والطول ومعامل الاحتكاك متساوية بين البديلين؛ لذلك يعكس اختلاف السرعة والفقد هنا اختلاف القطر ضمن افتراضات المقارنة.",
+        "selection": {
+          "promptArabic": "أي وصف يحدد مقارنة عادلة بين A وB؟",
+          "options": [
+            {
+              "optionId": "controlled",
+              "displayName": "التدفق 0.02 m³/s والطول 100 m ومعامل f=0.02 متساوية؛ القطر هو المتغير الأساسي",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ ثبت العوامل الأخرى لعزل أثر القطر."
+            },
+            {
+              "optionId": "flow_changes",
+              "displayName": "قارن سرعة الأنبوبين بافتراض أن التدفق مختلف في كل منهما",
+              "feedbackArabic": "المسألة تنص على التدفق نفسه؛ تغيير Q يخلط أثره بأثر القطر."
+            },
+            {
+              "optionId": "length_changes",
+              "displayName": "اعتبر طول A أقصر ومعامل احتكاكه أقل رغم تساوي القيم",
+              "feedbackArabic": "الطول ومعامل الاحتكاك متساويان حسب المعطيات."
+            },
+            {
+              "optionId": "area_same",
+              "displayName": "تجاهل القطر لأن تدفق البديلين متساوٍ",
+              "feedbackArabic": "تساوي التدفق لا يعني تساوي مساحة المقطع أو السرعة."
+            }
+          ],
+          "correctOptionId": "controlled",
+          "justification": {
+            "prompt": "ما الشروط التي تسمح بعزو الفرق للقطر؟",
+            "factors": [
+              {
+                "factorId": "same_q",
+                "labelArabic": "التدفق المطلوب متساوٍ في A وB",
+                "correct": true
+              },
+              {
+                "factorId": "same_l",
+                "labelArabic": "طول المقطعين متساوٍ",
+                "correct": true
+              },
+              {
+                "factorId": "same_f",
+                "labelArabic": "معامل الاحتكاك متساوٍ في المقارنة",
+                "correct": true
+              },
+              {
+                "factorId": "flow_as_confounder",
+                "labelArabic": "غيّر التدفق مع القطر لكي تعزل أثر القطر",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "same_q": "ثبت Q في البديلين حتى تفسر أثر المساحة وحدها.",
+                "same_l": "الطول يدخل في نسبة الفقد، لذا يجب تثبيته.",
+                "same_f": "تغير f سيغير الفقد ويخلط نتيجة المقارنة."
+              },
+              "wrongFactor": {
+                "flow_as_confounder": "تغيير Q يمنع عزل أثر D."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — اختيار العلاقات للمقارنة",
+        "instructionArabic": "احسب السرعة في كل بديل ثم قارن فقد الاحتكاك عند ثبات الطول ومعامل الاحتكاك.",
+        "feedbackArabic": "تربط الاستمرارية Q بالسرعة والمساحة، وتقدر Darcy–Weisbach فقد الرأس من f وL/D والسرعة.",
+        "selection": {
+          "mode": "multiple",
+          "scoreAsFormula": true,
+          "promptArabic": "أي العلاقات تخدم التحليل، وما دور كل منها؟",
+          "options": [
+            {
+              "optionId": "continuity",
+              "displayName": "الاستمرارية V=Q/A لحساب سرعة كل قطر",
+              "feedbackArabic": "تلزم لأن السرعة تتغير باختلاف المساحة مع ثبات Q."
+            },
+            {
+              "optionId": "darcy",
+              "displayName": "Darcy–Weisbach لحساب فقد الرأس الاحتكاكي",
+              "feedbackArabic": "تربط الفقد بالسرعة والطول والقطر ومعامل الاحتكاك."
+            },
+            {
+              "optionId": "ohm",
+              "displayName": "قانون أوم لحساب فقد الضغط في الأنبوب",
+              "feedbackArabic": "ليس قانون الجريان الهيدروليكي المستخدم هنا."
+            },
+            {
+              "optionId": "manning",
+              "displayName": "Manning كقانون أساسي لأنبوب مضغوط",
+              "feedbackArabic": "معادلة ماننغ مخصصة عادةً لتدفق القنوات المفتوحة، لا هذا الأنبوب المضغوط."
+            }
+          ],
+          "correctOptionIds": [
+            "continuity",
+            "darcy"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط كل علاقة بالكمية التي تحتاجها في المقارنة.",
+            "factors": [
+              {
+                "factorId": "flow_area_speed",
+                "labelArabic": "الاستمرارية تحسب V من Q ومساحة كل بديل",
+                "correct": true
+              },
+              {
+                "factorId": "diameter_loss",
+                "labelArabic": "Darcy–Weisbach يقارن hf باستخدام L/D وV²",
+                "correct": true
+              },
+              {
+                "factorId": "same_q_condition",
+                "labelArabic": "يجب تطبيق التدفق نفسه على البديلين",
+                "correct": true
+              },
+              {
+                "factorId": "manning_pipe",
+                "labelArabic": "Manning هو قانون هذا الأنبوب المضغوط",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_area_speed": "احسب السرعة من Q/A لكل قطر على حدة.",
+                "diameter_loss": "القطر يظهر في Darcy–Weisbach مباشرةً ويغير السرعة أيضًا.",
+                "same_q_condition": "لا تغير شرط التدفق بين التصميمين."
+              },
+              "wrongFactor": {
+                "manning_pipe": "اختر علاقة الجريان في الأنبوب المضغوط المعطاة في الدرس."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — سرعة البديل A",
+        "instructionArabic": "استخدم Q = 0.02 m³/s وD_A = 0.10 m. أدخل V_A بوحدة m/s.",
+        "feedbackArabic": "A_A = π(0.10)²/4 ≈ 0.007854 m²، ثم V_A = Q/A_A ≈ 2.546 m/s.",
+        "calculation": {
+          "targetParameterKey": "V_A (m/s)",
+          "expectedValue": 2.54647908947,
+          "tolerancePercent": 2,
+          "feedbackArabic": "راجع حساب المساحة A_A = π × (0.10)² / 4، ثم V = Q / A_A مع Q = 0.02 m³/s."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — سرعة البديل B",
+        "instructionArabic": "استخدم التدفق نفسه وD_B = 0.15 m. أدخل V_B بوحدة m/s.",
+        "feedbackArabic": "A_B ≈ 0.017671 m²، لذلك V_B = 0.02/A_B ≈ 1.132 m/s؛ القطر الأكبر خفض السرعة في هذه المقارنة.",
+        "calculation": {
+          "targetParameterKey": "V_B (m/s)",
+          "expectedValue": 1.13176848421,
+          "tolerancePercent": 2,
+          "feedbackArabic": "راجع حساب المساحة A_B = π × (0.15)² / 4، ثم V = Q / A_B مع التدفق نفسه 0.02 m³/s."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "5 — فقد الرأس في البديل A",
+        "instructionArabic": "استخدم Darcy–Weisbach مع f=0.02 وL=100 m وD_A=0.10 m والسرعة التي حسبتها. أدخل h_f بوحدة m.",
+        "feedbackArabic": "h_fA = 0.02 × (100/0.10) × (V_A²/(2×9.81)) ≈ 6.61 m.",
+        "calculation": {
+          "targetParameterKey": "h_fA (m)",
+          "expectedValue": 6.61014857605,
+          "tolerancePercent": 3,
+          "feedbackArabic": "تأكد من تطبيق معادلة دارسي-فايسباخ: h_f = f × (L/D) × (V² / (2g)) مع D = 0.10 m وسرعة البديل A."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "6 — فقد الرأس في البديل B",
+        "instructionArabic": "كرر العلاقة للبديل B باستخدام D_B=0.15 m وV_B. أدخل h_f بوحدة m.",
+        "feedbackArabic": "h_fB = 0.02 × (100/0.15) × (V_B²/(2×9.81)) ≈ 0.87 m.",
+        "calculation": {
+          "targetParameterKey": "h_fB (m)",
+          "expectedValue": 0.870472240468,
+          "tolerancePercent": 3,
+          "feedbackArabic": "تأكد من تطبيق معادلة دارسي-فايسباخ مع D = 0.15 m وسرعة البديل B وتربيع السرعة V²."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "7 — اختيار البديل وفق القيود",
+        "instructionArabic": "قارن نتائج السرعة وفقد الرأس بحدي التصميم: V ≤ 1.5 m/s وh_f ≤ 2 m. اختر التصميم الأنسب ضمن هذه الافتراضات.",
+        "feedbackArabic": "البديل A يتجاوز حدي السرعة والفقد (2.55 m/s و6.61 m). البديل B يحقق الحدين (1.13 m/s و0.87 m) عند التدفق المطلوب؛ اعتماد تصميم نهائي ما زال يتطلب مراجعة التكلفة والضغوط الفعلية.",
+        "selection": {
+          "promptArabic": "أي بديل يحقق حدود السرعة وفقد الرأس المعطاة؟",
+          "options": [
+            {
+              "optionId": "B",
+              "displayName": "البديل B بقطر 0.15 m؛ يحقق V_limit وhf_limit معًا",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح وفق حدود المسألة: V_B≈1.13 m/s وh_fB≈0.87 m."
+            },
+            {
+              "optionId": "A",
+              "displayName": "البديل A لأنه أصغر وأسرع في نقل الماء",
+              "feedbackArabic": "سرعته وفقده أكبر من الحدين المحددين."
+            },
+            {
+              "optionId": "either",
+              "displayName": "البديلان متكافئان لأن Q متساوٍ",
+              "feedbackArabic": "تساوي Q لا يلغي أثر القطر في السرعة والفقد."
+            },
+            {
+              "optionId": "replace",
+              "displayName": "غيّر المضخة بدل فحص مواصفات الأنبوب",
+              "feedbackArabic": "المقارنة لا تقدم دليلًا على عطل المضخة؛ أحد البديلين يحقق القيود الهيدروليكية."
+            }
+          ],
+          "correctOptionId": "B",
+          "justification": {
+            "prompt": "استند إلى الحسابين وحدود التشغيل قبل اعتماد التوصية.",
+            "factors": [
+              {
+                "factorId": "A_velocity_exceeds",
+                "labelArabic": "سرعة A تقارب 2.55 m/s وتتجاوز حد 1.5 m/s",
+                "correct": true
+              },
+              {
+                "factorId": "A_loss_exceeds",
+                "labelArabic": "فقد A يقارب 6.61 m ويتجاوز حد 2 m",
+                "correct": true
+              },
+              {
+                "factorId": "B_meets",
+                "labelArabic": "B يعطي 1.13 m/s وفقدًا يقارب 0.87 m، ضمن الحدين",
+                "correct": true
+              },
+              {
+                "factorId": "flow_equal_no_difference",
+                "labelArabic": "تساوي Q يجعل السرعة والفقد متساويين",
+                "correct": false
+              },
+              {
+                "factorId": "pump_assumed",
+                "labelArabic": "النتائج تثبت أن المضخة تحتاج إلى الاستبدال",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "A_velocity_exceeds": "قارن سرعة A بحد التشغيل المذكور.",
+                "A_loss_exceeds": "قارن فقد A بحد الفقد التصميمي.",
+                "B_meets": "تحقق من أن B يحقق السرعة والفقد معًا."
+              },
+              "wrongFactor": {
+                "flow_equal_no_difference": "المساحة تختلف حتى مع ثبات Q.",
+                "pump_assumed": "البدائل تقارن الأنبوبين ولا تختبر المضخة."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pipeDiameterTool",
+    "pressureGauge"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "قارن المساحة باستخدام مربع القطر؛ A_B/A_A = (0.15/0.10)² = 2.25.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "احسب V لكل بديل من Q/A، ثم عوض كل سرعة وقطر في Darcy–Weisbach.",
+      "scorePenalty": 4
+    },
+    {
+      "textArabic": "قارن نتائجك مباشرةً بحدي التصميم المعطيين؛ لا تستنتج عطل المضخة من مقارنة الأنبوبين.",
+      "scorePenalty": 5
+    }
+  ],
+  "timeLimitSeconds": 1200,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 45,
+    "correctFormulaWeight": 15,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 15,
+    "engineeringDecisionsWeight": 20,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "قارنت البديلين على أساس التدفق والطول ومعامل الاحتكاك نفسها. القطر الأكبر خفض السرعة وفقد الرأس وحقق حدود التصميم المعطاة؛ القرار يظل أوليًا إلى أن تراجع قيود الخدمة والكلفة والقياسات الواقعية.",
+  "debriefFailureArabic": "راجع V=Q/A لكل قطر ثم احسب h_f بالسرعة المقابلة لكل بديل. قارن كل نتيجة بحدها المحدد، وتجنب استنتاج عطل المضخة من مقارنة أقطار الأنابيب."
+}

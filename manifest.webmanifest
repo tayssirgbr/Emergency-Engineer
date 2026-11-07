@@ -1,0 +1,35 @@
+{
+  "id": "./",
+  "name": "مهندس الطوارئ الهيدروليكية — Hydraulic Emergency Engineer",
+  "short_name": "مهندس الطوارئ",
+  "description": "لعبة تعليمية لتشخيص الطوارئ الهيدروليكية واتخاذ القرارات الهندسية.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0b1b25",
+  "background_color": "#07131d",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

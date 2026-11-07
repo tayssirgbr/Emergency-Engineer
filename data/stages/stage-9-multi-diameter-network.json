@@ -1,0 +1,493 @@
+{
+  "stageId": "L3_S9_MultiDiameterNetwork",
+  "level": 3,
+  "stageIndexInLevel": 5,
+  "titleArabic": "تحليل شبكة متعددة الأقطار",
+  "briefingArabic": "يتكون الخط من مقطعين متصلين على التوالي، مع إهمال التسرب والفواقد الموضعية. قارن السرعة وفقد الرأس في كل مقطع لتحديد أين يتركز الفقد، ثم اقترح قياسًا ميدانيًا قبل تقرير الإصلاح.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "مدخل",
+        "kind": "reservoir",
+        "elevationMeters": 20
+      },
+      {
+        "nodeId": "مخرج",
+        "kind": "consumer",
+        "elevationMeters": 20
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "A",
+        "fromNodeId": "مدخل",
+        "toNodeId": "وصلة",
+        "lengthMeters": 300,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "B",
+        "fromNodeId": "وصلة",
+        "toNodeId": "مخرج",
+        "lengthMeters": 300,
+        "diameterMm": 100,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q",
+      "displayNameArabic": "التدفق في الخط المتصل",
+      "value": 0.01,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D_A",
+      "displayNameArabic": "قطر المقطع A",
+      "value": 0.15,
+      "unit": "m"
+    },
+    {
+      "key": "D_B",
+      "displayNameArabic": "قطر المقطع B",
+      "value": 0.1,
+      "unit": "m"
+    },
+    {
+      "key": "L_A",
+      "displayNameArabic": "طول المقطع A",
+      "value": 300,
+      "unit": "m"
+    },
+    {
+      "key": "L_B",
+      "displayNameArabic": "طول المقطع B",
+      "value": 300,
+      "unit": "m"
+    },
+    {
+      "key": "f",
+      "displayNameArabic": "معامل Darcy لكلا المقطعين",
+      "value": 0.02,
+      "unit": "—"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "تسارع الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — فهم ترتيب الشبكة",
+        "instructionArabic": "المقطعان متصلان على التوالي ولا يوجد تفرع أو تسرب مفترض. استنتج علاقة التدفق بينهما.",
+        "feedbackArabic": "في هذا النموذج يمر التدفق نفسه في مقطعي التوالي؛ تختلف السرعة لأن المساحة تختلف.",
+        "selection": {
+          "promptArabic": "أي فرضية تلائم النموذج المعطى؟",
+          "options": [
+            {
+              "optionId": "same_flow",
+              "displayName": "يمر Q نفسه في A وB؛ وتتغير V مع القطر",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح وفق فرضية التوالي والاستمرارية."
+            },
+            {
+              "optionId": "split_flow",
+              "displayName": "يتوزع التدفق بالتساوي بين A وB كأنهما فرعان متوازيان",
+              "feedbackArabic": "المقطعان على التوالي، لا فرعان متوازيان."
+            },
+            {
+              "optionId": "same_velocity",
+              "displayName": "سرعة السريان تبقى ثابتة تمامًا في كلا المقطعين استنادًا لثبات معدل التدفق الإجمالي المار",
+              "feedbackArabic": "مع التدفق نفسه، تتغير السرعة بتغير مساحة المقطع."
+            }
+          ],
+          "correctOptionId": "same_flow",
+          "justification": {
+            "prompt": "ما أساس الاستنتاج؟",
+            "factors": [
+              {
+                "factorId": "series",
+                "labelArabic": "المقطعان متصلان على التوالي ولا يوجد تفرع مفترض",
+                "correct": true
+              },
+              {
+                "factorId": "continuity",
+                "labelArabic": "الاستمرارية تجعل التدفق نفسه يمر في المقطعين",
+                "correct": true
+              },
+              {
+                "factorId": "area_velocity",
+                "labelArabic": "اختلاف المساحة يسمح باختلاف السرعة مع ثبات Q",
+                "correct": true
+              },
+              {
+                "factorId": "parallel",
+                "labelArabic": "الشبكة موصوفة بفرعين متوازيين",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "series": "ارجع إلى وصف اتصال المقطعين.",
+                "continuity": "استخدم فرضية الاستمرارية على المسار المتصل.",
+                "area_velocity": "السرعة تعتمد على مساحة المقطع عند Q ثابت."
+              },
+              "wrongFactor": {
+                "parallel": "النموذج يذكر مسارًا متصلًا لا تفرعًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — اختيار المدخلات والقوانين",
+        "instructionArabic": "اختر البيانات والقوانين اللازمة لإيجاد السرعة وفقد الرأس لكل مقطع.",
+        "feedbackArabic": "استخدم Q وقطر كل مقطع لحساب السرعتين، ثم L وD وf وg في Darcy–Weisbach لكل مقطع.",
+        "selection": {
+          "mode": "multiple",
+          "scoreAsFormula": true,
+          "promptArabic": "اختر جميع مدخلات الحساب والعلاقات المناسبة.",
+          "options": [
+            {
+              "optionId": "Q",
+              "displayName": "التدفق Q المشترك",
+              "feedbackArabic": "التدفق Q المشترك ضروري لحساب السرعة في كلا المقطعين المتتاليين."
+            },
+            {
+              "optionId": "D_A_D_B",
+              "displayName": "قطرا المقطعين D_A وD_B",
+              "feedbackArabic": "قطرا المقطعين يحددان مساحة الجريان والسرعة وفقد الاحتكاك في كل جزء."
+            },
+            {
+              "optionId": "L_A_L_B",
+              "displayName": "طولا المقطعين L_A وL_B",
+              "feedbackArabic": "أطوال المقاطع لازمة لحساب فقد الرأس الموزع في كل مقطع."
+            },
+            {
+              "optionId": "f_g",
+              "displayName": "معامل Darcy f والجاذبية g",
+              "feedbackArabic": "معامل الاحتكاك وتسارع الجاذبية يدخلان مباشرة في علاقة Darcy–Weisbach."
+            },
+            {
+              "optionId": "continuity",
+              "displayName": "الاستمرارية V=Q/A",
+              "feedbackArabic": "معادلة الاستمرارية V=Q/A مطلوبة لحساب السرعة في كل مقطع."
+            },
+            {
+              "optionId": "darcy",
+              "displayName": "Darcy–Weisbach لكل مقطع",
+              "feedbackArabic": "معادلة Darcy–Weisbach هي الأساس لحساب فواقد الاحتكاك."
+            },
+            {
+              "optionId": "brand",
+              "displayName": "اسم المصنع بدل معامل الاحتكاك المعطى",
+              "feedbackArabic": "اسم المصنع غير ذي صلة بالحساب الهيدروليكي ما دام معامل الاحتكاك f معطى."
+            },
+            {
+              "optionId": "ohm",
+              "displayName": "قانون أوم",
+              "feedbackArabic": "قانون أوم يختص بالدوائر الكهربائية ولا يطبق على السريان الهيدروليكي."
+            }
+          ],
+          "correctOptionIds": [
+            "Q",
+            "D_A_D_B",
+            "L_A_L_B",
+            "f_g",
+            "continuity",
+            "darcy"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط كل مجموعة بيانات بالدور الذي تؤديه.",
+            "factors": [
+              {
+                "factorId": "velocity",
+                "labelArabic": "Q والقطر يحددان السرعة في كل مقطع",
+                "correct": true
+              },
+              {
+                "factorId": "geometry",
+                "labelArabic": "لكل مقطع طول وقطر خاصان لحساب الفقد",
+                "correct": true
+              },
+              {
+                "factorId": "friction",
+                "labelArabic": "f وg يدخلان في تقدير Darcy–Weisbach",
+                "correct": true
+              },
+              {
+                "factorId": "sequence",
+                "labelArabic": "الاستمرارية تسبق تطبيق Darcy على المقطعين",
+                "correct": true
+              },
+              {
+                "factorId": "brand",
+                "labelArabic": "اسم المصنع مطلوب رغم أن f معطى",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "velocity": "استخدم Q ومساحة كل مقطع.",
+                "geometry": "لا تخلط طول أو قطر المقطعين.",
+                "friction": "أدخل f وg في معادلة الفقد.",
+                "sequence": "احسب السرعات أولًا ثم الفقد."
+              },
+              "wrongFactor": {
+                "brand": "معامل Darcy معطى مباشرة."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — سرعة المقطع A",
+        "instructionArabic": "احسب V_A=Q/(πD_A²/4) بوحدة m/s.",
+        "feedbackArabic": "V_A≈0.566 m/s.",
+        "calculation": {
+          "targetParameterKey": "V_A (m/s)",
+          "expectedValue": 0.5658842421045167,
+          "tolerancePercent": 2,
+          "feedbackArabic": "تأكد من حساب سرعة المقطع A بقسمة التدفق Q على مساحة القطر D_A (V_A = Q / A_A)."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — سرعة المقطع B",
+        "instructionArabic": "احسب V_B=Q/(πD_B²/4) بوحدة m/s.",
+        "feedbackArabic": "V_B≈1.273 m/s؛ القطر الأصغر يعطي سرعة أكبر عند التدفق نفسه.",
+        "calculation": {
+          "targetParameterKey": "V_B (m/s)",
+          "expectedValue": 1.2732395447351625,
+          "tolerancePercent": 2,
+          "feedbackArabic": "تأكد من حساب سرعة المقطع B بقسمة التدفق Q على مساحة القطر D_B (V_B = Q / A_B)."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "5 — فقد الرأس في A",
+        "instructionArabic": "احسب h_fA=f(L_A/D_A)(V_A²/2g) بوحدة m.",
+        "feedbackArabic": "h_fA≈0.653 m.",
+        "calculation": {
+          "targetParameterKey": "h_fA (m)",
+          "expectedValue": 0.652854180351077,
+          "tolerancePercent": 3,
+          "feedbackArabic": "تأكد من التعويض في Darcy–Weisbach بخصائص المقطع A: f × (L_A / D_A) × (V_A² / 2g)."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "6 — فقد الرأس في B",
+        "instructionArabic": "احسب h_fB=f(L_B/D_B)(V_B²/2g) بوحدة m.",
+        "feedbackArabic": "h_fB≈4.958 m؛ وهو أكبر بكثير من الفقد في A.",
+        "calculation": {
+          "targetParameterKey": "h_fB (m)",
+          "expectedValue": 4.9576114320409905,
+          "tolerancePercent": 3,
+          "feedbackArabic": "تأكد من التعويض في Darcy–Weisbach بخصائص المقطع B: f × (L_B / D_B) × (V_B² / 2g)."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "7 — تحديد موضع الفقد الأكبر",
+        "instructionArabic": "اجمع الفقدين وقدّر مساهمة المقطع B، مع اعتبار النتائج تقديرًا وفق افتراضات المسألة.",
+        "feedbackArabic": "المجموع نحو 5.61 m. يسهم B بنحو 88% من الفقد المحسوب (نحو 7.6 مرات فقد A). هذا يحدد أولوية الفحص في النموذج ولا يثبت وجود عطل.",
+        "selection": {
+          "promptArabic": "أي استنتاج كمي صحيح؟",
+          "options": [
+            {
+              "optionId": "B_priority",
+              "displayName": "فقد B≈4.96 m من إجمالي≈5.61 m، أي نحو 88%؛ فيستحق أولوية القياس",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح، مع بقاء السبب بحاجة إلى قياس ميداني."
+            },
+            {
+              "optionId": "A_priority",
+              "displayName": "المقطع A ذو القطر الأوسع يستحوذ على الحصة الأكبر من فواقد الاحتكاك لزيادة مساحته السطحية المبللة",
+              "feedbackArabic": "قيمة Darcy المحسوبة في A أصغر بكثير من B."
+            },
+            {
+              "optionId": "same_loss",
+              "displayName": "فقد الرأس في المقطعين A وB متماثل تمامًا بسبب تطابق الطول الهندسي لكل منهما عند 50 مترًا",
+              "feedbackArabic": "القطر والسرعة مختلفان، لذا لا يكفي تساوي الطول."
+            },
+            {
+              "optionId": "proven_fault",
+              "displayName": "النتيجة النظرية تقدم دليلاً قاطعًا لا يحتمل الشك على حدوث انسداد فيزيائي كامل داخل المقطع B",
+              "feedbackArabic": "النموذج يقدر الفقد ولا يثبت انسدادًا فعليًا."
+            }
+          ],
+          "correctOptionId": "B_priority",
+          "justification": {
+            "prompt": "ما الذي يجعل B أولوية للفحص دون الجزم بسبب؟",
+            "factors": [
+              {
+                "factorId": "sum",
+                "labelArabic": "الفقد الكلي يقارب 5.61 m",
+                "correct": true
+              },
+              {
+                "factorId": "share",
+                "labelArabic": "مساهمة B تقارب 88% من الفقد المحسوب",
+                "correct": true
+              },
+              {
+                "factorId": "model",
+                "labelArabic": "الأولوية الحسابية لا تثبت وجود عطل ميداني",
+                "correct": true
+              },
+              {
+                "factorId": "clog_proven",
+                "labelArabic": "القيم تثبت انسداد B قطعًا",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "sum": "اجمع فقد المقطعين للمقارنة.",
+                "share": "قارن h_fB بالمجموع لا بالطول وحده.",
+                "model": "افصل بين التقدير النظري والإثبات الميداني."
+              },
+              "wrongFactor": {
+                "clog_proven": "يلزم قياس وفحص لتحديد السبب الفعلي."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "8 — خطة التحقق الهندسي",
+        "instructionArabic": "اقترح خطوة ميدانية تراجع الفرضيات وتحدد موضع هبوط الضغط قبل أي إصلاح دائم.",
+        "feedbackArabic": "تحقق من التدفق والأقطار ومعامل الاحتكاك، وقس الضغط قبل المقطع B وبعده، ثم قرر وفق النتائج وإجراءات الموقع.",
+        "selection": {
+          "promptArabic": "ما الإجراء التالي الأكثر مسؤولية؟",
+          "options": [
+            {
+              "optionId": "measure_B",
+              "displayName": "التحقق من Q والأبعاد وقياس الضغط قبل B وبعده لتحديد الهبوط الفعلي",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ يختبر النموذج ويحدد موضع الفقد ميدانيًا."
+            },
+            {
+              "optionId": "replace_B",
+              "displayName": "استبدال المقطع B بقطر أوسع على الفور استنادًا إلى أن النتيجة الحسابية أثبتت وجود خلل فيزيائي",
+              "feedbackArabic": "الحساب لا يثبت انسدادًا ولا يكفي لتقرير الاستبدال."
+            },
+            {
+              "optionId": "increase_pump",
+              "displayName": "رفع ضغط محطة الضخ بصورة مباشرة لتعويض الانخفاض المسجل دون إجراء قياسات تفصيلية على المقطع B",
+              "feedbackArabic": "لا يحدد هذا الإجراء موضع الفقد وقد يخفي السبب."
+            }
+          ],
+          "correctOptionId": "measure_B",
+          "justification": {
+            "prompt": "اختر أدلة وخطوات التحقق المناسبة.",
+            "factors": [
+              {
+                "factorId": "verify_inputs",
+                "labelArabic": "التحقق من التدفق والأبعاد ومعامل الاحتكاك",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_pair",
+                "labelArabic": "قياس الضغط قبل B وبعده لتحديد الهبوط الموضعي",
+                "correct": true
+              },
+              {
+                "factorId": "no_certain_cause",
+                "labelArabic": "عدم اعتبار الحساب إثباتًا لانسداد أو عطل بعينه",
+                "correct": true
+              },
+              {
+                "factorId": "replace_now",
+                "labelArabic": "التعديل الدائم يسبق القياس والتحقق",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "verify_inputs": "راجع مدخلات الحساب ميدانيًا.",
+                "pressure_pair": "القياس على جانبي المقطع يساعد على تحديد الفقد.",
+                "no_certain_cause": "ابق التشخيص مفتوحًا حتى تتوفر الأدلة."
+              },
+              "wrongFactor": {
+                "replace_now": "اجمع القياسات قبل تقرير الإصلاح."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pressureGauge",
+    "pipeDiameterTool"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "في المقطعين على التوالي، استخدم Q نفسه ثم احسب مساحة كل قطر على حدة.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "احسب V لكل مقطع، ثم عوّض سرعته وطوله وقطره في Darcy–Weisbach.",
+      "scorePenalty": 4
+    },
+    {
+      "textArabic": "اجمع الفقدين وقارن مساهمة B بالمجموع؛ الحساب يحدد أولوية القياس ولا يثبت عطلًا.",
+      "scorePenalty": 5
+    }
+  ],
+  "timeLimitSeconds": 1500,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 45,
+    "correctFormulaWeight": 15,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 15,
+    "engineeringDecisionsWeight": 20,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "حسبت السرعة والفقد لكل مقطع على حدة، وحددت أن B يمثل معظم الفقد المقدر. استخدم ذلك لترتيب القياس الميداني، لا لإثبات عطل قبل التحقق.",
+  "debriefFailureArabic": "راجع ثبات التدفق في مقطعي التوالي، واحسب V=Q/A لكل قطر. بعد ذلك طبق Darcy–Weisbach لكل مقطع واجمع القيم قبل تحديد أولوية الفحص."
+}

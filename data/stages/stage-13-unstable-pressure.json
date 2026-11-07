@@ -1,0 +1,486 @@
+{
+  "stageId": "L3_S13_UnstablePressure",
+  "level": 3,
+  "stageIndexInLevel": 12,
+  "titleArabic": "المرحلة 13 — تحليل عدم استقرار الضغط أثناء التشغيل",
+  "briefingArabic": "تغير الضغط والتدفق وموضع الصمام خلال فترة تشغيل قصيرة. افحص تزامن الإشارات وتكرارها قبل وصف نمط العابر أو نسبته إلى سبب بعينه.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "منبع",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مقطع الفحص",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مستهلك",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخط قيد الفحص",
+        "fromNodeId": "منبع",
+        "toNodeId": "مستهلك",
+        "lengthMeters": 100,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "P0",
+      "displayNameArabic": "ضغط عند البداية",
+      "value": 3,
+      "unit": "bar"
+    },
+    {
+      "key": "P10",
+      "displayNameArabic": "ضغط بعد 10 ثوان",
+      "value": 2.4,
+      "unit": "bar"
+    },
+    {
+      "key": "P30",
+      "displayNameArabic": "ضغط بعد 30 ثانية",
+      "value": 2.7,
+      "unit": "bar"
+    },
+    {
+      "key": "Q0",
+      "displayNameArabic": "التدفق عند البداية",
+      "value": 0.018,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q10",
+      "displayNameArabic": "التدفق بعد 10 ثوان",
+      "value": 0.013,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q30",
+      "displayNameArabic": "التدفق بعد 30 ثانية",
+      "value": 0.016,
+      "unit": "m3/s"
+    },
+    {
+      "key": "valve0",
+      "displayNameArabic": "فتحة الصمام عند البداية",
+      "value": 80,
+      "unit": "%"
+    },
+    {
+      "key": "valve10",
+      "displayNameArabic": "فتحة الصمام بعد 10 ثوان",
+      "value": 55,
+      "unit": "%"
+    },
+    {
+      "key": "valve30",
+      "displayNameArabic": "فتحة الصمام بعد 30 ثانية",
+      "value": 72,
+      "unit": "%"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — قراءة التسلسل",
+        "instructionArabic": "قارن العينات الزمنية بدل انتقاء قراءة واحدة.",
+        "feedbackArabic": "السجل يثبت تغيرًا مرصودًا فقط.",
+        "selection": {
+          "promptArabic": "ما الذي يظهر في السجل؟",
+          "options": [
+            {
+              "optionId": "steady",
+              "displayName": "الضغط والتدفق مستقران تمامًا عند القيم التصميمية دون أي تذبذب يذكر عبر السجل",
+              "meetsRequirements": false,
+              "feedbackArabic": "سجلات الضغط والتدفق توضح تذبذبًا واضحًا مع الزمن وليست ثابتة عند خط الأساس."
+            },
+            {
+              "optionId": "surge",
+              "displayName": "تذبذب الضغط يمثل موجة طرق مائي فورية حادة نتجت عن إغلاق مفاجئ لصمام القفل السريع أحدثت صدمة في جدار الأنبوب",
+              "meetsRequirements": false,
+              "feedbackArabic": "معدل أخذ العينات المعطى وتدرج القراءات لا يثبتان حدوث موجة طرق مائي فائقة السرعة."
+            },
+            {
+              "optionId": "vary",
+              "displayName": "تغيرت قراءات الضغط والتدفق وموضع الصمام مع الزمن؛ يلزم تحديد هل القياس متزامن ومتكرر",
+              "meetsRequirements": true,
+              "feedbackArabic": "الاختيار صحيح: السجل يوضح تغيرات ديناميكية متزامنة في الضغط وموضع الصمام تستلزم تدقيقًا."
+            }
+          ],
+          "correctOptionId": "vary",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "القيم تتحرك معًا جزئيًا، لكن دقة العينة لا تكفي وحدها لتحديد عابر سريع.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — جودة البيانات",
+        "instructionArabic": "اختر وسائل تحسين المقارنة الزمنية.",
+        "feedbackArabic": "قارن الإشارات في الوقت نفسه وبمعدل أخذ عينات موثق.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما الذي تجمعه؟",
+          "options": [
+            {
+              "optionId": "sync",
+              "displayName": "تزامن ساعات الضغط والتدفق وموضع الصمام",
+              "feedbackArabic": "تزامن الساعات يضمن ربط حركة الصمام بالتغير اللحظي في الضغط والتدفق."
+            },
+            {
+              "optionId": "repeat",
+              "displayName": "إعادة التسجيل بفواصل زمنية معروفة",
+              "feedbackArabic": "التسجيل بفواصل زمنية منتظمة يوضح نمط التذبذب هل هو عابر أم مستمر."
+            },
+            {
+              "optionId": "cal",
+              "displayName": "فحص المعايرة والاستجابة الزمنية للمجسات",
+              "feedbackArabic": "التحقق من زمن استجابة المجسات يستبعد أخطاء التأخير والتأرجح الناتجة عن الأجهزة."
+            },
+            {
+              "optionId": "peak",
+              "displayName": "اعتماد أعلى قراءة فقط",
+              "feedbackArabic": "اعتماد الذروة فقط يتجاهل السلوك الزمني الكامل للتذبذب الهيدروليكي."
+            },
+            {
+              "optionId": "ops",
+              "displayName": "تسجيل أوامر التشغيل والأحداث المصاحبة",
+              "feedbackArabic": "توثيق أحداث التشغيل يربط التذبذب بأي مناورات صمامات أو تشغيل مضخات مصاحبة."
+            },
+            {
+              "optionId": "guess",
+              "displayName": "افتراض سبب التذبذب دون مراجعة السجل",
+              "feedbackArabic": "التخمين دون مراجعة السجل الزمني يقود لافتراضات خاطئة حول سبب عدم الاستقرار."
+            }
+          ],
+          "correctOptionIds": [
+            "sync",
+            "repeat",
+            "cal",
+            "ops"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "تزامن الأجهزة ومعايرتها ومقارنة سجل الأوامر يميز علاقة الحدث بالاستجابة.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — مقدار هبوط الضغط",
+        "instructionArabic": "احسب P0−P10.",
+        "feedbackArabic": "الهبوط بين أول عينة وعينة 10 ثوانٍ يساوي 0.6 bar.",
+        "calculation": {
+          "targetParameterKey": "ΔP (bar)",
+          "expectedValue": 0.6,
+          "tolerancePercent": 2,
+          "feedbackArabic": "احسب مقدار انخفاض الضغط بطرح القراءة عند الدقيقة العاشرة من القراءة الابتدائية: ΔP = P₀ − P₁₀."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — تفسير ارتباط الإشارات",
+        "instructionArabic": "اختر تفسيرًا لا يتجاوز ما يثبته السجل.",
+        "feedbackArabic": "لا تصف الطرق المائي دون قياس زمني ملائم أو دليل مباشر.",
+        "selection": {
+          "promptArabic": "ما النتيجة المدعومة؟",
+          "options": [
+            {
+              "optionId": "correlated",
+              "displayName": "التغير متزامن ظاهريًا مع تغير فتحة الصمام؛ يلزم تكرار مضبوط للتحقق من العلاقة",
+              "meetsRequirements": true,
+              "feedbackArabic": "استنتاج علمي منضبط: الربط المتزامن يرجح العلاقة لكنه يتطلب اختبارًا محكومًا لإثبات السببية."
+            },
+            {
+              "optionId": "cause",
+              "displayName": "حركة ساق الصمام تثبت بصفة قاطعة أنها السبب الأوحد والمباشر لكافة تذبذبات الضغط",
+              "meetsRequirements": false,
+              "feedbackArabic": "الارتباط الظاهري لا يثبت بمفرده أن الصمام هو المسبب دون استبعاد اضطرابات المنبع."
+            },
+            {
+              "optionId": "waterhammer",
+              "displayName": "البيانات تقدم برهانًا حاسمًا على حدوث ظاهرة الطرق المائي التدميري داخل مسار الأنبوب",
+              "meetsRequirements": false,
+              "feedbackArabic": "أزمنة التغير المرصودة أبطأ بكثير من مقاييس الطرق المائي العابر اللحظي."
+            }
+          ],
+          "correctOptionId": "correlated",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "فتحة الصمام والتدفق والضغط تغيرت عبر العينات، لكن سجلًا بطيئًا لا يثبت عابرًا سريعًا أو السببية.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — اختبار مضبوط",
+        "instructionArabic": "اختر طريقة اختبار قابلة للمقارنة وآمنة.",
+        "feedbackArabic": "التزم بحدود التشغيل والحمايات.",
+        "selection": {
+          "promptArabic": "كيف تختبر الفرضية؟",
+          "options": [
+            {
+              "optionId": "rapid",
+              "displayName": "تحريك الصمام يدويًا بسرعات عشوائية مفاجئة لمراقبة قفزة الضغط الناتجة عن الحركة ورصد مدى استجابة المنظومة الحركية",
+              "meetsRequirements": false,
+              "feedbackArabic": "المناورة العشوائية المفاجئة قد تسبب صدمات هيدروليكية خطرة وتزيد من اضطراب الشبكة."
+            },
+            {
+              "optionId": "controlled",
+              "displayName": "وثق حالة البداية، غير متغيرًا تشغيليًا واحدًا ضمن حدود الموقع، وسجل الإشارات المتزامنة",
+              "meetsRequirements": true,
+              "feedbackArabic": "منهج تجريبي سليم: عزل المتغيرات وتغيير عامل واحد بتوثيق متزامن يثبت السبب بدقة."
+            },
+            {
+              "optionId": "disable",
+              "displayName": "تعطيل مجسات الحماية وصمامات الأمان مؤقتًا لتفادي انقطاع التسجيل أثناء التجربة",
+              "meetsRequirements": false,
+              "feedbackArabic": "إلغاء أجهزة الحماية يشكل خطرًا تشغيليًا بالغًا ولا يعالج عدم الاستقرار."
+            }
+          ],
+          "correctOptionId": "controlled",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "تغيير واحد موثق يجعل المقارنة أقدر على اختبار العلاقة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — القرار",
+        "instructionArabic": "ما الخلاصة التشغيلية المؤقتة؟",
+        "feedbackArabic": "حافظ على الحمايات واتبع حدود الإنذار والإيقاف المعتمدة.",
+        "selection": {
+          "promptArabic": "اختر القرار.",
+          "options": [
+            {
+              "optionId": "ignore",
+              "displayName": "تجاهل تسجيلات التذبذب ما دام الضغط قد عاد تلقائيًا للاقتراب من حده الأدنى",
+              "meetsRequirements": false,
+              "feedbackArabic": "التجاهل قد يؤدي إلى تفاقم عدم الاستقرار وتلف الأجهزة أو الأنابيب مع تكرار التذبذب."
+            },
+            {
+              "optionId": "trip",
+              "displayName": "إلغاء إنذارات الضغط العالي والمنخفض في لوحة التحكم لإكمال ضخ المياه دون إزعاج ودون تعطيل دورة التغذية اليومية للمدينة",
+              "meetsRequirements": false,
+              "feedbackArabic": "كتم الإنذارات إجراء خطير يحرم المشغل من التحذير المبكر عند تجاوز الحدود الآمنة."
+            },
+            {
+              "optionId": "monitor",
+              "displayName": "اعتبر الحالة تغيرًا يحتاج مراقبة وتحققًا؛ لا تثبت السبب أو تعطل الحماية، وصعّد إذا تجاوزت حدود التشغيل",
+              "meetsRequirements": true,
+              "feedbackArabic": "قرار تشغيلي حكيم: متابعة حذرة مع الحفاظ الكامل على أنظمة السلامة والجاهزية للتصعيد."
+            }
+          ],
+          "correctOptionId": "monitor",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "القراءات متغيرة ولم يثبت سببها أو تجاوز الحدود باستمرار.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "valveController"
+  ],
+  "availableFormulas": [
+    "bernoulli"
+  ],
+  "hints": [
+    {
+      "textArabic": "رتب القياسات زمنيًا وافحص تزامنها.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "فرق الضغط بين أول عينة والعينة التالية يصف مقدار التغير فقط.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "السجل الحالي لا يثبت عابرًا سريعًا أو سببًا وحيدًا.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 900,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 10,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 3,
+    "errorCountWeight": 27,
+    "engineeringDecisionsWeight": 60,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

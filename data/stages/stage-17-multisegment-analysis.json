@@ -1,0 +1,538 @@
+{
+  "stageId": "L3_S17_MultisegmentNetwork",
+  "level": 3,
+  "stageIndexInLevel": 16,
+  "titleArabic": "المرحلة 17 — تحليل شبكة متعددة المقاطع",
+  "briefingArabic": "خط تسلسلي من ثلاثة مقاطع يمر فيه التدفق نفسه وفق فرضية الاستقرار وعدم وجود سحب جانبي. احسب السرعات والفقد الموزع لكل مقطع، ثم حدد أين تتركز الحاجة إلى قياسات ضغط إضافية.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "منبع",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "نهاية A",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "نهاية B",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "المصب",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "A",
+        "fromNodeId": "منبع",
+        "toNodeId": "نهاية A",
+        "lengthMeters": 100,
+        "diameterMm": 200,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "B",
+        "fromNodeId": "نهاية A",
+        "toNodeId": "نهاية B",
+        "lengthMeters": 150,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      },
+      {
+        "pipeId": "C",
+        "fromNodeId": "نهاية B",
+        "toNodeId": "المصب",
+        "lengthMeters": 80,
+        "diameterMm": 100,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q",
+      "displayNameArabic": "التدفق المستقر",
+      "value": 0.012,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D_A",
+      "displayNameArabic": "قطر A",
+      "value": 0.2,
+      "unit": "m"
+    },
+    {
+      "key": "L_A",
+      "displayNameArabic": "طول A",
+      "value": 100,
+      "unit": "m"
+    },
+    {
+      "key": "f_A",
+      "displayNameArabic": "معامل A",
+      "value": 0.02,
+      "unit": "—"
+    },
+    {
+      "key": "D_B",
+      "displayNameArabic": "قطر B",
+      "value": 0.15,
+      "unit": "m"
+    },
+    {
+      "key": "L_B",
+      "displayNameArabic": "طول B",
+      "value": 150,
+      "unit": "m"
+    },
+    {
+      "key": "f_B",
+      "displayNameArabic": "معامل B",
+      "value": 0.02,
+      "unit": "—"
+    },
+    {
+      "key": "D_C",
+      "displayNameArabic": "قطر C",
+      "value": 0.1,
+      "unit": "m"
+    },
+    {
+      "key": "L_C",
+      "displayNameArabic": "طول C",
+      "value": 80,
+      "unit": "m"
+    },
+    {
+      "key": "f_C",
+      "displayNameArabic": "معامل C",
+      "value": 0.02,
+      "unit": "—"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — فرضية الشبكة",
+        "instructionArabic": "قبل الحساب، حدد ما يلزم افتراضه لمقارنة المقاطع التسلسلية.",
+        "feedbackArabic": "اذكر الافتراضات وحدود المقارنة.",
+        "selection": {
+          "promptArabic": "أي وصف مناسب؟",
+          "options": [
+            {
+              "optionId": "series",
+              "displayName": "مقاطع متصلة على التوالي، Q ثابت، والارتفاع والفواقد الموضعية مهملة في هذا الحساب الجزئي",
+              "meetsRequirements": true,
+              "feedbackArabic": "توصيف دقيق للفرضية: السريان المتوالي يفرض ثبات معدل التدفق عبر المقاطع المختلفة."
+            },
+            {
+              "optionId": "parallel",
+              "displayName": "المقاطع الثلاثة متصلة على التوازي في الشبكة ويتقاسم كل مقطع ثلث التدفق الكلي المار وتتساوى فروق الضغط بين مداخلها ومخارجها",
+              "meetsRequirements": false,
+              "feedbackArabic": "الربط متوالٍ في خط واحد مستمر، والتدفق يمر بالتتابع في المقاطع وليس بالتوازي."
+            },
+            {
+              "optionId": "full",
+              "displayName": "المعطيات المتوفرة كافية لبناء نموذج هيدروليكي كامل للشبكة دون الحاجة لأي افتراضات",
+              "meetsRequirements": false,
+              "feedbackArabic": "الحساب أولي وجزئي؛ إهمال الفواقد الموضعية والارتفاع يتطلب افتراضات تبسيطية معلنة."
+            }
+          ],
+          "correctOptionId": "series",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "المقاطع موصولة تسلسليًا؛ يفترض الحساب Q نفسه ويعزل الاحتكاك الموزع.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — القوانين والمدخلات",
+        "instructionArabic": "حدد العلاقة والمدخلات التي تحتاجها لحساب السرعة وفقد Darcy في كل مقطع.",
+        "feedbackArabic": "الفقد ليس متناسبًا مع الطول وحده؛ السرعة تتغير مع القطر.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما الذي تستخدمه؟",
+          "options": [
+            {
+              "optionId": "color",
+              "displayName": "لون كل مقطع",
+              "feedbackArabic": "لون الأنابيب الخارجي لا علاقة له بالقوانين الهيدروليكية."
+            },
+            {
+              "optionId": "manning",
+              "displayName": "Manning لأن التدفق في أنبوب مضغوط",
+              "feedbackArabic": "معادلة مانينغ للقنوات المكشوفة وليست للأنابيب المغلقة المضغوطة."
+            },
+            {
+              "optionId": "data",
+              "displayName": "Q وD وL وf وg لكل مقطع",
+              "feedbackArabic": "التدفق والأبعاد وخصائص الاحتكاك هي المدخلات الأساسية لمعادلة دارسي."
+            },
+            {
+              "optionId": "continuity",
+              "displayName": "الاستمرارية V=Q/A لكل قطر",
+              "feedbackArabic": "معادلة الاستمرارية لازمة لإيجاد سرعة الجريان في كل قطر مختلف."
+            },
+            {
+              "optionId": "darcy",
+              "displayName": "Darcy–Weisbach h_f=f(L/D)V²/(2g)",
+              "feedbackArabic": "معادلة دارسي-فايسباخ هي القانون المعتمد لحساب فقد الاحتكاك في الأنابيب."
+            }
+          ],
+          "correctOptionIds": [
+            "continuity",
+            "darcy",
+            "data"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "الاستمرارية تحسب السرعة، وDarcy يقارن فقد الاحتكاك الموزع باستخدام هندسة كل مقطع.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — سرعة المقطع C",
+        "instructionArabic": "احسب سرعة التدفق في قطر 0.10 m.",
+        "feedbackArabic": "V_C=0.012/(π×0.10²/4)≈1.528 m/s.",
+        "calculation": {
+          "targetParameterKey": "V_C (m/s)",
+          "expectedValue": 1.5278874537,
+          "tolerancePercent": 2,
+          "feedbackArabic": "احسب سرعة المقطع C باستخدام القطر D = 0.10 m والتدفق المار فيه: V = Q / A."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — فقد Darcy في C",
+        "instructionArabic": "احسب فقد الرأس في C باستخدام f=0.02 وL=80 m.",
+        "feedbackArabic": "f(L/D)V²/(2g)≈1.904 m.",
+        "calculation": {
+          "targetParameterKey": "h_f_C (m)",
+          "expectedValue": 1.9037227899,
+          "tolerancePercent": 3,
+          "feedbackArabic": "عوّض في Darcy–Weisbach للمقطع C: h_f = f × (L_C / D_C) × (V_C² / 2g) مع L = 80 m و f = 0.02."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — مقارنة المقاطع",
+        "instructionArabic": "استخدم نتائج ورقة الحساب الموثقة للمقاطع A وB: hA≈0.074 m وhB≈0.470 m، مع hC المحسوب.",
+        "feedbackArabic": "هذه مقارنة فواقد موزعة وفق المعطيات، لا تثبت انسدادًا.",
+        "selection": {
+          "promptArabic": "أي مقطع يساهم أكثر في الفقد الموزع؟",
+          "options": [
+            {
+              "optionId": "a",
+              "displayName": "المقطع A هو صاحب الفقد الأكبر في الرأس نظرًا لأن قطره الداخلي هو الأكبر بين المقاطع",
+              "meetsRequirements": false,
+              "feedbackArabic": "الفقد يتناسب عكسيًا مع القطر مرفوعًا للقوة الخامسة؛ فالقطر الأكبر هو الأقل فقدًا."
+            },
+            {
+              "optionId": "c",
+              "displayName": "المقطع C هو الأكبر في هذا التقدير؛ يستحق قياسًا موضعيًا مع عدم إغفال الفواقد الأخرى",
+              "meetsRequirements": true,
+              "feedbackArabic": "استنتاج سليم: المقطع C ذو القطر الأصغر 0.10 م يولد السرعة الأعلى والفقد الأكبر."
+            },
+            {
+              "optionId": "equal",
+              "displayName": "فواقد الاحتكاك متطابقة تمامًا بين المقاطع الثلاثة بسبب سريان نفس معدل التدفق فيها",
+              "meetsRequirements": false,
+              "feedbackArabic": "اختلاف الأقطار يؤدي إلى تباين حاد في السرعات وبالتالي تباين كبير في الفواقد."
+            }
+          ],
+          "correctOptionId": "c",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "مقارنة القيم التقريبية 0.074 و0.470 و1.904 m تجعل C الأعلى.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "6 — مجموع الفقد الموزع",
+        "instructionArabic": "اجمع قيم ورقة العمل: A≈0.074364 m وB≈0.470055 m، مع C المحسوب.",
+        "feedbackArabic": "مجموع الفقد الموزع يقارب 2.448 m وفق الافتراضات.",
+        "calculation": {
+          "targetParameterKey": "h_f_total (m)",
+          "expectedValue": 2.448141971,
+          "tolerancePercent": 3,
+          "feedbackArabic": "اجمع فواقد الرأس الاحتكاكية للمقاطع الثلاثة: h_f_total = h_f_A + h_f_B + h_f_C."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "7 — قياس ميداني تالٍ",
+        "instructionArabic": "اختر موضع القياس الذي يختبر توزيع الفقد عبر الشبكة.",
+        "feedbackArabic": "قارن الفقد الموضعي مع ظروف التدفق الفعلية.",
+        "selection": {
+          "promptArabic": "كيف تتحقق؟",
+          "options": [
+            {
+              "optionId": "ends",
+              "displayName": "الاكتفاء بقراءة ضغط المدخل النهائي للمنظومة فقط للحكم على أداء المقطع C دون تجزئة",
+              "meetsRequirements": false,
+              "feedbackArabic": "الضغط الإجمالي عند المدخل يدمج كافة فواقد الشبكة ولا يحدد حصة المقطع C بدقة."
+            },
+            {
+              "optionId": "diameter",
+              "displayName": "إعادة قياس القطر الخارجي بالفرجار دون أخذ أي قراءات لضغط السريان أو معدل التدفق",
+              "meetsRequirements": false,
+              "feedbackArabic": "التحقق الهندسي يتطلب ربط الأبعاد الفيزيائية بالقياسات الهيدروليكية الميدانية."
+            },
+            {
+              "optionId": "taps",
+              "displayName": "تحقق من الأجهزة ثم قس الضغط قبل C وبعده، مع نقاط ضغط حول A وB وقياس Q متزامن",
+              "meetsRequirements": true,
+              "feedbackArabic": "خطة قياس ممتازة: حصر المقاطع بنقاط قياس ضغط تفاضلية متزامنة يثبت الفواقد الموزعة."
+            }
+          ],
+          "correctOptionId": "taps",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "نقاط الضغط على جانبي المقاطع تقارن التوزيع المحسوب بالواقع.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "8 — الاستنتاج",
+        "instructionArabic": "ما الذي تسمح به الحسابات؟",
+        "feedbackArabic": "اجعل الحساب أداة لترتيب القياس لا بديلًا عنه.",
+        "selection": {
+          "promptArabic": "اختر خلاصة مناسبة.",
+          "options": [
+            {
+              "optionId": "prioritize",
+              "displayName": "الفقد الموزع الأكبر مقدر في C تحت فرضيات النموذج؛ وجّه القياس إليه قبل أي تشخيص أو إصلاح",
+              "meetsRequirements": true,
+              "feedbackArabic": "توصية عملية رشيدة: تركيز الموارد الميدانية على المقطع الأكثر استهلاكًا للطاقة الهيدروليكية."
+            },
+            {
+              "optionId": "blocked",
+              "displayName": "النتيجة الحسابية تقدم دليلاً قاطعًا ومؤكدًا على حدوث انسداد فيزيائي داخل المقطع C يستلزم استبداله بقطر مضاعف على وجه السرعة",
+              "meetsRequirements": false,
+              "feedbackArabic": "الحساب يمثل فواقد احتكاك تصميمية طبيعية للقطر الأصغر ولا يثبت وجود انسداد."
+            },
+            {
+              "optionId": "certain",
+              "displayName": "إهمال الفواقد الموضعية وفروق المنسوب لا يؤثر إطلاقًا على دقة الحكم النهائي للشبكة",
+              "meetsRequirements": false,
+              "feedbackArabic": "إهمال الفواقد الأخرى هو افتراض تبسيطي يجب تدقيقه والتأكد من ملاءمته للواقع."
+            }
+          ],
+          "correctOptionId": "prioritize",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "الحساب يرتب مواضع الاهتمام لكنه لا يتضمن فواقد محلية أو تحققًا ميدانيًا.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pressureGauge",
+    "pipeDiameterTool"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "احسب السرعة لكل قطر مستقلًا مع Q التسلسلي نفسه.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "استخدم بيانات A وB المقارنة المعطاة للموازنة بين المقاطع.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "الجزء C الأعلى في هذا النموذج؛ تحقق من الضغط على جانبيه.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1500,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 30,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 20,
+    "engineeringDecisionsWeight": 45,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

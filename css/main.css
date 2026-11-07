@@ -1,0 +1,111 @@
+/* Emergency Engineer — global tokens and base styles.
+   Palette grounded in hydraulics/industrial instrumentation: deep
+   panel-steel background, brass gauge accents, verdigris (aged-copper)
+   for normal flow, an oxidized hazard red for faults. */
+
+:root {
+  --ink: #12181f;
+  --panel: #1a232b;
+  --panel-alt: #202b34;
+  --line: #2c3640;
+
+  --brass: #c9974a;
+  --brass-dim: #ba9050;
+  --verdigris: #4f9d8a;
+  --hazard: #ea7262;
+  --node-pump: #b5602e;
+  --node-consumer: #6b7a68;
+
+  --paper: #e9e3d4;
+  --paper-dim: #9c9484;
+
+  --font-ui: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-ui);
+}
+
+#app { height: 100vh; }
+
+h1, h2, h3 { margin: 0 0 8px; font-weight: 600; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.readout {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Menu screen --------------------------------------------------- */
+
+.menu-screen {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 42px 42px;
+  background-position: center;
+}
+
+.menu-plate {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 40px 56px;
+  border-radius: 3px;
+}
+
+.menu-title {
+  font-size: 2.25rem;
+  letter-spacing: 0.01em;
+  color: var(--paper);
+}
+
+.menu-subtitle {
+  font-family: var(--font-mono);
+  color: var(--brass);
+  margin: 0 0 28px;
+  font-size: 0.9rem;
+}
+
+.menu-btn {
+  background: var(--brass);
+  color: var(--ink);
+  border: none;
+  padding: 12px 40px;
+  border-radius: 3px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.08s ease, background 0.15s ease;
+}
+.menu-btn:hover { background: #d8a75c; }
+.menu-btn:active { transform: translateY(1px); }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--paper-dim);
+  font-family: var(--font-mono);
+}

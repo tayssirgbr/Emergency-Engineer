@@ -1,0 +1,427 @@
+{
+  "stageId": "L3_S6_FlowVelocity",
+  "level": 3,
+  "stageIndexInLevel": 1,
+  "titleArabic": "تحليل التدفق والسرعة داخل الأنبوب",
+  "briefingArabic": "تحتاج إلى تقدير سرعة الجريان في خط مستقيم معلوم التدفق والقطر. ابدأ بتمييز المعطيات عن القيم المطلوبة، ثم اربط مساحة المقطع بسرعة الماء. في المقارنة الأخيرة يتغير القطر ويبقى التدفق ثابتًا.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "بداية الخط",
+        "kind": "reservoir",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "نهاية الخط",
+        "kind": "consumer",
+        "elevationMeters": 100
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "أنبوب القياس",
+        "fromNodeId": "بداية الخط",
+        "toNodeId": "نهاية الخط",
+        "lengthMeters": 100,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q",
+      "displayNameArabic": "التدفق الحجمي",
+      "value": 0.015,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "القطر الداخلي",
+      "value": 0.15,
+      "unit": "m"
+    },
+    {
+      "key": "D_alt",
+      "displayNameArabic": "قطر بديل للمقارنة عند التدفق نفسه",
+      "value": 0.1,
+      "unit": "m"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "تسارع الجاذبية (غير لازم لحساب V)",
+      "value": 9.81,
+      "unit": "m/s2"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — تحديد معطيات الجريان",
+        "instructionArabic": "لإيجاد المساحة ثم السرعة في المقطع الدائري، افصل المدخلات المباشرة عن المعلومات غير اللازمة لهذه الخطوة.",
+        "feedbackArabic": "التدفق Q والقطر الداخلي D يكفيان لإيجاد مساحة المقطع الدائري ثم السرعة. لا تدخل الكثافة أو الجاذبية في V = Q/A.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما المعطيات التي تحتاجها مباشرةً لهذا التسلسل؟",
+          "options": [
+            {
+              "optionId": "Q",
+              "displayName": "التدفق الحجمي Q",
+              "feedbackArabic": "يلزم حساب السرعة بعد إيجاد المساحة."
+            },
+            {
+              "optionId": "D",
+              "displayName": "القطر الداخلي D",
+              "feedbackArabic": "يحدد مساحة المقطع الدائري."
+            },
+            {
+              "optionId": "rho",
+              "displayName": "كثافة الماء ρ",
+              "feedbackArabic": "لا تلزم لعلاقة المساحة والسرعة هنا."
+            },
+            {
+              "optionId": "g",
+              "displayName": "الجاذبية g",
+              "feedbackArabic": "لا تدخل في حساب السرعة من Q/A."
+            },
+            {
+              "optionId": "brand",
+              "displayName": "الشركة المصنّعة للأنبوب",
+              "feedbackArabic": "لا تدخل في مساحة المقطع الهندسية."
+            }
+          ],
+          "correctOptionIds": [
+            "Q",
+            "D"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط كل مدخل بدوره في الحساب الهندسي.",
+            "factors": [
+              {
+                "factorId": "flow_input",
+                "labelArabic": "Q هو حجم الماء المار في وحدة الزمن",
+                "correct": true
+              },
+              {
+                "factorId": "diameter_input",
+                "labelArabic": "D يحدد مساحة المقطع A",
+                "correct": true
+              },
+              {
+                "factorId": "density_unneeded",
+                "labelArabic": "الكثافة مطلوبة لحساب A أو V",
+                "correct": false
+              },
+              {
+                "factorId": "gravity_unneeded",
+                "labelArabic": "الجاذبية تدخل في V = Q/A",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_input": "يجب معرفة التدفق لحساب السرعة المتوسطة.",
+                "diameter_input": "القطر هو ما يسمح بإيجاد مساحة الأنبوب."
+              },
+              "wrongFactor": {
+                "density_unneeded": "تدخل الكثافة عند تحويل ضغط أو طاقة، لا في مساحة المقطع.",
+                "gravity_unneeded": "الجاذبية لا تدخل في استمرارية التدفق هنا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — اختيار علاقة مساحة المقطع والسرعة",
+        "instructionArabic": "استخدم القطر أولًا لإيجاد مساحة الدائرة، ثم اربط التدفق بالمساحة للحصول على السرعة المتوسطة.",
+        "feedbackArabic": "للمقطع الدائري A = πD²/4، ومن الاستمرارية V = Q/A. تأكد من استخدام D بالمتر وA بالمتر المربع كي تظهر V بالمتر في الثانية.",
+        "selection": {
+          "scoreAsFormula": true,
+          "promptArabic": "أي تسلسل علاقات يحول القطر والتدفق إلى سرعة صحيحة الوحدات؟",
+          "options": [
+            {
+              "optionId": "continuity_area",
+              "displayName": "A = πD²/4 ثم V = Q/A",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح: احسب مساحة الدائرة ثم اقسم التدفق بوحدة m3/s على المساحة m2."
+            },
+            {
+              "optionId": "diameter_linear",
+              "displayName": "A = πD ثم V = Q × A",
+              "feedbackArabic": "مساحة الدائرة تتناسب مع D²، والسرعة تساوي Q/A لا Q×A."
+            },
+            {
+              "optionId": "radius_confusion",
+              "displayName": "A = πD² ثم V = Q/A",
+              "feedbackArabic": "هذه الصيغة أكبر بأربع مرات من مساحة الدائرة لأن عامل 1/4 مفقود."
+            },
+            {
+              "optionId": "flow_square",
+              "displayName": "A = D²/4 ثم V = Q²/A",
+              "feedbackArabic": "المساحة تحتاج π، وعلاقة الاستمرارية خطية في Q."
+            }
+          ],
+          "correctOptionId": "continuity_area",
+          "justification": {
+            "prompt": "لماذا يجب اتباع هاتين العلاقتين بهذا الترتيب؟",
+            "factors": [
+              {
+                "factorId": "circle_area",
+                "labelArabic": "A = πD²/4 مساحة المقطع الدائري",
+                "correct": true
+              },
+              {
+                "factorId": "continuity_speed",
+                "labelArabic": "V = Q/A تربط التدفق بالمساحة",
+                "correct": true
+              },
+              {
+                "factorId": "si_units",
+                "labelArabic": "استخدام D بالمتر يجعل A بوحدة m² وV بوحدة m/s",
+                "correct": true
+              },
+              {
+                "factorId": "diameter_not_area",
+                "labelArabic": "القطر نفسه مساحة مقطع",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "circle_area": "المقطع دائري، لذلك يلزم قانون مساحة الدائرة.",
+                "continuity_speed": "بعد المساحة، احسب السرعة من معدل التدفق الحجمي.",
+                "si_units": "تحويل المليمتر إلى المتر يحافظ على الوحدات المتسقة."
+              },
+              "wrongFactor": {
+                "diameter_not_area": "D طول بوحدة m، بينما A مساحة بوحدة m²."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — حساب مساحة الأنبوب",
+        "instructionArabic": "احسب مساحة المقطع باستخدام القطر الداخلي D = 0.15 m. أدخل A بوحدة m².",
+        "feedbackArabic": "استخدم A = π × (0.15 m)² / 4. لا تخلط القطر بنصف القطر؛ النتيجة تقارب 0.01767 m².",
+        "calculation": {
+          "targetParameterKey": "A (m²)",
+          "expectedValue": 0.0176714586764,
+          "tolerancePercent": 2,
+          "feedbackArabic": "تحقق من استخدام نصف القطر أو تربيع القطر: A = π × D² / 4، وتأكد من أن D بالمتر (0.15 m)."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — إيجاد سرعة الجريان",
+        "instructionArabic": "استخدم Q = 0.015 m³/s والمساحة التي حسبتها لإيجاد V = Q/A. أدخل السرعة بوحدة m/s.",
+        "feedbackArabic": "اقسم التدفق الحجمي على مساحة المقطع، ولا تضربهما. السرعة المتوسطة تقارب 0.849 m/s.",
+        "calculation": {
+          "targetParameterKey": "V (m/s)",
+          "expectedValue": 0.848826363157,
+          "tolerancePercent": 2,
+          "feedbackArabic": "تأكد من قسمة التدفق Q على المساحة A المحسوبة (V = Q / A) مع استخدام الوحدات الدولية m³/s و m²."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — مقارنة قطر بديل عند التدفق نفسه",
+        "instructionArabic": "إذا بقي Q = 0.015 m³/s وثُبّت القطر البديل عند 0.10 m، قارن السرعة بنتيجتك السابقة.",
+        "feedbackArabic": "عند D = 0.10 m تكون A ≈ 0.00785 m² وV ≈ 1.91 m/s؛ أي إن تقليل القطر مع ثبات التدفق يرفع السرعة.",
+        "selection": {
+          "promptArabic": "أي مقارنة بين الأنبوبين صحيحة؟",
+          "options": [
+            {
+              "optionId": "small_faster",
+              "displayName": "القطر 0.10 m يعطي نحو 1.91 m/s، أسرع من 0.85 m/s عند 0.15 m",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ المساحة الأصغر تحتاج سرعة أكبر لنقل التدفق نفسه."
+            },
+            {
+              "optionId": "large_faster",
+              "displayName": "القطر 0.15 m يعطي سرعة أكبر لأن مساحته أكبر",
+              "feedbackArabic": "عند ثبات Q، المساحة الأكبر تعني سرعة متوسطة أقل."
+            },
+            {
+              "optionId": "same_velocity",
+              "displayName": "السرعة متساوية لأن التدفق متساوٍ مهما اختلف القطر",
+              "feedbackArabic": "العلاقة V = Q/A تعني أن تغير المساحة يغير السرعة عند ثبات التدفق."
+            },
+            {
+              "optionId": "flow_changes",
+              "displayName": "القطر الأصغر يغيّر قيمة التدفق المعطاة تلقائيًا",
+              "feedbackArabic": "المقارنة تثبت التدفق نفسه؛ لا تفترض تغيره دون شرط أو قياس جديد."
+            }
+          ],
+          "correctOptionId": "small_faster",
+          "justification": {
+            "prompt": "اختر الأدلة التي تفسر الفرق بين السرعتين.",
+            "factors": [
+              {
+                "factorId": "same_flow",
+                "labelArabic": "التدفق ثابت في المقارنة عند 0.015 m³/s",
+                "correct": true
+              },
+              {
+                "factorId": "area_ratio",
+                "labelArabic": "قطر 0.10 m يعطي مساحة مقطع أصغر",
+                "correct": true
+              },
+              {
+                "factorId": "velocity_ratio",
+                "labelArabic": "عند ثبات Q، نقص A يرفع V = Q/A",
+                "correct": true
+              },
+              {
+                "factorId": "diameter_increases_flow",
+                "labelArabic": "مجرد تغيير القطر يثبت تدفقًا جديدًا دون شرط تشغيل",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "same_flow": "ثبات التدفق هو شرط المقارنة الذي يجعل أثر القطر واضحًا.",
+                "area_ratio": "مساحة الدائرة تتناسب مع مربع القطر.",
+                "velocity_ratio": "اقسم التدفق نفسه على المساحة الأصغر."
+              },
+              "wrongFactor": {
+                "diameter_increases_flow": "التدفق الفعلي يعتمد على النظام كله؛ لا يتغير تلقائيًا من معطى المقارنة."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — تفسير أثر القطر",
+        "instructionArabic": "استنتج ما يمكن قوله عن السرعة، وما يحتاج إلى بيانات إضافية قبل الحكم على الفقد أو كفاية الخط.",
+        "feedbackArabic": "القطر الأصغر يرفع السرعة عند التدفق نفسه، وغالبًا يزيد فقد الاحتكاك في ظروف متقاربة؛ لكن تقدير الفقد يتطلب معرفة الطول ومعامل الاحتكاك ولا يثبت عطل المضخة وحده.",
+        "selection": {
+          "promptArabic": "ما الاستنتاج الذي يجمع العلاقة الحسابية وحدودها الهندسية؟",
+          "options": [
+            {
+              "optionId": "interpret_correct",
+              "displayName": "القطر الأصغر يرفع السرعة لنفس Q، ويستلزم تقييم الفقد مع L وf قبل الحكم على كفاية الخط",
+              "meetsRequirements": true,
+              "feedbackArabic": "صحيح؛ السرعة تتبع Q/A، أما فقد الاحتكاك فيحتاج طول المقطع ومعامل الاحتكاك أيضًا."
+            },
+            {
+              "optionId": "pump_fault",
+              "displayName": "السرعة الأعلى تثبت أن المضخة معطلة ويجب تغييرها",
+              "feedbackArabic": "لا تثبت السرعة وحدها عطل المضخة ولا تحدد قرار الاستبدال."
+            },
+            {
+              "optionId": "larger_faster",
+              "displayName": "القطر الأكبر يرفع السرعة دائمًا مهما كان التدفق",
+              "feedbackArabic": "عند تدفق ثابت، القطر الأكبر يزيد المساحة ويخفض السرعة المتوسطة."
+            },
+            {
+              "optionId": "head_equals_speed",
+              "displayName": "قيمة السرعة m/s تساوي مباشرة فقد الرأس بالمتر",
+              "feedbackArabic": "السرعة وفقد الرأس كميتان مختلفتان؛ يلزم قانون الفقد وبيانات الخط."
+            }
+          ],
+          "correctOptionId": "interpret_correct",
+          "justification": {
+            "prompt": "ما الأدلة التي تحدد الاستنتاج الصحيح وما لا يمكن استنتاجه بعد؟",
+            "factors": [
+              {
+                "factorId": "continuity_evidence",
+                "labelArabic": "V = Q/A تفسر ارتفاع السرعة عند انخفاض المساحة",
+                "correct": true
+              },
+              {
+                "factorId": "friction_data_needed",
+                "labelArabic": "تقدير فقد الاحتكاك يتطلب طول الخط ومعامل الاحتكاك",
+                "correct": true
+              },
+              {
+                "factorId": "no_pump_proof",
+                "labelArabic": "السرعة وحدها لا تثبت عطل المضخة",
+                "correct": true
+              },
+              {
+                "factorId": "speed_is_head",
+                "labelArabic": "السرعة وفقد الرأس لهما القيمة والوحدة نفسيهما",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "continuity_evidence": "تذكر ارتباط السرعة بالمساحة عند ثبات التدفق.",
+                "friction_data_needed": "لا يكفي القطر والسرعة لتقدير فقد المقطع كاملًا.",
+                "no_pump_proof": "لا تعيّن سببًا لم يقسه السيناريو."
+              },
+              "wrongFactor": {
+                "speed_is_head": "m/s سرعة، بينما h_f طول طاقة بوحدة m ويحسب بعلاقة مختلفة."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pipeDiameterTool"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach"
+  ],
+  "hints": [
+    {
+      "textArabic": "حوّل القطر إلى المتر قبل حساب A = πD²/4؛ التدفق معطى بوحدة m³/s.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "بعد إيجاد المساحة، اقسم Q على A لتحصل على V بوحدة m/s.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "للتدفق نفسه، يقل V عندما تزيد A. لا تساوِ السرعة بفقد الرأس دون حساب إضافي.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 900,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 35,
+    "correctFormulaWeight": 15,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 25,
+    "engineeringDecisionsWeight": 20,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "حوّلت التدفق والقطر إلى مساحة ثم سرعة بوحدات SI، واستخدمت المقارنة لتفسير أثر القطر دون الادعاء أن السرعة وحدها تحدد سلامة المضخة أو فقد الخط.",
+  "debriefFailureArabic": "راجع تحويل القطر إلى المتر ومساحة الدائرة A = πD²/4، ثم احسب V = Q/A. عند ثبات التدفق، تعطي المساحة الأصغر سرعة أعلى؛ أما فقد الخط فيحتاج بيانات أخرى."
+}

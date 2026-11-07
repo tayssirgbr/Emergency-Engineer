@@ -1,0 +1,800 @@
+{
+  "stageId": "L3_S20_FinalCapstone",
+  "level": 3,
+  "stageIndexInLevel": 20,
+  "titleArabic": "المرحلة 20 — المهمة النهائية: استجابة هيدروليكية متكاملة",
+  "briefingArabic": "مهمة ختامية: خط نقل طويل لا يحقق التدفق أو ضغط الخدمة. حلل البيانات، اختر القوانين، احسب السرعة وفقد الاحتكاك وأثر الارتفاع، قارن الضغط المقدر بالمقاس، ثم ضع خطة تحقق وتدخل وإعادة تشغيل مبررة. النموذج يفترض تساوي سرعتي الدخول والخروج ويهمل الفواقد الموضعية.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "المدخل",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "المخرج",
+        "kind": "consumer",
+        "elevationMeters": 8
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "خط النقل الطويل",
+        "fromNodeId": "المدخل",
+        "toNodeId": "المخرج",
+        "lengthMeters": 450,
+        "diameterMm": 120,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_design",
+      "displayNameArabic": "التدفق التصميمي",
+      "value": 0.02,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q_actual",
+      "displayNameArabic": "التدفق الفعلي",
+      "value": 0.014,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "القطر الداخلي",
+      "value": 0.12,
+      "unit": "m"
+    },
+    {
+      "key": "L",
+      "displayNameArabic": "طول الخط",
+      "value": 450,
+      "unit": "m"
+    },
+    {
+      "key": "f",
+      "displayNameArabic": "معامل Darcy",
+      "value": 0.025,
+      "unit": "—"
+    },
+    {
+      "key": "dz",
+      "displayNameArabic": "ارتفاع المخرج",
+      "value": 8,
+      "unit": "m"
+    },
+    {
+      "key": "rho",
+      "displayNameArabic": "كثافة الماء",
+      "value": 1000,
+      "unit": "kg/m3"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    },
+    {
+      "key": "P_in",
+      "displayNameArabic": "ضغط المدخل",
+      "value": 3.6,
+      "unit": "bar"
+    },
+    {
+      "key": "P_out_measured",
+      "displayNameArabic": "ضغط المخرج المقاس",
+      "value": 1.9,
+      "unit": "bar"
+    },
+    {
+      "key": "P_min",
+      "displayNameArabic": "حد الخدمة الأدنى",
+      "value": 2,
+      "unit": "bar"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — توصيف الحالة الأولية",
+        "instructionArabic": "ابدأ بمقارنة التدفق والضغط بمتطلبات التصميم والخدمة.",
+        "feedbackArabic": "هذه مؤشرات نقص خدمة ولا تحدد السبب.",
+        "selection": {
+          "promptArabic": "ما الاستنتاج الأولي؟",
+          "options": [
+            {
+              "optionId": "under",
+              "displayName": "التدفق 70% من التصميم والضغط المقاس أدنى من حد الخدمة؛ الحالة تحتاج تحليلًا وتحقيقًا",
+              "meetsRequirements": true,
+              "feedbackArabic": "تشخيص دقيق للمهمة الختامية: رصد عجز التدفق وهبوط الضغط كأساس للانطلاق في التحقيق الشامل."
+            },
+            {
+              "optionId": "ok",
+              "displayName": "الشبكة في حالة ممتازة لأن مؤشرات التدفق والضغط تسجل قيمًا عددية موجبة فوق الصفر وتلبي الحد الأدنى للاستهلاك في الظروف الراهنة",
+              "meetsRequirements": false,
+              "feedbackArabic": "تسجيل قيم موجبة لا يعني تحقيق الأداء التصميمي، فالتدفق 70% والضغط دون حد الخدمة المعتمد."
+            },
+            {
+              "optionId": "cause",
+              "displayName": "البيانات الأولية تقدم برهانًا قاطعًا على احتراق محرك المضخة وتلف مكوناتها الداخلية",
+              "meetsRequirements": false,
+              "feedbackArabic": "استمرار الضخ وتوليد 70% من التدفق ينفي تلف المضخة التام ويوجه لدراسة فواقد المسار."
+            }
+          ],
+          "correctOptionId": "under",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "0.014/0.020=70% والضغط 1.90 bar أدنى من حد 2.0 bar.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — جمع البيانات وترتيبها",
+        "instructionArabic": "حدد البيانات ذات الصلة بالحساب والتشخيص النهائي.",
+        "feedbackArabic": "لا تخلط قيمة محسوبة بقراءة ميدانية ولا تهمل تحقق الأجهزة.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "اختر مجموعات البيانات.",
+          "options": [
+            {
+              "optionId": "flow",
+              "displayName": "التدفق الفعلي والتصميمي والقطر",
+              "feedbackArabic": "بيانات التدفق والقطر تحسب سرعة السريان الحقيقية في الخط."
+            },
+            {
+              "optionId": "elevation",
+              "displayName": "فرق المنسوب والكثافة",
+              "feedbackArabic": "فرق المنسوب وكثافة الماء تحددان فقد أو كسب الضغط الهيدروستاتيكي."
+            },
+            {
+              "optionId": "loss",
+              "displayName": "الطول ومعامل f والجاذبية",
+              "feedbackArabic": "طول الخط ومعامل دارسي يحددان فواقد الاحتكاك الموزعة بدقة."
+            },
+            {
+              "optionId": "color",
+              "displayName": "لون الخط",
+              "feedbackArabic": "لون الطلاء الخارجي لا يدخل في معادلات الطاقة الهيدروليكية."
+            },
+            {
+              "optionId": "brand",
+              "displayName": "اسم المصنع مع أن f معطى",
+              "feedbackArabic": "اسم المصنع معلومة تجارية لا تستخدم في الحسابات عند توفر معامل f."
+            },
+            {
+              "optionId": "pressure",
+              "displayName": "ضغطا المدخل والمخرج وحد الخدمة",
+              "feedbackArabic": "ضغوط البداية والنهاية وحدود الخدمة هي معايير الحكم على نجاح المنظومة."
+            },
+            {
+              "optionId": "calibration",
+              "displayName": "حالة معايرة الأجهزة وظروف القياس",
+              "feedbackArabic": "حالة المعايرة تضمن مصداقية القراءات قبل بناء القرارات الهندسية عليها."
+            }
+          ],
+          "correctOptionIds": [
+            "flow",
+            "loss",
+            "elevation",
+            "pressure",
+            "calibration"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "البيانات الهندسية والضغوط وحد الخدمة ومعايرة القياس مطلوبة للتحليل والمقارنة.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — اختيار القوانين",
+        "instructionArabic": "اختر العلاقات اللازمة لكل جزء من ميزانية الطاقة المبسطة.",
+        "feedbackArabic": "يجب توضيح افتراضات برنولي المبسطة عند مقارنة الضغط.",
+        "selection": {
+          "promptArabic": "ما المجموعة الصحيحة؟",
+          "options": [
+            {
+              "optionId": "manning",
+              "displayName": "استخدام معادلة مانينغ للقنوات المفتوحة لحساب ضغط الأنبوب المضغوط مع إهمال الارتفاع",
+              "meetsRequirements": false,
+              "feedbackArabic": "معادلة مانينغ لا تطبق على الأنابيب المضغوطة، كما أن إهمال الارتفاع خطأ جسيم في الطاقة."
+            },
+            {
+              "optionId": "laws",
+              "displayName": "الاستمرارية للسرعة، Darcy–Weisbach للاحتكاك، وρgΔz لأثر الارتفاع",
+              "meetsRequirements": true,
+              "feedbackArabic": "المنظومة الفيزيائية الصحيحة: دمج الاستمرارية ودارسي والمعادلة الهيدروستاتيكية يحلل الطاقة بدقة."
+            },
+            {
+              "optionId": "ohm",
+              "displayName": "تطبيق قانون أوم للمقاومات الكهربائية لحساب تدرج الضغط وسرعة سريان المياه في الخط",
+              "meetsRequirements": false,
+              "feedbackArabic": "قانون أوم يختص بحسابات الجهد والتيار الكهربائي ولا صلة له بجريان الموائع الهيدروليكية."
+            }
+          ],
+          "correctOptionId": "laws",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "كل علاقة تعالج جزءًا محددًا: السرعة، الاحتكاك الموزع، وارتفاع المخرج.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — سرعة الجريان",
+        "instructionArabic": "احسب مساحة D=0.12 m ثم V باستخدام Q الفعلي.",
+        "feedbackArabic": "A≈0.011310 m² وV≈1.238 m/s.",
+        "calculation": {
+          "targetParameterKey": "V (m/s)",
+          "expectedValue": 1.2378717796,
+          "tolerancePercent": 2,
+          "feedbackArabic": "احسب مساحة المقطع للقطر D = 0.12 m ثم قسّم التدفق الفعلي على المساحة لإيجاد السرعة V."
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "5 — فقد الاحتكاك",
+        "instructionArabic": "احسب h_f وفق Darcy–Weisbach باستخدام V المحسوبة.",
+        "feedbackArabic": "f(L/D)V²/(2g)≈7.322 m.",
+        "calculation": {
+          "targetParameterKey": "h_f (m)",
+          "expectedValue": 7.3218967065,
+          "tolerancePercent": 3,
+          "feedbackArabic": "طبق معادلة Darcy–Weisbach باستخدام السرعة المحسوبة والمعاملات المعطاة لحساب الفقد الكلي."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — ميزانية الضغط",
+        "instructionArabic": "حوّل الفقد والارتفاع إلى bar، ثم قدّر P_out=P_in−Δp_f−Δp_z.",
+        "feedbackArabic": "هذا تقدير مبسط يفترض تساوي السرعتين ويهمل الفواقد الموضعية.",
+        "selection": {
+          "promptArabic": "أي نتيجة توافق النموذج؟",
+          "options": [
+            {
+              "optionId": "no_elevation",
+              "displayName": "ضغط المخرج النظري يساوي 2.882 بار على افتراض أن تأثير فرق المنسوب مهمل في هذا الخط",
+              "meetsRequirements": false,
+              "feedbackArabic": "فرق الارتفاع يمثل هبوطًا مقداره 0.785 بار، وإهماله يؤدي لتقدير متفائل وخاطئ للضغط المتاح."
+            },
+            {
+              "optionId": "add",
+              "displayName": "جمع فواقد الاحتكاك وفارق الارتفاع وإضافتهما لضغط المدخل بدلاً من طرحهما من طاقة السائل",
+              "meetsRequirements": false,
+              "feedbackArabic": "فواقد الاحتكاك والارتفاع الصاعد تستهلك من ضغط المدخل ويجب طرحهما وليس جمعهما."
+            },
+            {
+              "optionId": "balance",
+              "displayName": "Δp_f≈0.718 bar وΔp_z≈0.785 bar؛ P_out النظري≈2.097 bar",
+              "meetsRequirements": true,
+              "feedbackArabic": "حساب توازن طاقة متكامل ودقيق: طرح فواقد الاحتكاك والمنسوب يعطي القيمة النظرية السليمة."
+            }
+          ],
+          "correctOptionId": "balance",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "7.322 m ماء≈0.718 bar و8 m ماء≈0.785 bar؛ 3.6−0.718−0.785≈2.097 bar.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "7 — مقارنة القياس والفرضيات",
+        "instructionArabic": "قارن التقدير 2.097 bar بالقياس 1.90 bar.",
+        "feedbackArabic": "احتفظ بفرضيات متعددة حتى تجمع أدلة موضعية.",
+        "selection": {
+          "promptArabic": "ما الذي يمكن استنتاجه؟",
+          "options": [
+            {
+              "optionId": "gap",
+              "displayName": "الفارق نحو 0.197 bar؛ قد ينتج عن فواقد موضعية أو قياس أو شروط نموذج مختلفة ولا يثبت مسببًا",
+              "meetsRequirements": true,
+              "feedbackArabic": "استنتاج هندسي ناضج: النموذج يفسر معظم الهبوط، والفارق المتبقي يتطلب تحريًا موضعيًا."
+            },
+            {
+              "optionId": "leak",
+              "displayName": "الفارق المحسوب البالغ 0.197 بار يمثل دليلاً قاطعًا على وجود ثقب وتسرب مائي في الخط الناقل أدى إلى ضياع الطاقة الهيدروليكية المتاحة",
+              "meetsRequirements": false,
+              "feedbackArabic": "الفارق المحدود قد ينتج عن فواقد تركيبية أو خطأ معايرة طفيف ولا يجزم بوجود تسرب."
+            },
+            {
+              "optionId": "pump",
+              "displayName": "التباين الحسابي يؤكد تراجع كفاءة المضخة وعجزها عن توليد الرأس الهيدروليكي المطلوب",
+              "meetsRequirements": false,
+              "feedbackArabic": "ضغط المدخل المقاس محقق؛ والخلل يرتبط بمسار الخط وفواقده وليس بأداء محطة الضخ."
+            }
+          ],
+          "correctOptionId": "gap",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "ضغط القياس أدنى من التقدير بنحو 0.197 bar إضافة إلى أنه دون حد الخدمة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "8 — فحوص ميدانية موجهة",
+        "instructionArabic": "اختر مجموعة القياسات والفحوص التي تميز فرضيات الفقد والقياس والتشغيل.",
+        "feedbackArabic": "حدد أين يظهر فرق الضغط قبل اختيار عنصر للإصلاح.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما الخطوات المفيدة؟",
+          "options": [
+            {
+              "optionId": "cal",
+              "displayName": "تحقق من معايرة عدادي الضغط والتدفق",
+              "feedbackArabic": "معايرة العدادات تستبعد أخطاء القياس قبل البدء بأي تدخل ميكانيكي مكلف."
+            },
+            {
+              "optionId": "flow_sync",
+              "displayName": "سجل Q والضغوط في الوقت نفسه وبحمل موثق",
+              "feedbackArabic": "التسجيل المتزامن يربط التدفق بالضغط تحت نفس ظروف التشغيل والحمل."
+            },
+            {
+              "optionId": "levels",
+              "displayName": "أكد فرق المنسوب والقطر الفعليين",
+              "feedbackArabic": "تأكيد المناسيب والأقطار يضمن مطابقة الواقع لمدخلات النموذج الرياضي."
+            },
+            {
+              "optionId": "raise",
+              "displayName": "ارفع ضغط التشغيل لتجاوز النقص",
+              "feedbackArabic": "رفع الضغط قسرًا دون تشخيص يعرض الأنابيب لخطر الانفجار ولا يعالج الفواقد."
+            },
+            {
+              "optionId": "inspect",
+              "displayName": "افحص المرشحات والصمامات والمقاطع بعد عزل معتمد عند الحاجة",
+              "feedbackArabic": "فحص الصمامات والمرشحات بعد العزل الآمن يكشف العوائق الموضعية المحتملة."
+            },
+            {
+              "optionId": "taps",
+              "displayName": "قِس الضغط عند المدخل وعبر عناصر الخط والمخرج",
+              "feedbackArabic": "القياس الموضعي عبر عناصر المسار يحدد بدقة أين يضيع الفارق غير المفسر."
+            },
+            {
+              "optionId": "replace",
+              "displayName": "استبدل المضخة والخط دون قياس",
+              "feedbackArabic": "استبدال المضخة والخط عشوائيًا دون قياس تصرف باطل هندسيًا وماليًا."
+            }
+          ],
+          "correctOptionIds": [
+            "cal",
+            "taps",
+            "flow_sync",
+            "inspect",
+            "levels"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "المعايرة والقياس الموضعي المتزامن والتحقق من هندسة الخط والفحص الآمن تختبر الاحتمالات.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "9 — اختيار التدخل",
+        "instructionArabic": "بعد ظهور نتائج التحقق، اختر تدخلًا مسؤولًا.",
+        "feedbackArabic": "لا تنفذ تعديلًا يتجاوز الحدود أو إجراءات الموقع.",
+        "selection": {
+          "promptArabic": "ما سياسة التدخل؟",
+          "options": [
+            {
+              "optionId": "boost",
+              "displayName": "زيادة سرعة دوران المضخة ورفع الضغط فورًا لتعويض العجز دون مراجعة إجهادات الشبكة ودون التحقق من سلامة الأنابيب ووصلات المشتركين",
+              "meetsRequirements": false,
+              "feedbackArabic": "رفع الضغط قسرًا يهدد بحدوث كسور وتلفيات خطيرة في التوصيلات المنزلية والخطوط."
+            },
+            {
+              "optionId": "target",
+              "displayName": "اختر إصلاحًا محددًا فقط إذا أكدته القياسات والفحص؛ التزم بالعزل والتصريح وحدود التشغيل",
+              "meetsRequirements": true,
+              "feedbackArabic": "قرار هندسي محترف: الاعتماد على الأدلة المثبتة والالتزام الصارم بإجراءات السلامة والعزل."
+            },
+            {
+              "optionId": "replace",
+              "displayName": "إصدار أمر فوري باستبدال محطة الضخ بالكامل بحجة أن أداء الشبكة لم يبلغ الحد التصميمي",
+              "meetsRequirements": false,
+              "feedbackArabic": "استبدال المضخة تصرف مكلف وغير مبرر ما دامت الفحوص الميدانية لم تثبت عطلها."
+            }
+          ],
+          "correctOptionId": "target",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "المعطيات الحالية تحدد نقص أداء لكنها لا تثبت أي مكون معيب.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "10 — إعادة التشغيل",
+        "instructionArabic": "حدد شروط إعادة الخط إلى الخدمة بعد إصلاح متحقق.",
+        "feedbackArabic": "وثق النتائج أثناء إعادة التشغيل.",
+        "selection": {
+          "promptArabic": "متى تعيد التشغيل؟",
+          "options": [
+            {
+              "optionId": "immediate",
+              "displayName": "إعادة ضخ المياه بكامل الطاقة والضغط بمجرد الانتهاء من أعمال الصيانة الميدانية للمعدة",
+              "meetsRequirements": false,
+              "feedbackArabic": "التشغيل الفوري المباشر قد يسبب صدمات مائية؛ والواجب هو الإطلاق التدريجي المحكوم."
+            },
+            {
+              "optionId": "single",
+              "displayName": "اعتماد قراءة مانومتر واحدة عابرة سجلت ضغطًا مقبولاً كدليل كافٍ على نجاح عملية الإصلاح",
+              "meetsRequirements": false,
+              "feedbackArabic": "القراءة المنفردة قد تكون نبضة عابرة؛ ولا بد من مراقبة استقرار المنظومة لفترة تشغيل كافية."
+            },
+            {
+              "optionId": "recommission",
+              "displayName": "بعد إتمام الإصلاح المعتمد وفحصه، ثم تشغيل تدريجي ضمن الإجراء والتحقق من ضغط وتدفق مستقرين ومعايرين يحققان الحدود",
+              "meetsRequirements": true,
+              "feedbackArabic": "بروتوكول إعادة تشغيل نموذجي: تدقيق الإصلاح، والتشغيل المتدرج، والتأكد من استقرار الخدمة."
+            }
+          ],
+          "correctOptionId": "recommission",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "إعادة الخدمة تتطلب اختبارًا وظيفيًا وهيدروليكيًا وموافقة التشغيل وفق الإجراء.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "11 — التبرير الهندسي النهائي",
+        "instructionArabic": "اجمع المؤشرات والحساب وحدود النموذج والخطوات التالية في قرار واحد.",
+        "feedbackArabic": "ميّز بين قيمة النظرية وواقع القياس ولا تتجاوز حد الخدمة.",
+        "selection": {
+          "promptArabic": "أي خلاصة متكاملة؟",
+          "options": [
+            {
+              "optionId": "integrated",
+              "displayName": "التدفق 70% والضغط 1.90 bar دون الحد؛ النموذج يقدر 2.097 bar تحت افتراضاته، والفارق 0.197 bar يوجه لقياس موضعي ومعايرة قبل تدخل مثبت وإعادة تشغيل موثقة",
+              "meetsRequirements": true,
+              "feedbackArabic": "تبرير هندسي رفيع المستوى: تتويج متكامل يجمع بين النمذجة الرياضية، والتحقق الميداني، والقرار الرشيد."
+            },
+            {
+              "optionId": "certain",
+              "displayName": "التحليل الرياضي يقدم دليلاً جازمًا على تسرب الخط أو تلف المضخة ويبرر الاستبدال الفوري للمعدات",
+              "meetsRequirements": false,
+              "feedbackArabic": "النموذج يفسر معظم الفقد؛ والادعاء القاطع بانهيار المعدات دون فحص موضعي يتنافى مع المنهج الهندسي."
+            },
+            {
+              "optionId": "ignore",
+              "displayName": "الضغط النظري المقدر تجاوز حد الخدمة، لذا يمكن إهمال القراءات الميدانية ومواصلة الضخ دون قلق",
+              "meetsRequirements": false,
+              "feedbackArabic": "الواقع الميداني هو الحكم الأساسي لخدمة المستهلكين، ولا يجوز إهمال القياس الفعلي لصالح نموذج مبسط."
+            }
+          ],
+          "correctOptionId": "integrated",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "الخلاصة تجمع حالة الخدمة والحساب والفرق غير المفسر وحدود الدليل وخطة التحقق الآمنة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pressureGauge",
+    "pipeDiameterTool",
+    "elevationMeter",
+    "pumpMonitor",
+    "valveController",
+    "leakDetector"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach",
+    "hydrostaticPressure"
+  ],
+  "hints": [
+    {
+      "textArabic": "استخدم التدفق الفعلي، وافصل خسارة الاحتكاك عن أثر الارتفاع.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "حوّل أمتار الماء إلى bar باستخدام ρg.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "الفرق بين القياس والتقدير يوجه التحقق، ولا يثبت عطلًا بعينه.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1800,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 30,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 3,
+    "errorCountWeight": 22,
+    "engineeringDecisionsWeight": 45,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}

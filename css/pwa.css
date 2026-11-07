@@ -1,0 +1,45 @@
+.pwa-install {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px auto 0;
+  padding: 12px 14px;
+  max-width: 470px;
+  text-align: start;
+  border: 1px solid rgba(69, 214, 187, .25);
+  border-radius: 14px;
+  background: rgba(69, 214, 187, .055);
+}
+.pwa-install__copy { min-width: 0; flex: 1; }
+.pwa-install__copy strong { display: block; color: var(--paper); font-size: .88rem; }
+.pwa-install__copy p { margin: 3px 0 0; color: var(--paper-dim); font-size: .76rem; line-height: 1.55; }
+.pwa-install__action {
+  min-height: 42px;
+  padding: 8px 12px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(69, 214, 187, .42);
+  border-radius: 10px;
+  color: var(--verdigris);
+  background: rgba(69, 214, 187, .08);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pwa-install__dismiss {
+  width: 32px;
+  height: 36px;
+  flex: 0 0 auto;
+  border: 0;
+  color: var(--paper-dim);
+  background: transparent;
+  font: inherit;
+  font-size: 1.35rem;
+  cursor: pointer;
+}
+.pwa-install__action:focus-visible, .pwa-install__dismiss:focus-visible { outline: 2px solid var(--verdigris); outline-offset: 2px; }
+@media (max-width: 420px) {
+  .pwa-install { flex-wrap: wrap; gap: 8px; padding: 11px; }
+  .pwa-install__copy { flex-basis: calc(100% - 46px); }
+  .pwa-install__action { margin-inline-start: 0; }
+}

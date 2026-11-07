@@ -1,0 +1,293 @@
+{
+  "stageId": "L3_S12_PumpSelection",
+  "level": 3,
+  "stageIndexInLevel": 6,
+  "titleArabic": "المرحلة 1 — اختيار مضخة مناسبة",
+  "briefingArabic": "تعاني محطة الضخ الرئيسية من عدم قدرة المضخة الحالية على توصيل المياه إلى الخزان المرتفع بالضغط المطلوب. حلّل المعطيات واختر المضخة المناسبة.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "source",
+        "kind": "reservoir",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "tank",
+        "kind": "tank",
+        "elevationMeters": 185
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "main",
+        "fromNodeId": "source",
+        "toNodeId": "tank",
+        "lengthMeters": 1200,
+        "diameterMm": 300,
+        "roughnessMm": 0.15
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_required",
+      "displayNameArabic": "التدفق المطلوب",
+      "value": 120,
+      "unit": "L/s"
+    },
+    {
+      "key": "z_source",
+      "displayNameArabic": "ارتفاع منسوب السحب",
+      "value": 100,
+      "unit": "m"
+    },
+    {
+      "key": "z_tank",
+      "displayNameArabic": "ارتفاع منسوب الخزان",
+      "value": 185,
+      "unit": "m"
+    },
+    {
+      "key": "delta_z",
+      "displayNameArabic": "فرق المنسوب الهندسي",
+      "value": 85,
+      "unit": "m"
+    },
+    {
+      "key": "f",
+      "displayNameArabic": "معامل الاحتكاك التقريبي للأنابيب",
+      "value": 0.018,
+      "unit": ""
+    },
+    {
+      "key": "rho",
+      "displayNameArabic": "الكثافة",
+      "value": 1000,
+      "unit": "kg/m3"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    },
+    {
+      "key": "eta_system",
+      "displayNameArabic": "كفاءة النظام",
+      "value": 0.65,
+      "unit": ""
+    }
+  ],
+  "objective": {
+    "type": "selection",
+    "selection": {
+      "shuffle": false,
+      "options": [
+        {
+          "optionId": "A",
+          "displayName": "المضخة A",
+          "specs": [
+            {
+              "key": "Q",
+              "displayNameArabic": "التدفق",
+              "value": 125,
+              "unit": "L/s"
+            },
+            {
+              "key": "H",
+              "displayNameArabic": "الارتفاع",
+              "value": 100,
+              "unit": "m"
+            },
+            {
+              "key": "eta",
+              "displayNameArabic": "الكفاءة",
+              "value": 0.75,
+              "unit": ""
+            },
+            {
+              "key": "P",
+              "displayNameArabic": "القدرة",
+              "value": 163.5,
+              "unit": "kW"
+            }
+          ],
+          "costEuro": 31000,
+          "meetsRequirements": true,
+          "feedbackArabic": "المضخة A تحقق التدفق المطلوب (125 ≥ 120 L/s) والرأس الهيدروليكي الكلي (100 ≥ 98 m) ضمن الميزانية المتاحة."
+        },
+        {
+          "optionId": "B",
+          "displayName": "المضخة B",
+          "specs": [
+            {
+              "key": "Q",
+              "displayNameArabic": "التدفق",
+              "value": 140,
+              "unit": "L/s"
+            },
+            {
+              "key": "H",
+              "displayNameArabic": "الارتفاع",
+              "value": 88,
+              "unit": "m"
+            },
+            {
+              "key": "eta",
+              "displayNameArabic": "الكفاءة",
+              "value": 0.8,
+              "unit": ""
+            },
+            {
+              "key": "P",
+              "displayNameArabic": "القدرة",
+              "value": 151.1,
+              "unit": "kW"
+            }
+          ],
+          "costEuro": 34000,
+          "meetsRequirements": false,
+          "feedbackArabic": "المضخة B توفر تدفقًا كافيًا (140 L/s) لكن رأسها الهيدروليكي (88 m) أقل من الرأس الكلي المطلوب (نحو 98 m) ولن يصل الماء للخزان."
+        },
+        {
+          "optionId": "C",
+          "displayName": "المضخة C",
+          "specs": [
+            {
+              "key": "Q",
+              "displayNameArabic": "التدفق",
+              "value": 112,
+              "unit": "L/s"
+            },
+            {
+              "key": "H",
+              "displayNameArabic": "الارتفاع",
+              "value": 105,
+              "unit": "m"
+            },
+            {
+              "key": "eta",
+              "displayNameArabic": "الكفاءة",
+              "value": 0.7,
+              "unit": ""
+            },
+            {
+              "key": "P",
+              "displayNameArabic": "القدرة",
+              "value": 164.8,
+              "unit": "kW"
+            }
+          ],
+          "costEuro": 26000,
+          "meetsRequirements": false,
+          "feedbackArabic": "المضخة C توفر رأسًا كافيًا (105 m) لكن تدفقها (112 L/s) أقل من التدفق التصميمي المطلوب (120 L/s)."
+        }
+      ],
+      "correctOptionId": "A",
+      "justification": {
+        "shuffle": true,
+        "prompt": "لماذا اخترت هذه المضخة؟ اختر العوامل التي اعتمدت عليها في قرارك.",
+        "factors": [
+          {
+            "factorId": "flow_rate",
+            "labelArabic": "معدل التدفق المطلوب",
+            "correct": true
+          },
+          {
+            "factorId": "head_pressure",
+            "labelArabic": "الضغط / الارتفاع المطلوب",
+            "correct": true
+          },
+          {
+            "factorId": "fluid_nature",
+            "labelArabic": "طبيعة السائل",
+            "correct": false
+          },
+          {
+            "factorId": "efficiency",
+            "labelArabic": "كفاءة واستهلاك الطاقة",
+            "correct": false
+          },
+          {
+            "factorId": "operating_conditions",
+            "labelArabic": "توافق المضخة مع ظروف التشغيل",
+            "correct": false
+          },
+          {
+            "factorId": "motor_speed_only",
+            "labelArabic": "سرعة دوران المحرك الاسمية وحدها",
+            "correct": false
+          },
+          {
+            "factorId": "flange_diameter_only",
+            "labelArabic": "قطر فوهة المضخة وحده دون منحنى الأداء",
+            "correct": false
+          },
+          {
+            "factorId": "price_only",
+            "labelArabic": "سعر المضخة فقط بدون النظر للمواصفات",
+            "correct": false
+          }
+        ],
+        "feedback": {
+          "missedFactor": {
+            "flow_rate": "أهملت معدل التدفق المطلوب — وهو الشرط الأول لمطابقة المضخة لاحتياج الشبكة (Q ≥ 120 L/s).",
+            "head_pressure": "أهملت الضغط/الارتفاع المطلوب. عند اختيار المضخة يجب التأكد من قدرتها على توفير الارتفاع الكلي (Δz + hf + hm) وليس فقط فرق الارتفاع، بالإضافة إلى معدل التدفق."
+          },
+          "wrongFactor": {
+            "fluid_nature": "طبيعة السائل عامل مهم في حالات أخرى (سوائل لزجة أو أكّالة)، لكنه ليس ما حسم القرار هنا لأن السائل ماء عادي.",
+            "efficiency": "كفاءة الطاقة عامل اقتصادي حقيقي، لكنه ليس شرط المطابقة الأساسي — المطابقة الأساسية هي التدفق والارتفاع.",
+            "operating_conditions": "ظروف التشغيل عامل عام مهم، لكن القرار في هذه الحالة حُسم تحديدًا بالتدفق والارتفاع، لا بظروف التشغيل.",
+            "motor_speed_only": "سرعة الدوران وحدها (RPM) لا تحدد أداء المضخة دون معرفة منحنى التدفق والارتفاع (Q-H).",
+            "flange_diameter_only": "قطر فوهة التوصيل لا يضمن تحقيق التدفق والضغط المطلوبين دون مراجعة منحنى التشغيل الهيدروليكي.",
+            "price_only": "السعر عامل مهم عند التساوي في المواصفات، لكن الاعتماد عليه وحده بدون مطابقة التدفق والارتفاع قد يؤدي لاختيار معدات غير مناسبة."
+          }
+        },
+        "scoring": {
+          "fullBonus": 10,
+          "wrongFactorPenalty": 2,
+          "maxWrongPenalty": 6
+        }
+      }
+    }
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "elevationMeter",
+    "pumpMonitor"
+  ],
+  "availableFormulas": [
+    "bernoulli",
+    "darcyWeisbach",
+    "hydraulicPower"
+  ],
+  "hints": [
+    {
+      "textArabic": "تذكّر: H الإجمالي = Δz + hf + hm، وليس Δz وحده. Δz هنا = 185 - 100 = 85 m.",
+      "scorePenalty": 10
+    },
+    {
+      "textArabic": "احسب hf بمعادلة دارسي-وايزباخ باستخدام طول الأنبوب (1200 m)، قطره (300 mm)، وخشونته (0.15 mm).",
+      "scorePenalty": 15
+    },
+    {
+      "textArabic": "المضخة المناسبة يجب أن تحقق Q ≥ 120 L/s و H ≥ الارتفاع الكلي المطلوب (نحو 98 m).",
+      "scorePenalty": 20
+    }
+  ],
+  "timeLimitSeconds": 600,
+  "budgetEuro": 45000,
+  "scoring": {
+    "calculationAccuracyWeight": 0,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 10,
+    "errorCountWeight": 15,
+    "engineeringDecisionsWeight": 75,
+    "minorMistakePenalty": 5,
+    "wrongChoicePenalty": 10,
+    "criticalMistakePenalty": 20
+  },
+  "debriefSuccessArabic": "صحيح. تم اختيار المضخة A لأنها تحقق الشرطين معًا: التدفق Q ≥ 120 L/s والرأس الهيدروليكي الكلي H ≥ 98 m (Δz + hf + hm)، وليس فرق المنسوب الاستاتيكي (85 m) فقط. المضخة B توفر تدفقًا زائدًا برأس غير كافٍ، بينما المضخة C تقدم رأسًا كافيًا بتدفق غير كافٍ.",
+  "debriefFailureArabic": "الخطأ الشائع هو الاكتفاء بفرق المنسوب الهندسي Δz = 85 m وإهمال الفواقد الهيدروليكية الموزعة والموضعية في الأنبوب (بطول 1200 m)، والتي تضيف نحو 13 m، مما يرفع الرأس الكلي المطلوب إلى نحو 98 m."
+}

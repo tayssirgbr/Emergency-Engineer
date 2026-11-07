@@ -1,0 +1,627 @@
+{
+  "stageId": "L3_S4_HydraulicHeadLoss",
+  "level": 3,
+  "stageIndexInLevel": 3,
+  "titleArabic": "المرحلة 4 — حساب فقدان الرأس في شبكة مائية",
+  "briefingArabic": "كُلّفت بتحليل مقطع مستقيم من خط مياه قبل تقرير الحاجة إلى تعديل تشغيلي أو استبدال أي جزء. استخدم التدفق وهندسة الأنبوب لتقدير سرعة الماء وفقد الرأس بالاحتكاك، ثم حوّل هذا الفقد إلى فرق ضغط وقارنه بفرق الارتفاع والضغط المطلوب عند المستهلك. الفقد الموضعي مهمل في هذا التقدير الأولي.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "بداية المقطع",
+        "kind": "reservoir",
+        "elevationMeters": 100
+      },
+      {
+        "nodeId": "نهاية المقطع",
+        "kind": "consumer",
+        "elevationMeters": 108
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخط المستقيم محل الحساب",
+        "fromNodeId": "بداية المقطع",
+        "toNodeId": "نهاية المقطع",
+        "lengthMeters": 800,
+        "diameterMm": 200,
+        "roughnessMm": 0.05
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q",
+      "displayNameArabic": "التدفق الحجمي",
+      "value": 0.03,
+      "unit": "m3/s"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "القطر الداخلي للأنبوب",
+      "value": 0.2,
+      "unit": "m"
+    },
+    {
+      "key": "L",
+      "displayNameArabic": "طول المقطع المستقيم",
+      "value": 800,
+      "unit": "m"
+    },
+    {
+      "key": "f",
+      "displayNameArabic": "معامل دارسي للاحتكاك",
+      "value": 0.02,
+      "unit": "—"
+    },
+    {
+      "key": "rho",
+      "displayNameArabic": "كثافة الماء",
+      "value": 1000,
+      "unit": "kg/m3"
+    },
+    {
+      "key": "g",
+      "displayNameArabic": "تسارع الجاذبية",
+      "value": 9.81,
+      "unit": "m/s2"
+    },
+    {
+      "key": "deltaZ",
+      "displayNameArabic": "ارتفاع نهاية المقطع عن بدايته",
+      "value": 8,
+      "unit": "m"
+    },
+    {
+      "key": "P_in",
+      "displayNameArabic": "الضغط عند بداية المقطع",
+      "value": 4.5,
+      "unit": "bar"
+    },
+    {
+      "key": "P_min",
+      "displayNameArabic": "الضغط الأدنى المطلوب عند المستهلك",
+      "value": 2.5,
+      "unit": "bar"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — تحديد ما نريد حسابه",
+        "instructionArabic": "حدد الكميات التي تساعد على الوصول إلى فرق الضغط الناتج عن الاحتكاك. فرّق بين كمية نبحث عنها وكمية نستخدمها كخطوة وسيطة.",
+        "feedbackArabic": "نحتاج سرعة الجريان كقيمة وسيطة لأن Q وD معطيان، ثم نحسب فقد الرأس h_f بعلاقة دارسي–وايزباخ، ونحوّله إلى فرق ضغط احتكاكي بالعلاقة Δp_f = ρ g h_f. التدفق نفسه معطى وليس ناتج الحساب.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "ما الكميات المطلوبة مباشرةً أو وسيطًا لإتمام هذا التقدير؟",
+          "options": [
+            {
+              "optionId": "velocity",
+              "displayName": "سرعة الماء V كقيمة وسيطة",
+              "feedbackArabic": "نحسبها من التدفق والمساحة باستخدام الاستمرارية قبل حساب الفقد."
+            },
+            {
+              "optionId": "friction_head",
+              "displayName": "فقد الرأس الاحتكاكي h_f",
+              "feedbackArabic": "هو مقدار الطاقة لكل وحدة وزن المفقودة على طول الأنبوب."
+            },
+            {
+              "optionId": "friction_pressure",
+              "displayName": "فرق الضغط الاحتكاكي Δp_f",
+              "feedbackArabic": "نحوّل فقد الرأس إلى ضغط باستخدام كثافة الماء والجاذبية."
+            },
+            {
+              "optionId": "flow_again",
+              "displayName": "إيجاد تدفق جديد رغم أن Q معطى",
+              "feedbackArabic": "التدفق معلوم في السيناريو؛ المطلوب استخدامه لتقدير السرعة والفقد."
+            },
+            {
+              "optionId": "pump_power",
+              "displayName": "القدرة الكهربائية للمضخة",
+              "feedbackArabic": "لا تدخل القدرة في حساب فقد الاحتكاك للمقطع المستقيم المعطى."
+            },
+            {
+              "optionId": "pipe_color",
+              "displayName": "لون الأنبوب",
+              "feedbackArabic": "اللون لا يحدد سرعة الجريان أو فقد الرأس."
+            }
+          ],
+          "correctOptionIds": [
+            "velocity",
+            "friction_head",
+            "friction_pressure"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط الكمية التي اخترتها بوظيفتها في سلسلة الحساب.",
+            "factors": [
+              {
+                "factorId": "continuity_speed",
+                "labelArabic": "الاستمرارية تحسب السرعة من Q ومساحة المقطع",
+                "correct": true
+              },
+              {
+                "factorId": "darcy_head",
+                "labelArabic": "دارسي–وايزباخ يحسب فقد الرأس الاحتكاكي على طول المقطع",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_conversion",
+                "labelArabic": "ρ g h_f يحول فقد الرأس إلى فرق ضغط احتكاكي",
+                "correct": true
+              },
+              {
+                "factorId": "recalculate_flow",
+                "labelArabic": "التدفق مجهول ويجب تخمينه رغم إعطاء Q",
+                "correct": false
+              },
+              {
+                "factorId": "color_factor",
+                "labelArabic": "لون الأنبوب يدخل في معادلة فقد الرأس",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "continuity_speed": "نحتاج V في دارسي–وايزباخ، وتوفر Q وD يسمحان بحسابها.",
+                "darcy_head": "المطلوب الرئيس في المقطع هو h_f.",
+                "pressure_conversion": "الكثافة والجاذبية تربطان الرأس بفرق الضغط."
+              },
+              "wrongFactor": {
+                "recalculate_flow": "استخدم قيمة Q المعطاة بدل اختراع تدفق آخر.",
+                "color_factor": "خواص السطح والمقطع والجريان تهم؛ اللون لا يدخل الحساب."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — انتقاء المعطيات",
+        "instructionArabic": "ركز هنا على حساب فقد الرأس الاحتكاكي ثم تحويله إلى فرق الضغط الناتج عن الاحتكاك. بعض القيم المعروضة تصبح مهمة عند تقدير الضغط المتبقي عند النهاية، لا في حساب h_f نفسه.",
+        "feedbackArabic": "تحتاج Q وD لحساب السرعة، وL وf لحساب فقد الرأس، ثم ρ وg لتحويل الرأس إلى فرق ضغط. فرق الارتفاع وضغط الدخول لا يدخلان في h_f أو فرق الضغط الاحتكاكي وحده، لكنهما ضروريان لاحقًا لتقدير الضغط المتاح عند النهاية.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "اختر المعطيات اللازمة لحساب h_f ثم Δp_f بالصيغة المحددة.",
+          "options": [
+            {
+              "optionId": "Q",
+              "displayName": "التدفق Q",
+              "feedbackArabic": "يلزم لاشتقاق سرعة الماء من مساحة المقطع."
+            },
+            {
+              "optionId": "D",
+              "displayName": "القطر الداخلي D",
+              "feedbackArabic": "يحدد المساحة والسرعة ونسبة الطول إلى القطر."
+            },
+            {
+              "optionId": "L",
+              "displayName": "طول المقطع L",
+              "feedbackArabic": "يدخل في تقدير فقد الاحتكاك على طول الأنبوب."
+            },
+            {
+              "optionId": "f",
+              "displayName": "معامل الاحتكاك f",
+              "feedbackArabic": "يربط الجريان وخشونة الأنبوب بفقد الاحتكاك في الصيغة المعطاة."
+            },
+            {
+              "optionId": "rho",
+              "displayName": "كثافة الماء ρ",
+              "feedbackArabic": "تستخدم لتحويل فقد الرأس إلى فرق ضغط."
+            },
+            {
+              "optionId": "g",
+              "displayName": "الجاذبية g",
+              "feedbackArabic": "تدخل في حساب الرأس وتحويله إلى فرق ضغط."
+            },
+            {
+              "optionId": "elevation",
+              "displayName": "فرق الارتفاع Δz",
+              "feedbackArabic": "لا يحسب الفقد الاحتكاكي، لكنه يلزم عند تقدير الضغط المتبقي downstream."
+            },
+            {
+              "optionId": "inlet_pressure",
+              "displayName": "ضغط بداية المقطع",
+              "feedbackArabic": "لا يحدد h_f؛ استخدمه لاحقًا مع الفقد والارتفاع لتقدير ضغط النهاية."
+            },
+            {
+              "optionId": "manufacturer",
+              "displayName": "الشركة المصنّعة للأنبوب",
+              "feedbackArabic": "لا تدخل في الصيغة بعد أن أعطي معامل الاحتكاك f مباشرةً."
+            }
+          ],
+          "correctOptionIds": [
+            "Q",
+            "D",
+            "L",
+            "f",
+            "rho",
+            "g"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "أي مجموعة أسباب تشرح اعتماد الحساب على هذه القيم؟",
+            "factors": [
+              {
+                "factorId": "flow_area",
+                "labelArabic": "Q وD يحددان V عبر مساحة المقطع",
+                "correct": true
+              },
+              {
+                "factorId": "friction_terms",
+                "labelArabic": "L وD وf وV تحدد فقد الرأس في Darcy–Weisbach",
+                "correct": true
+              },
+              {
+                "factorId": "convert_pressure",
+                "labelArabic": "ρ وg تحولان الرأس المفقود إلى ضغط",
+                "correct": true
+              },
+              {
+                "factorId": "use_friction_factor",
+                "labelArabic": "f معطى، فلا يلزم تخمينه من اسم الشركة",
+                "correct": true
+              },
+              {
+                "factorId": "height_is_friction",
+                "labelArabic": "فرق الارتفاع جزء من فقد الاحتكاك h_f نفسه",
+                "correct": false
+              },
+              {
+                "factorId": "brand_required",
+                "labelArabic": "اسم الشركة مطلوب بعد إعطاء معامل الاحتكاك",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "flow_area": "استخرج V من Q ومساحة الأنبوب.",
+                "friction_terms": "تتضمن الصيغة طول المقطع وقطره ومعامل الاحتكاك والسرعة.",
+                "convert_pressure": "يستخدم Δp_f = ρ g h_f.",
+                "use_friction_factor": "قيمة f معطاة صراحةً لهذا التقدير."
+              },
+              "wrongFactor": {
+                "height_is_friction": "الارتفاع يغير الرأس المتاح، لكنه ليس الفقد الاحتكاكي.",
+                "brand_required": "لا تحتاج اسم المصنع لحساب هذه الصيغة بعد معرفة f."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "3 — اختيار العلاقات المناسبة",
+        "instructionArabic": "اختر العلاقة التي تستخرج السرعة، والقانون الذي يحسب فقد الاحتكاك، وعلاقة تحويل الرأس إلى ضغط. ركز على سبب استخدام كل علاقة هنا.",
+        "feedbackArabic": "نبدأ بالاستمرارية V = Q/A لأن السرعة غير معطاة. نستخدم بعدها Darcy–Weisbach لحساب h_f للمقطع المستقيم. وأخيرًا نستخدم Δp_f = ρ g h_f للتعبير عن الفقد بوحدة الضغط. برنولي مفيد لموازنة الطاقة بين نقطتين، لكنه ليس بديلًا عن حساب حد الاحتكاك المطلوب هنا.",
+        "selection": {
+          "mode": "multiple",
+          "scoreAsFormula": true,
+          "promptArabic": "أي العلاقات تحتاجها، وماذا تحسب كل واحدة؟",
+          "options": [
+            {
+              "optionId": "continuity",
+              "displayName": "Continuity: V = Q/A لحساب سرعة الماء",
+              "feedbackArabic": "نحتاج السرعة لأن الصيغة المعطاة لدارسي–وايزباخ تعتمد على V."
+            },
+            {
+              "optionId": "darcyWeisbach",
+              "displayName": "Darcy–Weisbach: h_f = f (L/D) (V²/2g)",
+              "feedbackArabic": "تحسب فقد الرأس بسبب الاحتكاك على طول الأنبوب المضغوط."
+            },
+            {
+              "optionId": "hydrostaticPressure",
+              "displayName": "تحويل الرأس إلى فرق ضغط: Δp_f = ρ g h_f",
+              "feedbackArabic": "يعبر عن الرأس المفقود بوحدة الضغط باستخدام كثافة الماء والجاذبية."
+            },
+            {
+              "optionId": "bernoulli",
+              "displayName": "Bernoulli لموازنة الرؤوس بين نقطتين",
+              "feedbackArabic": "تدخل موازنة برنولي عند حساب حالة النهاية كاملةً؛ لكنها لا تستخرج وحدها حد الاحتكاك في هذه الخطوة."
+            },
+            {
+              "optionId": "ohm",
+              "displayName": "قانون أوم لربط الضغط والتدفق",
+              "feedbackArabic": "قانون أوم يخص الجهد والتيار والمقاومة الكهربائية."
+            },
+            {
+              "optionId": "manning",
+              "displayName": "Manning لقناة مفتوحة",
+              "feedbackArabic": "المقطع هنا أنبوب مضغوط، لا قناة مفتوحة."
+            }
+          ],
+          "correctOptionIds": [
+            "continuity",
+            "darcyWeisbach",
+            "hydrostaticPressure"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "برر ترتيب استخدام العلاقات من المعطيات إلى فرق الضغط.",
+            "factors": [
+              {
+                "factorId": "derive_velocity",
+                "labelArabic": "Continuity يستخرج V لأن Q معلوم والسرعة غير معطاة",
+                "correct": true
+              },
+              {
+                "factorId": "calculate_head",
+                "labelArabic": "Darcy–Weisbach يستخدم V وf وL/D لحساب h_f",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_units",
+                "labelArabic": "ρ g h_f يحول مقدار الرأس إلى فرق ضغط",
+                "correct": true
+              },
+              {
+                "factorId": "memorize_name",
+                "labelArabic": "يكفي حفظ اسم Darcy–Weisbach دون معرفة ما يحتاجه",
+                "correct": false
+              },
+              {
+                "factorId": "use_open_channel",
+                "labelArabic": "Manning هو القانون الأساسي لأنبوب مضغوط",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "derive_velocity": "اشتق السرعة أولًا من التدفق ومساحة المقطع.",
+                "calculate_head": "بعد إيجاد V، عوّضها في Darcy–Weisbach مع f وL وD.",
+                "pressure_units": "حوّل h_f من متر رأس إلى باسكال أو bar باستخدام ρ وg."
+              },
+              "wrongFactor": {
+                "memorize_name": "اربط القانون بحد الاحتكاك والسرعة وهندسة الأنبوب.",
+                "use_open_channel": "قناة مفتوحة تختلف عن أنبوب ممتلئ مضغوط."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "4 — احسب فقد الرأس الاحتكاكي",
+        "instructionArabic": "حوّل Q إلى m3/s عند الحاجة، ثم احسب A = πD²/4 وV = Q/A. عوّض في h_f = f × (L/D) × (V²/2g). أدخل h_f بوحدة المتر. تقبل المهمة فرق التقريب ضمن 8%.",
+        "calculation": {
+          "targetParameterKey": "h_f (m)",
+          "expectedValue": 3.72,
+          "tolerancePercent": 8,
+          "feedbackArabic": "راجع تحويل الوحدات أولًا، ثم احسب مساحة المقطع والسرعة من Q/A. عوّض V في Darcy–Weisbach، ولا تخلط h_f بالمتر مع فرق الضغط بالبار."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — تفسير النتيجة",
+        "instructionArabic": "القيمة المحسوبة تقارب h_f = 3.72 m. يعادل هذا فقد ضغط احتكاكيًا يقارب ρgh_f ≈ 36.5 kPa ≈ 0.365 bar. ارتفاع النهاية 8 m يستهلك نحو 0.785 bar إضافية من الضغط المتاح؛ لذلك يكون ضغط النهاية المقدر قرابة 3.35 bar قبل الفواقد الموضعية، مع افتراض تقارب سرعتي الطرفين.",
+        "feedbackArabic": "h_f يمثل طاقة مفقودة بالاحتكاك لكل وحدة وزن، وتحويله يعطي فرق الضغط المنسوب للاحتكاك. فرق الارتفاع أثر منفصل. بعد احتساب الاثنين يبقى تقدير الضغط نحو 3.35 bar، أعلى من الحد المطلوب 2.5 bar ضمن افتراضات هذا النموذج المبسط.",
+        "selection": {
+          "promptArabic": "ما التفسير الهندسي الأدق لهذه النتيجة؟",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — المقطع يفقد نحو 3.72 m من الرأس بالاحتكاك (نحو 0.365 bar)، ثم يخفض فرق الارتفاع الضغط المتاح بصورة مستقلة",
+              "feedbackArabic": "صحيح. فقد الرأس ليس قيمة ضغط بالبار؛ نحوله باستخدام ρg، ثم نأخذ فرق الارتفاع بالحسبان منفصلًا عند تقدير ضغط النهاية.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — فقد رأس الاحتكاك البالغ 3.72 m يعني رياضيًا انخفاض معدل التدفق الحجمي بمقدار 3.72 لتر/ثانية",
+              "feedbackArabic": "h_f مقياس لفقد الطاقة لكل وحدة وزن، وليس معدل تغير التدفق."
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — قيمة فقد الرأس 3.72 m تعادل هبوطًا في الضغط المتاح بمقدار 3.72 بار بصورة مباشرة دون تحويل",
+              "feedbackArabic": "لا تتساوى وحدات المتر والبار؛ يلزم التحويل Δp = ρ g h_f."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — قوى الاحتكاك الهيدروليكي في الأنبوب لا تؤثر إطلاقًا على ضغط المصب ما دام ضغط المنبع ثابتًا عند 4.5 بار",
+              "feedbackArabic": "الاحتكاك يستهلك جزءًا من الرأس ويقلل الضغط المتاح downstream."
+            }
+          ],
+          "correctOptionId": "A",
+          "justification": {
+            "prompt": "اختر الأدلة التي تفسر معنى النتيجة وحدودها.",
+            "factors": [
+              {
+                "factorId": "head_units",
+                "labelArabic": "h_f بالمتر فقد رأس، وليس ضغطًا بوحدة bar",
+                "correct": true
+              },
+              {
+                "factorId": "pressure_convert",
+                "labelArabic": "ρ g h_f يحول فقد الرأس الاحتكاكي إلى فرق ضغط",
+                "correct": true
+              },
+              {
+                "factorId": "elevation_separate",
+                "labelArabic": "فرق الارتفاع يستهلك ضغطًا متاحًا منفصلًا عن احتكاك الأنبوب",
+                "correct": true
+              },
+              {
+                "factorId": "assumptions",
+                "labelArabic": "تقدير ضغط النهاية يهمل الفواقد الموضعية ويفترض تقارب السرعتين",
+                "correct": true
+              },
+              {
+                "factorId": "head_equals_bar",
+                "labelArabic": "كل متر رأس يساوي bar واحدًا مباشرةً",
+                "correct": false
+              },
+              {
+                "factorId": "friction_no_effect",
+                "labelArabic": "فقد الاحتكاك لا يغير ضغط النهاية",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "head_units": "احتفظ بوحدة الرأس m إلى أن تحولها إلى ضغط.",
+                "pressure_convert": "استخدم كثافة الماء والجاذبية للتحويل.",
+                "elevation_separate": "أضف فرق الارتفاع منفصلًا عند تطبيق موازنة الطاقة.",
+                "assumptions": "الضغط التقديري ليس قياسًا ميدانيًا؛ الفواقد الموضعية غير محسوبة."
+              },
+              "wrongFactor": {
+                "head_equals_bar": "التحويل يعتمد على ρg، فلا تساوي بين m وbar.",
+                "friction_no_effect": "الاحتكاك يقلل الضغط المتاح بعد المقطع."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — القرار الهندسي",
+        "instructionArabic": "استند إلى حسابك وتفسيرك: الضغط المتبقي المقدر 3.35 bar أعلى من الحد الأدنى المطلوب 2.5 bar، مع إهمال الفواقد الموضعية. أوصِ بخطوة تناسب النتيجة وحدود التقدير.",
+        "feedbackArabic": "ضمن المعطيات والافتراضات، لا يظهر تجاوز للحد الأدنى يبرر تغيير المضخة أو الأنبوب فورًا. وثّق الفقد، وتحقق بقياس ضغط وتدفق فعليين عند ظروف الطلب، وراجع حالة الأنبوب وقطره إذا خالفت القياسات التقدير أو تقلص هامش الضغط.",
+        "selection": {
+          "promptArabic": "ما التوصية الهندسية الأنسب للفريق؟",
+          "options": [
+            {
+              "optionId": "A",
+              "displayName": "A — وثّق h_f، وتحقق بقياس الضغط والتدفق عند الطلب الفعلي؛ لا تغيّر المضخة أو الأنبوب قبل مقارنة القياس بحد 2.5 bar ومراجعة الفواقد غير المحسوبة",
+              "feedbackArabic": "قرار مناسب: التقدير يعطي هامشًا فوق الحد الأدنى، لكن القياس الميداني يتحقق من الافتراضات والفواقد الموضعية قبل أي تعديل.",
+              "meetsRequirements": true
+            },
+            {
+              "optionId": "B",
+              "displayName": "B — الشروع الفوري في استبدال محطة الضخ بافتراض أن رصد أي فقد هيدروليكي بالاحتكاك دليل قاطع على عدم كفاءتها الميكانيكية",
+              "feedbackArabic": "الفقد الاحتكاكي متوقع في الأنابيب ولا يثبت عطل المضخة؛ ضغط النهاية المقدر أعلى من الحد المحدد."
+            },
+            {
+              "optionId": "C",
+              "displayName": "C — استبدال الخط الناقل الحالي بقطر داخلي أكبر دون التحقق من قراءات الضغط أو مراجعة الحسابات التصميمية الأولية للشبكة",
+              "feedbackArabic": "لا تبرر النتيجة وحدها تعديلًا دائمًا؛ تحقق من الأداء الفعلي وهامش الخدمة أولًا."
+            },
+            {
+              "optionId": "D",
+              "displayName": "D — إهمال تأثير فروق المنسوب الجيوديسي والفواقد الموضعية استنادًا إلى أن الفقد المحسوب 0.365 بار لا يمثل نسبة حرجة من ضغط المنبع",
+              "feedbackArabic": "ضغط الدخول ليس الضغط المتاح عند النهاية؛ يجب أخذ الارتفاع وبقية الفواقد في الحسبان."
+            }
+          ],
+          "correctOptionId": "A",
+          "justification": {
+            "prompt": "اربط توصيتك بالحساب ومتطلب الخدمة وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "use_calculated_loss",
+                "labelArabic": "احتكاك المقطع يستهلك نحو 0.365 bar من الضغط",
+                "correct": true
+              },
+              {
+                "factorId": "include_elevation",
+                "labelArabic": "فرق الارتفاع يستهلك نحو 0.785 bar إضافية من المتاح",
+                "correct": true
+              },
+              {
+                "factorId": "compare_minimum",
+                "labelArabic": "ضغط النهاية المقدر 3.35 bar أعلى من الحد المطلوب 2.5 bar",
+                "correct": true
+              },
+              {
+                "factorId": "verify_assumptions",
+                "labelArabic": "يلزم قياس ميداني لأن الفواقد الموضعية مهملة في التقدير",
+                "correct": true
+              },
+              {
+                "factorId": "replace_pump_now",
+                "labelArabic": "وجود h_f يثبت أن المضخة تالفة ويجب استبدالها",
+                "correct": false
+              },
+              {
+                "factorId": "ignore_losses",
+                "labelArabic": "يكفي طرح فرق ضغط الاحتكاك وتجاهل الارتفاع",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "use_calculated_loss": "استخدم h_f الذي حسبته ولا تخلطه بالتدفق.",
+                "include_elevation": "الارتفاع يؤثر في الضغط المتاح عند النهاية.",
+                "compare_minimum": "قارن الضغط المتبقي بمتطلب الخدمة قبل التصعيد.",
+                "verify_assumptions": "تحقق من القياسات والفواقد الموضعية قبل تغيير المعدات."
+              },
+              "wrongFactor": {
+                "replace_pump_now": "الفقد في الأنبوب لا يثبت خلل المضخة.",
+                "ignore_losses": "موازنة الضغط تتضمن الارتفاع والفواقد، لا الاحتكاك وحده."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "pressureGauge",
+    "flowMeter",
+    "pipeDiameterTool",
+    "elevationMeter"
+  ],
+  "availableFormulas": [
+    "continuity",
+    "darcyWeisbach",
+    "hydrostaticPressure"
+  ],
+  "hints": [
+    {
+      "textArabic": "ابدأ بحساب A = πD²/4 ثم V = Q/A؛ حوّل L/s إلى m³/s إذا استخدمت تلك الوحدة.",
+      "scorePenalty": 4
+    },
+    {
+      "textArabic": "عوّض السرعة في h_f = f(L/D)(V²/2g). افصل بين h_f بوحدة m وفرق الضغط Δp_f = ρgh_f.",
+      "scorePenalty": 5
+    },
+    {
+      "textArabic": "بعد إيجاد Δp_f، اطرح أثره وρgΔz من ضغط البداية لتقدير ضغط النهاية، ثم قارنه بحد الخدمة 2.5 bar.",
+      "scorePenalty": 6
+    }
+  ],
+  "timeLimitSeconds": 900,
+  "scoring": {
+    "calculationAccuracyWeight": 40,
+    "correctFormulaWeight": 20,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 15,
+    "engineeringDecisionsWeight": 20,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "استخدمت الاستمرارية لاشتقاق السرعة، ثم Darcy–Weisbach لفقد الرأس، وحولت النتيجة إلى فرق ضغط قبل مقارنة المتاح بمتطلب الخدمة. تحقق من القياسات والفواقد الموضعية ميدانيًا قبل أي تعديل دائم.",
+  "debriefFailureArabic": "راجع الوحدات ومساحة المقطع والسرعة، ثم افصل فقد الرأس الاحتكاكي عن فرق الارتفاع. حوّل h_f إلى ضغط باستخدام ρg وقارن الضغط المتبقي بحد الخدمة قبل اقتراح تغيير المعدات."
+}

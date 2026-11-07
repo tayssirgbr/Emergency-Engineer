@@ -1,0 +1,480 @@
+{
+  "stageId": "L3_S11_FieldDistributionFault",
+  "level": 3,
+  "stageIndexInLevel": 11,
+  "titleArabic": "المرحلة 11 — تشخيص عطل ميداني في خط توزيع المياه",
+  "briefingArabic": "انخفض التدفق وضغط ما بعد صمام التحكم مقارنة بخط الأساس. البيانات تثبت تراجع الأداء، لكنها لا تعين وحدها هل السبب قياس أم مقاومة موضعية أم تغير تشغيل.",
+  "network": {
+    "nodes": [
+      {
+        "nodeId": "منبع",
+        "kind": "reservoir",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مقطع الفحص",
+        "kind": "junction",
+        "elevationMeters": 0
+      },
+      {
+        "nodeId": "مستهلك",
+        "kind": "consumer",
+        "elevationMeters": 0
+      }
+    ],
+    "pipes": [
+      {
+        "pipeId": "الخط قيد الفحص",
+        "fromNodeId": "منبع",
+        "toNodeId": "مستهلك",
+        "lengthMeters": 100,
+        "diameterMm": 150,
+        "roughnessMm": 0.1
+      }
+    ]
+  },
+  "givenParameters": [
+    {
+      "key": "Q_ref",
+      "displayNameArabic": "التدفق المرجعي",
+      "value": 0.02,
+      "unit": "m3/s"
+    },
+    {
+      "key": "Q_now",
+      "displayNameArabic": "التدفق الحالي",
+      "value": 0.014,
+      "unit": "m3/s"
+    },
+    {
+      "key": "P_before_ref",
+      "displayNameArabic": "ضغط قبل الصمام سابقًا",
+      "value": 3.2,
+      "unit": "bar"
+    },
+    {
+      "key": "P_before",
+      "displayNameArabic": "ضغط قبل الصمام حاليًا",
+      "value": 2.6,
+      "unit": "bar"
+    },
+    {
+      "key": "P_after_ref",
+      "displayNameArabic": "ضغط بعد الصمام سابقًا",
+      "value": 3,
+      "unit": "bar"
+    },
+    {
+      "key": "P_after",
+      "displayNameArabic": "ضغط بعد الصمام حاليًا",
+      "value": 2,
+      "unit": "bar"
+    },
+    {
+      "key": "valve_command",
+      "displayNameArabic": "أمر الصمام",
+      "value": 100,
+      "unit": "%"
+    },
+    {
+      "key": "D",
+      "displayNameArabic": "قطر الخط",
+      "value": 0.15,
+      "unit": "m"
+    }
+  ],
+  "objective": {
+    "type": "multiStep",
+    "subObjectives": [
+      {
+        "type": "selection",
+        "stepTitleArabic": "1 — توصيف المؤشرات",
+        "instructionArabic": "قارن التدفق الحالي بخط الأساس وفارق الضغط عبر الصمام.",
+        "feedbackArabic": "المؤشرات متسقة مع مقاومة أكبر، لكنها لا تثبت سببها.",
+        "selection": {
+          "promptArabic": "ما الذي تدعمه القراءات؟",
+          "options": [
+            {
+              "optionId": "drop",
+              "displayName": "انخفض التدفق وازداد فرق الضغط عبر الصمام؛ يلزم تحديد موضع المقاومة والتحقق من القياس",
+              "meetsRequirements": true,
+              "feedbackArabic": "التحليل سليم: تراجع التدفق مع تزايد فرق الضغط يرجح وجود مقاومة إضافية تتطلب تدقيقًا."
+            },
+            {
+              "optionId": "normal",
+              "displayName": "التدفق طبيعي ومستقر لأن المياه ما زالت تجري في الخط وتصل لنقطة المصب دون انقطاع كامل",
+              "meetsRequirements": false,
+              "feedbackArabic": "سريان الماء الجزئي لا ينفي وجود هبوط حاد في التدفق وارتفاع مريب في فرق الضغط."
+            },
+            {
+              "optionId": "valve",
+              "displayName": "الصمام تالف ميكانيكيًا بصفة قاطعة ويجب استبداله فورًا قبل إجراء أي قياسات تدقيقية إضافية",
+              "meetsRequirements": false,
+              "feedbackArabic": "البيانات الأولية ترصد عَرَضًا هيدروليكيًا ولا تثبت تلف الصمام بصفة قاطعة دون فحص موضعي."
+            }
+          ],
+          "correctOptionId": "drop",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "التدفق هبط من 0.020 إلى 0.014 m³/s وفرق الضغط عبر الصمام ازداد من 0.2 إلى 0.6 bar.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "2 — جمع المعلومات",
+        "instructionArabic": "اختر الفحوص والقراءات التي تساعد على فصل عطل القياس عن مقاومة الصمام أو تغير الحالة.",
+        "feedbackArabic": "قارن القياسات الحالية بخط الأساس على جانبي الصمام.",
+        "selection": {
+          "mode": "multiple",
+          "promptArabic": "حدد البيانات المفيدة.",
+          "options": [
+            {
+              "optionId": "position",
+              "displayName": "التحقق من موضع ساق الصمام الفعلي مقابل الأمر",
+              "feedbackArabic": "موضع الساق الفعلي يكشف هل الصمام مغلق جزئيًا خلافًا لما تظهره إشارة التحكم."
+            },
+            {
+              "optionId": "upstream",
+              "displayName": "مقارنة ظروف المنبع والتشغيل بخط الأساس",
+              "feedbackArabic": "مقارنة ظروف المنبع ضرورية للتأكد من أن الانخفاض ليس قادمًا من المصدر المغذي."
+            },
+            {
+              "optionId": "paint",
+              "displayName": "لون جسم الصمام",
+              "feedbackArabic": "لون جسم الصمام صفة ظاهرية لا تؤثر على الأداء الهيدروليكي أو تدفق المياه."
+            },
+            {
+              "optionId": "synchronized",
+              "displayName": "تسجيل متزامن للضغط قبل الصمام وبعده والتدفق",
+              "feedbackArabic": "التسجيل المتزامن يربط قراءات الضغط بالتدفق ويستبعد أخطاء التباين الزمني."
+            },
+            {
+              "optionId": "calibration",
+              "displayName": "مطابقة معايرة عداد التدفق ومقاييس الضغط",
+              "feedbackArabic": "مطابقة المعايرة تضمن أن القراءات تمثل واقع الشبكة وليست خطأ في أجهزة القياس."
+            },
+            {
+              "optionId": "operator_guess",
+              "displayName": "اعتماد تخمين المشغل دون قياس",
+              "feedbackArabic": "التخمينات الفردية لا تبنى عليها قرارات هندسية دون قياسات موثقة ومعايرة."
+            }
+          ],
+          "correctOptionIds": [
+            "calibration",
+            "synchronized",
+            "position",
+            "upstream"
+          ],
+          "scoring": {
+            "fullBonus": 0.5
+          },
+          "feedback": {},
+          "justification": {
+            "prompt": "اربط اختياراتك بوظائف القياس وحدود النموذج.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "القياس المتزامن والمعاير وموضع الصمام الفعلي وظروف المنبع تميز الفرضيات.",
+                "correct": true
+              },
+              {
+                "factorId": "verification",
+                "labelArabic": "تحقق من معايرة الأجهزة وتزامن القياسات",
+                "correct": true
+              },
+              {
+                "factorId": "noise",
+                "labelArabic": "اختر معلومة لا تؤثر في التشخيص كأنها دليل حاسم",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "حدد البيانات التي تفصل بين الفرضيات."
+              },
+              "wrongFactor": {
+                "noise": "هذه المعلومة لا تفسر المؤشرات الهيدروليكية."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "calculation",
+        "stepTitleArabic": "3 — نسبة التدفق",
+        "instructionArabic": "احسب نسبة Q_now إلى Q_ref مئوية.",
+        "feedbackArabic": "النسبة = 0.014 / 0.020 × 100 = 70%.",
+        "calculation": {
+          "targetParameterKey": "النسبة (%)",
+          "expectedValue": 70,
+          "tolerancePercent": 2,
+          "feedbackArabic": "احسب النسبة المئوية بقسمة التدفق الحالي على التدفق المرجعي: (Q_now / Q_ref) × 100%."
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "4 — فرضية أولية",
+        "instructionArabic": "قدّم فرضية قابلة للاختبار دون اعتبارها تشخيصًا نهائيًا.",
+        "feedbackArabic": "سمّها فرضية إلى أن تتحقق بقياسات مستقلة وفحص.",
+        "selection": {
+          "promptArabic": "أي فرضية هي الأكثر اتساقًا؟",
+          "options": [
+            {
+              "optionId": "proven",
+              "displayName": "البيانات الحالية تقدم دليلاً قاطعًا ونهائيًا على حدوث انسداد فيزيائي صلب داخل تجويف الصمام",
+              "meetsRequirements": false,
+              "feedbackArabic": "البيانات ترصد مؤشرات فقد موضعي لكنها لا تجزم بانسداد مادي دون فحص ومعايرة تأكيدية."
+            },
+            {
+              "optionId": "resistance",
+              "displayName": "مقاومة إضافية محتملة قرب الصمام أو داخله؛ افحص الموضع والقياس قبل الجزم",
+              "meetsRequirements": true,
+              "feedbackArabic": "فرضية منطقية: التباين الهيدروليكي يرجح وجود مقاومة موضعية تستلزم فحصًا منظمًا."
+            },
+            {
+              "optionId": "pump",
+              "displayName": "القراءات المتاحة تثبت حدوث عطل كلي في مضخة الإمداد الرئيسية أدى لتراجع الضغط",
+              "meetsRequirements": false,
+              "feedbackArabic": "ارتفاع فرق الضغط عبر الصمام يتعارض مع فرضية عطل المضخة العامة التي تخفض الضغط كليًا."
+            }
+          ],
+          "correctOptionId": "resistance",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "هبوط التدفق وزيادة فرق الضغط عبر الصمام يجعلان المقاومة المحلية فرضية مناسبة.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "5 — خطة القياس",
+        "instructionArabic": "اختر الإجراء الذي يثبت مكان تغير الضغط مع إبقاء شروط الاختبار قابلة للمقارنة.",
+        "feedbackArabic": "استخدم القياس الموضعي قبل تغيير المعدة.",
+        "selection": {
+          "promptArabic": "كيف تتابع؟",
+          "options": [
+            {
+              "optionId": "replace",
+              "displayName": "البدء الفوري في فك واستبدال الصمام دون إضاعة الوقت في أخذ قياسات إضافية للشبكة",
+              "meetsRequirements": false,
+              "feedbackArabic": "الاستبدال الفوري دون تدقيق قد يكلف ميزانية باهظة إذا كان الخلل في المعايرة أو إشارة التحكم."
+            },
+            {
+              "optionId": "boost",
+              "displayName": "رفع ضغط التغذية من محطة الضخ لتعويض العجز الحاصل دون مراجعة حدود التحمل الآمنة للخط والأجهزة الملحقة",
+              "meetsRequirements": false,
+              "feedbackArabic": "رفع الضغط قسرًا يعرض الأنابيب والمحابس لخطر الانفجار ولا يعالج مسبب المقاومة غير الطبيعية."
+            },
+            {
+              "optionId": "measure",
+              "displayName": "تحقق من المعايرة ثم سجل التدفق والضغوط المتزامنة قبل الصمام وبعده وافحص موضعه وفق الإجراء",
+              "meetsRequirements": true,
+              "feedbackArabic": "خطة هندسية سليمة: التحقق من المعايرة وقياس الضغوط قبل الصمام وبعده يعزل المشكلة بدقة."
+            }
+          ],
+          "correctOptionId": "measure",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "تثبيت ظروف التشغيل والقياس على جانبي العنصر يحدد أين يظهر الفرق.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "selection",
+        "stepTitleArabic": "6 — القرار الميداني",
+        "instructionArabic": "اختم التحقيق بخطوة آمنة قابلة للتنفيذ.",
+        "feedbackArabic": "لا تفك معدة مضغوطة ولا تتجاوز إجراءات الموقع.",
+        "selection": {
+          "promptArabic": "ما القرار المسؤول؟",
+          "options": [
+            {
+              "optionId": "inspect",
+              "displayName": "اتبع تصريح وإجراءات الموقع، تحقق من الأجهزة والموضع، ثم اعزل وافحص الصمام فقط وفق إجراء معتمد",
+              "meetsRequirements": true,
+              "feedbackArabic": "قرار مهني متكامل: الالتزام بإجراءات السلامة، وتصاريح العمل، والعزل الآمن يضمن إصلاحًا سليمًا."
+            },
+            {
+              "optionId": "operate",
+              "displayName": "الاستمرار في تشغيل الخط وترحيل معالجة الهبوط إلى جدول الصيانة الدورية المعتاد في الشهر القادم دون تدخل فني عاجل",
+              "meetsRequirements": false,
+              "feedbackArabic": "مواصلة التشغيل مع تراجع الخدمة قد يؤدي إلى تفاقم الضرر وانقطاع الإمداد عن المستهلكين."
+            },
+            {
+              "optionId": "disassemble",
+              "displayName": "الشروع في فك براغي غطاء الصمام أثناء استمرار سريان الماء وضغط الشبكة لتوفير الوقت",
+              "meetsRequirements": false,
+              "feedbackArabic": "فك أي معدة هيدروليكية وهي تحت الضغط يشكل مخالفة جسيمة لسلامة الأرواح والمنشآت."
+            }
+          ],
+          "correctOptionId": "inspect",
+          "justification": {
+            "prompt": "اربط الدليل بالعلاقة أو الافتراض الذي يسند اختيارك.",
+            "factors": [
+              {
+                "factorId": "evidence",
+                "labelArabic": "النتيجة تشير إلى أداء متراجع وتحتاج تحققًا ميدانيًا منظمًا.",
+                "correct": true
+              },
+              {
+                "factorId": "relationship",
+                "labelArabic": "اربط الاختيار بالقياسات والعلاقات أو الافتراضات الواردة في الحالة",
+                "correct": true
+              },
+              {
+                "factorId": "overclaim",
+                "labelArabic": "اعتبر الاختيار وحده إثباتًا ميدانيًا يتجاوز البيانات والافتراضات",
+                "correct": false
+              }
+            ],
+            "feedback": {
+              "missedFactor": {
+                "evidence": "ارجع إلى الدليل الذي يميز اختيارك عن البدائل.",
+                "relationship": "وضح صلة القرار بالقياسات أو العلاقة المناسبة."
+              },
+              "wrongFactor": {
+                "overclaim": "الاختيار يفسر البيانات المتاحة ولا يعوض تحققًا ميدانيًا."
+              }
+            },
+            "scoring": {
+              "fullBonus": 0.5,
+              "wrongFactorPenalty": 0.5,
+              "maxWrongPenalty": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "availableTools": [
+    "flowMeter",
+    "pressureGauge",
+    "valveController"
+  ],
+  "availableFormulas": [
+    "continuity"
+  ],
+  "hints": [
+    {
+      "textArabic": "قارن التدفق بخط الأساس واحسب النسبة.",
+      "scorePenalty": 2
+    },
+    {
+      "textArabic": "فرق الضغط عبر عنصر يُقاس بين نقطتين على جانبيه.",
+      "scorePenalty": 3
+    },
+    {
+      "textArabic": "تحقق من الأجهزة وموضع الصمام قبل تسمية السبب.",
+      "scorePenalty": 4
+    }
+  ],
+  "timeLimitSeconds": 1200,
+  "budgetEuro": 0,
+  "scoring": {
+    "calculationAccuracyWeight": 15,
+    "correctFormulaWeight": 0,
+    "solveSpeedWeight": 5,
+    "errorCountWeight": 25,
+    "engineeringDecisionsWeight": 55,
+    "minorMistakePenalty": 2,
+    "wrongChoicePenalty": 3,
+    "criticalMistakePenalty": 10
+  },
+  "debriefSuccessArabic": "أكملت التحقيق بالاستناد إلى القياسات والحساب وحدود النموذج. حافظ على شروط السلامة والتحقق قبل إعادة المعدة إلى الخدمة.",
+  "debriefFailureArabic": "راجع المؤشرات والافتراضات، ثم أعد المحاولة مع التمييز بين الدليل والفرضية والسبب المثبت."
+}
